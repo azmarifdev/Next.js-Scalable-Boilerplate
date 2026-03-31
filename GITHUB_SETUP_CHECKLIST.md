@@ -23,7 +23,7 @@ Go to `Settings -> Branches -> Add branch protection rule`.
 - [ ] Enable `Require status checks to pass before merging`.
 - [ ] Enable `Require branches to be up to date before merging`.
 - [ ] Add required status checks:
-  - [ ] `CI / Lint, Typecheck, Format, Unit`
+  - [ ] `CI / CI`
   - [ ] `Commit Lint / commitlint`
   - [ ] `Dependency Review / dependency-review`
   - [ ] `PR Title Check / semantic-pr-title`

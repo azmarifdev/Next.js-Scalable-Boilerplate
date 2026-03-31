@@ -20,7 +20,7 @@ permissions:
 
 jobs:
   quality:
-    name: Lint, Typecheck, Format, Unit
+    name: CI
     runs-on: ubuntu-latest
     env:
       NEXT_PUBLIC_APP_NAME: Nextjs Starter Template
