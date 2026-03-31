@@ -1,61 +1,60 @@
 # Next Starter Template
 
-A production-ready Next.js App Router starter for modern SaaS-style applications.
+Production-ready Next.js App Router starter focused on fast delivery, safe defaults, and strong engineering workflow.
 
-This template is designed to help teams ship quickly with strong defaults for architecture, auth, validation, testing, and GitHub automation.
+This repository is designed so a team can:
+
+- start quickly with a modern SaaS-ready baseline
+- maintain consistent code quality across contributors
+- automate release and maintenance workflows on GitHub
+- reduce manual mistakes in CI, PR, and release processes
 
 ## Table of Contents
 
-- [Project Goals](#project-goals)
-- [Core Features](#core-features)
-- [Why Each Part Was Added](#why-each-part-was-added)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-- [Environment Variables](#environment-variables)
-- [Scripts](#scripts)
-- [How to Use This Template](#how-to-use-this-template)
-- [GitHub Automation](#github-automation)
-- [Safe Push and Release Demo](#safe-push-and-release-demo)
-- [Contribution Workflow](#contribution-workflow)
-- [Additional Guides](#additional-guides)
+- [1. What This Template Provides](#1-what-this-template-provides)
+- [2. Why These Tools Were Added](#2-why-these-tools-were-added)
+- [3. Tech Stack](#3-tech-stack)
+- [4. Repository Structure](#4-repository-structure)
+- [5. Prerequisites](#5-prerequisites)
+- [6. Local Setup (Step by Step)](#6-local-setup-step-by-step)
+- [7. Environment Variables](#7-environment-variables)
+- [8. Daily Development Workflow](#8-daily-development-workflow)
+- [9. Scripts Reference](#9-scripts-reference)
+- [10. Database Workflow](#10-database-workflow)
+- [11. Testing Strategy](#11-testing-strategy)
+- [12. GitHub Automation Overview](#12-github-automation-overview)
+- [13. Manual GitHub Setup (Required)](#13-manual-github-setup-required)
+- [14. Common Problems and Manual Fixes](#14-common-problems-and-manual-fixes)
+- [15. Safe Push and Release Demo](#15-safe-push-and-release-demo)
+- [16. Contribution Guidelines](#16-contribution-guidelines)
+- [17. Additional Documents](#17-additional-documents)
 
-## Project Goals
+## 1. What This Template Provides
 
-- Provide a clean, scalable baseline for Next.js projects.
-- Enforce consistent code quality from local development to CI.
-- Reduce manual release and maintenance work through automation.
-- Keep onboarding simple for new contributors.
+- Next.js App Router + React + TypeScript baseline.
+- Modular app structure under `src/` for long-term maintainability.
+- Authentication foundation with NextAuth.
+- Runtime validation and schema safety with Zod.
+- SQL-ready layer with Drizzle ORM.
+- Stripe integration scaffold for payments.
+- i18n-ready architecture.
+- Full quality tooling for lint, format, type checks, and tests.
+- End-to-end GitHub automation for PR checks, dependency updates, security scans, and releases.
 
-## Core Features
+## 2. Why These Tools Were Added
 
-- Next.js App Router with TypeScript strict mode.
-- Feature-friendly architecture with reusable `src/lib` utilities.
-- Auth flow support with NextAuth.
-- Form and runtime validation using Zod and `@t3-oss/env-nextjs`.
-- Stripe integration scaffold.
-- Drizzle ORM setup for SQL workflows.
-- i18n scaffold with `next-intl`.
-- UI baseline with Tailwind CSS and shadcn-compatible component setup.
-- Redux Toolkit store setup.
-- Comprehensive testing setup: Jest, Vitest, and Playwright.
-- GitHub automation for CI, release notes, dependency review, code scanning, and PR governance.
+- `TypeScript (strict)`: prevents runtime bugs by catching issues at compile time.
+- `ESLint + Prettier`: ensures consistent style and avoids review noise.
+- `Husky + lint-staged`: blocks low-quality changes before they are committed.
+- `Commitlint + semantic PR title`: enforces machine-readable commit history.
+- `Jest + Vitest + Playwright`: combines fast unit feedback with browser-level confidence.
+- `Release Please`: automates changelog, version bump, release PR, and tags.
+- `Dependabot + dependency review`: keeps dependencies updated with security visibility.
+- `CodeQL`: static security analysis in CI.
 
-## Why Each Part Was Added
+## 3. Tech Stack
 
-- `TypeScript (strict)`: catches bugs earlier and improves maintainability.
-- `ESLint + Prettier`: keeps code style and quality consistent across contributors.
-- `Husky + lint-staged + commitlint`: prevents low-quality commits before they enter PR.
-- `Jest + Vitest + Playwright`: balances fast unit testing with realistic end-to-end coverage.
-- `Zod + env validation`: avoids runtime failures caused by invalid inputs/config.
-- `Drizzle`: type-safe database access and predictable migrations.
-- `Release Please`: automatic changelog, version bump, tag, and GitHub release.
-- `Dependabot + dependency review`: safer and more regular dependency maintenance.
-- `CodeQL`: automated static security analysis on repository code.
-
-## Tech Stack
-
-### Application
+### Application Layer
 
 - Next.js 16
 - React 19
@@ -67,7 +66,7 @@ This template is designed to help teams ship quickly with strong defaults for ar
 - Drizzle ORM
 - Stripe SDK
 
-### Tooling and Quality
+### Quality and Tooling
 
 - ESLint
 - Prettier
@@ -77,196 +76,357 @@ This template is designed to help teams ship quickly with strong defaults for ar
 - Knip
 - Storybook
 
-### Testing
+### Test Stack
 
-- Jest + Testing Library
+- Jest + React Testing Library
 - Vitest
 - Playwright
 
-### CI/CD and GitHub Automation
+### CI/CD and Automation
 
 - GitHub Actions
 - Release Please
 - Dependabot
 - CodeQL
 
-## Project Structure
+## 4. Repository Structure
 
 ```text
 nextjs-starter-template/
   .github/
-    workflows/
-  drizzle/
-  public/
+    workflows/                 # CI, release, lint, label, security workflows
+  drizzle/                     # DB migration SQL snapshots
+  public/                      # Static assets
   src/
-    app/
-    lib/
-    store/
-    i18n/
-    styles/
+    app/                       # Next.js App Router pages and routes
+    components/                # Shared UI components
+    lib/                       # Utilities and service helpers
+    store/                     # Redux setup
+    i18n/                      # Internationalization setup
+    styles/                    # Global styles
   CHANGELOG.md
   CONTRIBUTING.md
   GITHUB_SETUP_CHECKLIST.md
   package.json
 ```
 
-## Getting Started
+## 5. Prerequisites
 
-### 1) Install
+- Node.js `22.x` recommended for CI parity.
+- npm `10+` recommended.
+- GitHub repository admin access (for one-time automation settings).
+
+## 6. Local Setup (Step by Step)
+
+### 6.1 Clone and install
 
 ```bash
+git clone https://github.com/azmarifdev/nextjs-starter-template.git
+cd nextjs-starter-template
 npm install
 ```
 
-### 2) Configure environment
+### 6.2 Configure environment
 
 ```bash
 cp .env.example .env.local
 ```
 
-Update required values in `.env.local`.
+Set real values in `.env.local`.
 
-### 3) Run development server
+### 6.3 Run application
 
 ```bash
 npm run dev
 ```
 
-### 4) Build and run production locally
-
-```bash
-npm run build
-npm run start
-```
-
-## Environment Variables
-
-- Use `.env.example` as the reference template.
-- Keep secrets in `.env.local` only.
-- Never commit real secrets.
-
-For CI and deployment, configure required values in repository/deployment secrets.
-
-## Scripts
-
-- `npm run dev`: start local development server.
-- `npm run build`: production build.
-- `npm run start`: run production server.
-- `npm run preview`: build and run production preview.
-- `npm run analyze`: build with bundle analysis.
-- `npm run lint`: run ESLint.
-- `npm run lint:fix`: auto-fix lint issues.
-- `npm run typecheck`: run TypeScript type check.
-- `npm run format:check`: verify formatting.
-- `npm run format:write`: apply formatting.
-- `npm run test`: run Jest tests.
-- `npm run test:watch`: run Jest in watch mode.
-- `npm run test:vitest`: run Vitest tests.
-- `npm run test:coverage`: generate Vitest coverage.
-- `npm run e2e`: run Playwright tests.
-- `npm run e2e:ui`: run Playwright UI mode.
-- `npm run storybook`: start Storybook.
-- `npm run build-storybook`: build Storybook.
-- `npm run db:generate`: generate Drizzle migrations.
-- `npm run db:migrate`: run Drizzle migrations.
-- `npm run db:studio`: open Drizzle Studio.
-- `npm run knip`: detect unused files/dependencies.
-- `npm run codehawk`: run CodeHawk analysis.
-
-## How to Use This Template
-
-### Typical implementation flow
-
-1. Create a feature branch from `main`.
-2. Implement UI and logic under `src/`.
-3. Add or update tests.
-4. Run local quality checks.
-5. Commit with Conventional Commit format.
-6. Push branch and open a PR.
-7. Merge after required checks and review.
-
-### Recommended local pre-PR checks
+### 6.4 Validate project health locally
 
 ```bash
 npm run lint
 npm run typecheck
 npm run format:check
 npm run test
+npm run test:vitest
+npm run build
 ```
 
-## GitHub Automation
+## 7. Environment Variables
 
-This project includes the following workflows:
+- `.env.example` is the baseline template.
+- `.env.local` is for local secrets and must not be committed.
+- CI and production should use repository/platform secrets.
 
-- `ci.yml`: lint, typecheck, format check, tests, build; plus E2E on `main`/`master`/`develop` pushes.
-- `commitlint.yml`: validates PR commit messages.
-- `pr-title.yml`: enforces semantic PR title format.
-- `dependency-review.yml`: checks dependency risk in PRs.
-- `dependabot-auto-merge.yml`: enables auto-merge for safe Dependabot patch/minor updates.
-- `labeler.yml`: auto-labels PRs by changed files.
-- `stale.yml`: marks/closes inactive issues and PRs.
-- `release-please.yml`: automates release PR, changelog, version, tag, and GitHub release notes.
-- `codeql.yml`: scheduled and PR/push security analysis.
+Recommended practice:
 
-## Safe Push and Release Demo
+- rotate credentials periodically
+- never hardcode secrets in source files
+- keep naming aligned between `.env.example`, app code, and CI secrets
 
-### Push flow (copy-paste safe)
+## 8. Daily Development Workflow
+
+1. Sync with latest `main`.
+2. Create a dedicated feature/fix branch.
+3. Implement code changes.
+4. Run local quality and tests.
+5. Commit with Conventional Commit format.
+6. Push branch.
+7. Open PR to `main`.
+8. Resolve review comments and failed checks.
+9. Merge after all required checks pass.
+
+## 9. Scripts Reference
+
+### App Lifecycle
+
+- `npm run dev`: start local development server.
+- `npm run build`: create production build.
+- `npm run start`: start production server.
+- `npm run preview`: build + run production locally.
+- `npm run analyze`: run build with bundle analysis.
+
+### Quality
+
+- `npm run lint`: run ESLint.
+- `npm run lint:fix`: apply lint auto-fixes.
+- `npm run typecheck`: run TypeScript checks.
+- `npm run format:check`: validate formatting.
+- `npm run format:write`: rewrite files with Prettier.
+
+### Testing
+
+- `npm run test`: run Jest tests.
+- `npm run test:watch`: Jest watch mode.
+- `npm run test:vitest`: run Vitest tests.
+- `npm run test:coverage`: Vitest coverage report.
+- `npm run e2e`: Playwright end-to-end tests.
+- `npm run e2e:ui`: Playwright interactive mode.
+
+### Data and Tooling
+
+- `npm run db:generate`: generate Drizzle migrations.
+- `npm run db:migrate`: run migrations.
+- `npm run db:studio`: open Drizzle Studio.
+- `npm run storybook`: run Storybook.
+- `npm run build-storybook`: build Storybook.
+- `npm run knip`: detect unused files/deps.
+- `npm run codehawk`: run CodeHawk scan.
+
+## 10. Database Workflow
+
+Typical migration cycle:
+
+1. Update schema files.
+2. Generate migration:
 
 ```bash
-git branch --show-current
-git status
+npm run db:generate
+```
+
+3. Apply migration:
+
+```bash
+npm run db:migrate
+```
+
+4. Verify with studio if needed:
+
+```bash
+npm run db:studio
+```
+
+## 11. Testing Strategy
+
+- Use Jest for component and unit behavior.
+- Use Vitest for fast utility-level checks.
+- Use Playwright for browser-level end-to-end flows.
+
+Suggested CI-parity local check before PR:
+
+```bash
+npm run lint && npm run typecheck && npm run format:check && npm run test && npm run test:vitest && npm run build
+```
+
+## 12. GitHub Automation Overview
+
+Configured workflows:
+
+- `ci.yml`: main quality gate (`lint`, `typecheck`, `format`, `test`, `build`).
+- `commitlint.yml`: validates commit messages in PR context.
+- `pr-title.yml`: validates semantic PR title.
+- `dependency-review.yml`: reviews dependency risk in PRs.
+- `dependabot-auto-merge.yml`: auto-merges safe Dependabot patch/minor updates.
+- `labeler.yml`: auto-labels PRs based on changed files.
+- `stale.yml`: marks/closes stale issues and PRs.
+- `release-please.yml`: automates changelog, release PR, version/tag, GitHub release notes.
+- `codeql.yml`: security scan for JavaScript/TypeScript.
+
+## 13. Manual GitHub Setup (Required)
+
+These are one-time repository settings that must be done manually.
+
+### 13.1 Enable action permissions for release automation
+
+Path: `Settings -> Actions -> General`
+
+- Set `Workflow permissions` to `Read and write permissions`.
+- Enable `Allow GitHub Actions to create and approve pull requests`.
+
+Why: required by `release-please` to open/update release PRs.
+
+### 13.2 Enable auto-merge
+
+Path: `Settings -> General -> Pull Requests`
+
+- Enable `Allow auto-merge`.
+
+Why: required for Dependabot safe auto-merge flow.
+
+### 13.3 Configure branch protection/ruleset for `main`
+
+Path: `Settings -> Rules -> Rulesets` or `Settings -> Branches`
+
+Enable:
+
+- Require pull request before merging
+- Require approvals (recommended: 1+)
+- Dismiss stale approvals on new commits
+- Require status checks to pass
+- Require branches to be up to date
+- Require conversation resolution
+
+Required checks to add:
+
+- `CI / CI`
+- `Commit Lint / commitlint`
+- `PR Title Check / semantic-pr-title`
+- `Dependency Review / dependency-review`
+- `CodeQL / Analyze (JavaScript/TypeScript)`
+
+Important note:
+
+- A check name appears in ruleset selection only after it has run at least once successfully.
+
+### 13.4 Optional but recommended repository settings
+
+- Enable `Automatically delete head branches`.
+- Keep only one merge strategy (usually squash merge).
+
+## 14. Common Problems and Manual Fixes
+
+### Problem A: Release Please cannot create PR
+
+Error:
+
+`GitHub Actions is not permitted to create or approve pull requests`
+
+Fix:
+
+1. Go to `Settings -> Actions -> General`.
+2. Enable write workflow permissions.
+3. Enable Actions create/approve PRs.
+4. Re-run `Release Please` job.
+
+### Problem B: PR title check fails
+
+Error:
+
+`No release type found in pull request title`
+
+Fix:
+
+Use semantic PR title:
+
+- `feat(ci): improve github automation`
+- `fix(ci): ensure commitlint reads repo config`
+- `chore(docs): update setup guide`
+
+### Problem C: CI check not visible in ruleset
+
+Fix:
+
+1. Ensure `CI` workflow ran successfully at least once on target branch context.
+2. Return to ruleset and search again.
+
+### Problem D: Push succeeded but cannot merge
+
+Fix:
+
+1. Push branch.
+2. Open PR from feature branch to `main`.
+3. Wait for checks and approvals.
+4. Merge PR.
+
+### Problem E: Commit lint fails unexpectedly
+
+Fix checklist:
+
+1. Verify commit format is Conventional Commit.
+2. Verify PR title is semantic (separate workflow requirement).
+3. Push updated commit/title and re-run failed jobs.
+
+## 15. Safe Push and Release Demo
+
+### 15.1 Standard safe push flow
+
+```bash
+git checkout main
+git pull origin main
+git checkout -b feat/your-change-name
 npm run lint
 npm run typecheck
 npm run format:check
 npm run test
 git add .
-git commit -m "feat(ci): improve github automation"
-git push -u origin feat/github-automation
+git commit -m "feat(scope): short clear message"
+git push -u origin feat/your-change-name
 ```
 
-Then open a PR to `main`.
+Then open PR to `main`.
 
-### After PR opens
+### 15.2 After opening PR
 
-- Wait for required checks to pass.
-- Address review comments.
-- Merge PR.
+- fix PR title if semantic check fails
+- wait for all required checks to pass
+- resolve reviews
+- merge PR
 
-### Release behavior after merge to `main`/`master`
+### 15.3 Release process after merge
 
-1. Release Please updates or creates a release PR.
-2. Merging that release PR updates `CHANGELOG.md` and creates a new tag (`vX.Y.Z`).
-3. GitHub Release notes are published automatically.
+- `release-please` updates/creates release PR
+- merge release PR
+- version + tag + changelog + GitHub release notes generated automatically
 
-## Contribution Workflow
+## 16. Contribution Guidelines
 
-### Commit format
-
-Use Conventional Commits:
+### Commit message format
 
 ```text
 <type>(optional-scope): <short description>
 ```
 
-Examples:
+Common `type` values:
 
-- `feat(auth): add remember me`
-- `fix(api): handle invalid token`
-- `chore(deps): update eslint`
-- `docs(readme): improve setup section`
+- `feat`
+- `fix`
+- `docs`
+- `refactor`
+- `test`
+- `chore`
+- `ci`
 
-### Pull request expectations
+### PR standards
 
-- Keep PRs focused and small.
-- Add or update tests for behavior changes.
-- Use semantic PR title (same style as Conventional Commits).
-- Ensure all required checks pass before merge.
+- keep PR focused and reasonably small
+- add/update tests for behavior changes
+- use semantic PR title
+- ensure all checks pass before merge
 
-For full policy, see [`CONTRIBUTING.md`](./CONTRIBUTING.md).
+For full details, see [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
-## Additional Guides
+## 17. Additional Documents
 
 - Contribution policy: [`CONTRIBUTING.md`](./CONTRIBUTING.md)
-- GitHub one-time manual setup: [`GITHUB_SETUP_CHECKLIST.md`](./GITHUB_SETUP_CHECKLIST.md)
+- Manual GitHub setup checklist: [`GITHUB_SETUP_CHECKLIST.md`](./GITHUB_SETUP_CHECKLIST.md)
 - Commit examples: [`.github-commit-message-examples.txt`](./.github-commit-message-examples.txt)
 - Changelog: [`CHANGELOG.md`](./CHANGELOG.md)
