@@ -1,0 +1,6 @@
+feat(auth): add forgot-password form shell
+fix(middleware): redirect unauthorized users to login
+refactor(services): centralize error handling in api client
+docs(readme): add testing section
+test(auth): add login validation tests
+chore(ci): cache npm dependencies

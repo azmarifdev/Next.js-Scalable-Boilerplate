@@ -1,0 +1,10 @@
+{
+  "common": {
+    "welcome": "Welcome",
+    "logout": "Logout"
+  },
+  "home": {
+    "title": "Next Starter Template",
+    "subtitle": "A scalable Next.js starter with feature modules and production tooling."
+  }
+}
