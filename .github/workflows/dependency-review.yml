@@ -17,3 +17,8 @@ jobs:
 
       - name: Dependency review
         uses: actions/dependency-review-action@v4
+        with:
+          # GitHub can take a short time to generate dependency snapshots
+          # for new commits; retrying avoids transient "No snapshots found" failures.
+          retry-on-snapshot-warnings: true
+          retry-on-snapshot-warnings-timeout: 600
