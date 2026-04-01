@@ -374,6 +374,11 @@ Fix:
 3. Wait for checks and approvals.
 4. Merge PR.
 
+Note:
+
+- Push to branch does not auto-merge into `main`.
+- If you want auto-merge behavior, add `automerge` label to the PR (this repository includes `PR Auto Merge` workflow for that).
+
 ### Problem E: Commit lint fails unexpectedly
 
 Fix checklist:
