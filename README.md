@@ -548,3 +548,5 @@ For full details, see [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 For complete runtime requirements and multi-platform deployment steps (Vercel, Docker, AWS, Azure, DigitalOcean), use:
 
 - [`DEPLOYMENT.md`](./DEPLOYMENT.md)
+
+A. Z. M. Arif
