@@ -60,9 +60,18 @@ For breaking changes, use `!` or a `BREAKING CHANGE:` footer:
 
 This repository uses `release-please` with Conventional Commits.
 
-1. Push/merge commits to `main` or `master`.
-2. GitHub Action automatically updates/opens a Release PR.
-3. When that PR is merged, version, tag, changelog, and GitHub release notes are created automatically.
+1. Open PR to `main` with semantic PR title and Conventional Commit messages.
+2. After merge to `main`, GitHub Action automatically updates/opens a release PR.
+3. Merge the release PR.
+4. Version, tag, `CHANGELOG.md`, and GitHub release notes are created automatically.
+
+Release quality notes:
+
+- `feat`, `fix`, `perf`, `refactor`, `docs`, `ci`, `build`, `test` are surfaced in changelog sections.
+- `chore` and `style` are hidden from release notes by default to reduce noise.
+- Non-conventional legacy commits may appear as parse warnings; keep all new commits conventional.
+
+For operational troubleshooting and manual fallback steps, see `RELEASE_AUTOMATION.md`.
 
 ## GitHub Automation Checks
 

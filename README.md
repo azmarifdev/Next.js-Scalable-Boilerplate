@@ -305,6 +305,16 @@ Configured workflows:
 - `package-manager-consistency.yml`: manual lockfile consistency verification for npm/yarn/pnpm (and bun when lockfile exists).
 - `bun-compatibility.yml`: manual Bun verification flow (`bun install`, lint, typecheck, vitest, build).
 
+Release mapping highlights:
+
+- `feat` -> `Features`
+- `fix` -> `Bug Fixes`
+- `perf` -> `Performance`
+- `refactor` -> `Refactoring`
+- `docs` -> `Documentation`
+- `ci` / `build` / `test` -> dedicated technical sections
+- `chore` and `style` are hidden from changelog by default
+
 ## 14. Manual GitHub Setup (Required)
 
 These are one-time repository settings that must be done manually.
@@ -430,9 +440,34 @@ Fix checklist:
 2. Verify PR title is semantic (separate workflow requirement).
 3. Push updated commit/title and re-run failed jobs.
 
+### Problem F: Release Please logs parsing warnings for old commits
+
+Example warning:
+
+`commit could not be parsed ... unexpected token`
+
+What it means:
+
+- Old non-conventional commits exist in history.
+
+What to do:
+
+1. Keep all new commits in Conventional Commit format.
+2. Continue using semantic PR titles.
+3. Treat old-history parse warnings as non-blocking unless release PR generation stops.
+
+### Problem G: Release PR not appearing after merge
+
+Checklist:
+
+1. Confirm merge happened into `main`.
+2. Confirm `Release Please` workflow ran on that push.
+3. Confirm action permissions in `Settings -> Actions -> General`.
+4. Confirm `.release-please-config.json` and `.release-please-manifest.json` exist in `main`.
+
 ## 17. Safe Push and Release Demo
 
-### 15.1 Standard safe push flow
+### 17.1 Standard safe push flow
 
 ```bash
 git checkout main
@@ -449,18 +484,23 @@ git push -u origin feat/your-change-name
 
 Then open PR to `main`.
 
-### 15.2 After opening PR
+### 17.2 After opening PR
 
 - fix PR title if semantic check fails
 - wait for all required checks to pass
 - resolve reviews
 - merge PR
 
-### 15.3 Release process after merge
+### 17.3 Release process after merge
 
 - `release-please` updates/creates release PR
 - merge release PR
 - version + tag + changelog + GitHub release notes generated automatically
+
+### 17.4 Example release-friendly commit and PR title
+
+- Commit: `feat(auth): add password reset flow`
+- PR title: `feat(auth): add password reset flow`
 
 ## 18. Contribution Guidelines
 
@@ -495,6 +535,7 @@ For full details, see [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 - Manual GitHub setup checklist: [`GITHUB_SETUP_CHECKLIST.md`](./GITHUB_SETUP_CHECKLIST.md)
 - Commit examples: [`.github-commit-message-examples.txt`](./.github-commit-message-examples.txt)
 - Changelog: [`CHANGELOG.md`](./CHANGELOG.md)
+- Release automation guide: [`RELEASE_AUTOMATION.md`](./RELEASE_AUTOMATION.md)
 - Cross-agent guide: [`AGENTS.md`](./AGENTS.md)
 - Claude AI guide: [`.claude/CLAUDE.md`](./.claude/CLAUDE.md)
 - Cursor rules: [`.cursor/rules/project-agent.mdc`](./.cursor/rules/project-agent.mdc)
