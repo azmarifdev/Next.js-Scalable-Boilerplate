@@ -4,7 +4,7 @@ import createMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
 import { AUTH_COOKIE_NAME } from "@/lib/constants";
 
-const protectedRoutes = ["/dashboard", "/users", "/products", "/orders"];
+const protectedRoutes = ["/dashboard", "/users", "/projects", "/tasks"];
 const authRoutes = ["/login", "/register"];
 
 const intlMiddleware = createMiddleware(routing);
@@ -34,8 +34,8 @@ export const config = {
   matcher: [
     "/dashboard/:path*",
     "/users/:path*",
-    "/products/:path*",
-    "/orders/:path*",
+    "/projects/:path*",
+    "/tasks/:path*",
     "/login",
     "/register"
   ]

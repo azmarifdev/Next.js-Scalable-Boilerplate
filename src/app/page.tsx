@@ -1,15 +1,14 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
-import { APP_NAME } from "@/lib/constants";
+export default async function HomePage() {
+  const t = await getTranslations("home");
 
-export default function HomePage() {
   return (
     <main className="page-section container">
       <section className="card stack">
-        <h1 className="card-title">{APP_NAME}</h1>
-        <p className="help-text">
-          A scalable Next.js starter with feature modules, auth, services, and testing setup.
-        </p>
+        <h1 className="card-title">{t("title")}</h1>
+        <p className="help-text">{t("subtitle")}</p>
         <div className="topbar-actions">
           <Link className="btn btn-primary" href="/login">
             Login

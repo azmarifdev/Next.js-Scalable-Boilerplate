@@ -39,7 +39,7 @@ This repository is designed so a team can:
 - Authentication foundation with NextAuth.
 - Runtime validation and schema safety with Zod.
 - SQL-ready layer with Drizzle ORM.
-- Stripe integration scaffold for payments.
+- Domain-neutral service layer scaffold for API integrations.
 - i18n-ready architecture.
 - Full quality tooling for lint, format, type checks, and tests.
 - End-to-end GitHub automation for PR checks, dependency updates, security scans, and releases.
@@ -67,7 +67,6 @@ This repository is designed so a team can:
 - NextAuth
 - Zod
 - Drizzle ORM
-- Stripe SDK
 
 ### Quality and Tooling
 

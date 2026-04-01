@@ -1,12 +1,12 @@
-import { Boxes, LayoutDashboard, ShoppingCart, Users } from "lucide-react";
+import { BriefcaseBusiness, CheckSquare, LayoutDashboard, Users } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 
 const links = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
   { href: "/users", label: "Users", icon: Users },
-  { href: "/products", label: "Products", icon: Boxes },
-  { href: "/orders", label: "Orders", icon: ShoppingCart }
+  { href: "/projects", label: "Projects", icon: BriefcaseBusiness },
+  { href: "/tasks", label: "Tasks", icon: CheckSquare }
 ];
 
 export function Sidebar() {

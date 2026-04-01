@@ -1,10 +1,10 @@
 "use client";
 
-import { Moon, Sun } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useTheme } from "next-themes";
 
+import { LangSwitcher } from "@/components/layout/lang-switcher";
+import { ThemeSwitcher } from "@/components/layout/theme-switcher";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { APP_NAME } from "@/lib/constants";
@@ -12,16 +12,11 @@ import { APP_NAME } from "@/lib/constants";
 export function Navbar() {
   const router = useRouter();
   const { user, isAuthenticated, logout } = useAuth();
-  const { resolvedTheme, setTheme } = useTheme();
 
   const handleLogout = async (): Promise<void> => {
     await logout();
     router.push("/login");
     router.refresh();
-  };
-
-  const toggleTheme = (): void => {
-    setTheme(resolvedTheme === "dark" ? "light" : "dark");
   };
 
   return (
@@ -32,9 +27,8 @@ export function Navbar() {
         </Link>
 
         <div className="topbar-actions">
-          <Button variant="secondary" onClick={toggleTheme} aria-label="Toggle theme">
-            {resolvedTheme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-          </Button>
+          <LangSwitcher />
+          <ThemeSwitcher />
           {isAuthenticated ? (
             <>
               <span className="badge">{user?.name}</span>

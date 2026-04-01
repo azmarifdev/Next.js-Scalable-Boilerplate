@@ -20,13 +20,12 @@ export const env = createEnv({
     NEXTAUTH_SECRET: optionalString,
     NEXTAUTH_URL: optionalUrl,
     GITHUB_CLIENT_ID: optionalString,
-    GITHUB_CLIENT_SECRET: optionalString,
-    STRIPE_SECRET_KEY: optionalString
+    GITHUB_CLIENT_SECRET: optionalString
   },
   client: {
     NEXT_PUBLIC_APP_NAME: appName,
     NEXT_PUBLIC_API_BASE_URL: optionalString,
-    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: optionalString
+    NEXT_PUBLIC_SITE_URL: optionalUrl
   },
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
@@ -34,9 +33,8 @@ export const env = createEnv({
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
     GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
-    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
     NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
     NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
-    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL
   }
 });

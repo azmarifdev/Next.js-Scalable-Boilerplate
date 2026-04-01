@@ -2,22 +2,26 @@ import "@/styles/globals.css";
 
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 import type { ReactNode } from "react";
 
-import enMessages from "@/i18n/messages/en.json";
-import { APP_NAME } from "@/lib/constants";
+import { siteConfig } from "@/lib/site-config";
 import { AppProviders } from "@/providers";
 
 export const metadata: Metadata = {
-  title: APP_NAME,
-  description: "Production-ready Next.js starter template"
+  title: siteConfig.name,
+  description: siteConfig.description,
+  metadataBase: new URL(siteConfig.url)
 };
 
-export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <body>
-        <NextIntlClientProvider locale="en" messages={enMessages}>
+        <NextIntlClientProvider locale={locale} messages={messages}>
           <AppProviders>{children}</AppProviders>
         </NextIntlClientProvider>
       </body>

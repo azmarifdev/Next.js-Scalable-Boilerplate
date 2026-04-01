@@ -5,4 +5,4 @@ export const API_PREFIX = `/api/${API_VERSION}`;
 export const AUTH_COOKIE_NAME = "auth_token";
 export const USER_COOKIE_NAME = "auth_user";
 
-export const DASHBOARD_ROUTES = ["/dashboard", "/users", "/products", "/orders"];
+export const DASHBOARD_ROUTES = ["/dashboard", "/users", "/projects", "/tasks"];

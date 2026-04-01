@@ -88,10 +88,9 @@ Typical required keys:
 - `DATABASE_URL`
 - `GITHUB_CLIENT_ID`
 - `GITHUB_CLIENT_SECRET`
-- `STRIPE_SECRET_KEY`
 - `NEXT_PUBLIC_APP_NAME`
 - `NEXT_PUBLIC_API_BASE_URL`
-- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
+- `NEXT_PUBLIC_SITE_URL` (recommended for correct sitemap/metadata URL)
 
 ## 7) Health Endpoint
 
