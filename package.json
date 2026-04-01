@@ -2,6 +2,9 @@
   "name": "nextjs-starter-template",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -30,6 +33,11 @@
     "install:yarn": "yarn install --frozen-lockfile",
     "install:pnpm": "pnpm install --frozen-lockfile",
     "install:bun": "bun install --frozen-lockfile || bun install",
+    "docker:build": "docker build -t nextjs-starter-template .",
+    "docker:run": "docker run --env-file .env.local -p 3000:3000 nextjs-starter-template",
+    "docker:up": "docker compose up --build",
+    "docker:up:db": "docker compose --profile db up --build",
+    "docker:down": "docker compose down",
     "prepare": "husky"
   },
   "dependencies": {
