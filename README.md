@@ -20,15 +20,16 @@ This repository is designed so a team can:
 - [7. Environment Variables](#7-environment-variables)
 - [8. Daily Development Workflow](#8-daily-development-workflow)
 - [9. Scripts Reference](#9-scripts-reference)
-- [10. Database Workflow](#10-database-workflow)
-- [11. Testing Strategy](#11-testing-strategy)
-- [12. GitHub Automation Overview](#12-github-automation-overview)
-- [13. Manual GitHub Setup (Required)](#13-manual-github-setup-required)
-- [14. AI Assistant Instructions (Optional but Recommended)](#14-ai-assistant-instructions-optional-but-recommended)
-- [15. Common Problems and Manual Fixes](#15-common-problems-and-manual-fixes)
-- [16. Safe Push and Release Demo](#16-safe-push-and-release-demo)
-- [17. Contribution Guidelines](#17-contribution-guidelines)
-- [18. Additional Documents](#18-additional-documents)
+- [10. Package Manager Support (npm, yarn, pnpm, bun)](#10-package-manager-support-npm-yarn-pnpm-bun)
+- [11. Database Workflow](#11-database-workflow)
+- [12. Testing Strategy](#12-testing-strategy)
+- [13. GitHub Automation Overview](#13-github-automation-overview)
+- [14. Manual GitHub Setup (Required)](#14-manual-github-setup-required)
+- [15. AI Assistant Instructions (Optional but Recommended)](#15-ai-assistant-instructions-optional-but-recommended)
+- [16. Common Problems and Manual Fixes](#16-common-problems-and-manual-fixes)
+- [17. Safe Push and Release Demo](#17-safe-push-and-release-demo)
+- [18. Contribution Guidelines](#18-contribution-guidelines)
+- [19. Additional Documents](#19-additional-documents)
 
 ## 1. What This Template Provides
 
@@ -213,7 +214,36 @@ Recommended practice:
 - `npm run knip`: detect unused files/deps.
 - `npm run codehawk`: run CodeHawk scan.
 
-## 10. Database Workflow
+## 10. Package Manager Support (npm, yarn, pnpm, bun)
+
+This template is primarily CI-verified with `npm`, and also prepared for `yarn` and `pnpm`.
+
+Included lock/config files:
+
+- `package-lock.json` (npm)
+- `yarn.lock` + `.yarnrc.yml` (yarn)
+- `pnpm-lock.yaml` (pnpm)
+- `codehawk.json` (for CodeHawk scan config)
+
+Install commands:
+
+- npm: `npm run install:npm`
+- yarn: `npm run install:yarn`
+- pnpm: `npm run install:pnpm`
+- bun (if installed): `npm run install:bun`
+
+Important:
+
+- In CI, `npm` remains the default for stability.
+- If your team decides to switch primary manager, keep lockfiles synchronized intentionally.
+- `bun` is optional and requires Bun runtime installed locally.
+- Before switching manager on the same machine, run a clean install (`rm -rf node_modules` then fresh install) to avoid mixed dependency states.
+
+Manual verification:
+
+- Run GitHub Action `Package Manager Consistency` from Actions tab to validate lockfiles across package managers.
+
+## 11. Database Workflow
 
 Typical migration cycle:
 
@@ -236,7 +266,7 @@ npm run db:migrate
 npm run db:studio
 ```
 
-## 11. Testing Strategy
+## 12. Testing Strategy
 
 - Use Jest for component and unit behavior.
 - Use Vitest for fast utility-level checks.
@@ -248,7 +278,7 @@ Suggested CI-parity local check before PR:
 npm run lint && npm run typecheck && npm run format:check && npm run test && npm run test:vitest && npm run build
 ```
 
-## 12. GitHub Automation Overview
+## 13. GitHub Automation Overview
 
 Configured workflows:
 
@@ -261,12 +291,14 @@ Configured workflows:
 - `stale.yml`: marks/closes stale issues and PRs.
 - `release-please.yml`: automates changelog, release PR, version/tag, GitHub release notes.
 - `codeql.yml`: security scan for JavaScript/TypeScript.
+- `codehawk.yml`: weekly/manual CodeHawk scan.
+- `package-manager-consistency.yml`: manual lockfile consistency verification for npm/yarn/pnpm (and bun when lockfile exists).
 
-## 13. Manual GitHub Setup (Required)
+## 14. Manual GitHub Setup (Required)
 
 These are one-time repository settings that must be done manually.
 
-### 13.1 Enable action permissions for release automation
+### 14.1 Enable action permissions for release automation
 
 Path: `Settings -> Actions -> General`
 
@@ -275,7 +307,7 @@ Path: `Settings -> Actions -> General`
 
 Why: required by `release-please` to open/update release PRs.
 
-### 13.2 Enable auto-merge
+### 14.2 Enable auto-merge
 
 Path: `Settings -> General -> Pull Requests`
 
@@ -283,7 +315,7 @@ Path: `Settings -> General -> Pull Requests`
 
 Why: required for Dependabot safe auto-merge flow.
 
-### 13.3 Configure branch protection/ruleset for `main`
+### 14.3 Configure branch protection/ruleset for `main`
 
 Path: `Settings -> Rules -> Rulesets` or `Settings -> Branches`
 
@@ -308,12 +340,12 @@ Important note:
 
 - A check name appears in ruleset selection only after it has run at least once successfully.
 
-### 13.4 Optional but recommended repository settings
+### 14.4 Optional but recommended repository settings
 
 - Enable `Automatically delete head branches`.
 - Keep only one merge strategy (usually squash merge).
 
-## 14. AI Assistant Instructions (Optional but Recommended)
+## 15. AI Assistant Instructions (Optional but Recommended)
 
 To improve output quality from coding agents, this template includes project-specific AI guidance files:
 
@@ -329,7 +361,7 @@ Why this helps:
 
 If your team does not use AI coding tools, these files are harmless and can be ignored.
 
-## 15. Common Problems and Manual Fixes
+## 16. Common Problems and Manual Fixes
 
 ### Problem A: Release Please cannot create PR
 
@@ -387,7 +419,7 @@ Fix checklist:
 2. Verify PR title is semantic (separate workflow requirement).
 3. Push updated commit/title and re-run failed jobs.
 
-## 16. Safe Push and Release Demo
+## 17. Safe Push and Release Demo
 
 ### 15.1 Standard safe push flow
 
@@ -419,7 +451,7 @@ Then open PR to `main`.
 - merge release PR
 - version + tag + changelog + GitHub release notes generated automatically
 
-## 17. Contribution Guidelines
+## 18. Contribution Guidelines
 
 ### Commit message format
 
@@ -446,7 +478,7 @@ Common `type` values:
 
 For full details, see [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
-## 18. Additional Documents
+## 19. Additional Documents
 
 - Contribution policy: [`CONTRIBUTING.md`](./CONTRIBUTING.md)
 - Manual GitHub setup checklist: [`GITHUB_SETUP_CHECKLIST.md`](./GITHUB_SETUP_CHECKLIST.md)

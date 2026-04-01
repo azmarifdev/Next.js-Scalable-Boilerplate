@@ -4,6 +4,9 @@
 
 1. Install dependencies:
    - `npm install`
+   - or `npm run install:yarn`
+   - or `npm run install:pnpm`
+   - or `npm run install:bun` (if Bun is installed)
 2. Start development server:
    - `npm run dev`
 

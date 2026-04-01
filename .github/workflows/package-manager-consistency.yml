@@ -1,0 +1,95 @@
+name: Package Manager Consistency
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  npm-lockfile:
+    name: npm lockfile check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install via npm
+        run: npm ci
+
+      - name: Verify package-lock is unchanged
+        run: git diff --exit-code -- package-lock.json
+
+  yarn-lockfile:
+    name: yarn lockfile check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Enable Yarn
+        run: |
+          corepack enable
+          corepack prepare yarn@1.22.22 --activate
+
+      - name: Install via Yarn
+        run: yarn install --frozen-lockfile --non-interactive --ignore-scripts
+
+      - name: Verify yarn.lock is unchanged
+        run: git diff --exit-code -- yarn.lock
+
+  pnpm-lockfile:
+    name: pnpm lockfile check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Enable pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.33.0 --activate
+
+      - name: Install via pnpm
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Verify pnpm-lock.yaml is unchanged
+        run: git diff --exit-code -- pnpm-lock.yaml
+
+  bun-lockfile:
+    name: bun lockfile check
+    if: ${{ hashFiles('bun.lock', 'bun.lockb') != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install via Bun
+        run: bun install --frozen-lockfile
+
+      - name: Verify bun lockfile is unchanged
+        run: |
+          if [ -f bun.lock ]; then
+            git diff --exit-code -- bun.lock
+          elif [ -f bun.lockb ]; then
+            git diff --exit-code -- bun.lockb
+          fi
