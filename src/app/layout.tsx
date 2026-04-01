@@ -5,14 +5,11 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import type { ReactNode } from "react";
 
-import { siteConfig } from "@/lib/site-config";
 import { AppProviders } from "@/providers";
 
-export const metadata: Metadata = {
-  title: siteConfig.name,
-  description: siteConfig.description,
-  metadataBase: new URL(siteConfig.url)
-};
+import { rootMetadata } from "../../config/root-metadata";
+
+export const metadata: Metadata = rootMetadata;
 
 export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   const locale = await getLocale();

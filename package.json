@@ -29,6 +29,7 @@
     "db:studio": "drizzle-kit studio",
     "knip": "knip",
     "codehawk": "codehawk src",
+    "clean": "node scripts/clean.js",
     "install:npm": "npm ci",
     "install:yarn": "yarn install --frozen-lockfile",
     "install:pnpm": "pnpm install --frozen-lockfile",

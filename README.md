@@ -213,6 +213,7 @@ Recommended practice:
 - `npm run build-storybook`: build Storybook.
 - `npm run knip`: detect unused files/deps.
 - `npm run codehawk`: run CodeHawk scan.
+- `npm run clean`: remove local build artifacts (`.next`, coverage, dist, storybook cache).
 
 ## 10. Package Manager Support (npm, yarn, pnpm, bun)
 
