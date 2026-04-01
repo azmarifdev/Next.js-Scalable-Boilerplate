@@ -60,6 +60,7 @@ Create these labels in `Issues -> Labels` if missing:
 
 - [ ] `dependencies`
 - [ ] `automerge-candidate`
+- [ ] `automerge`
 - [ ] `ci`
 - [ ] `docs`
 - [ ] `tests`
@@ -87,6 +88,14 @@ Create these labels in `Issues -> Labels` if missing:
   - [ ] PR Title Check
   - [ ] Dependency Review
 - [ ] Merge a Conventional Commit into `main` and confirm `Release Please` opens/updates a release PR.
+
+## 11) Optional: Auto-Merge Your Own PRs
+
+This repo includes `.github/workflows/pr-auto-merge.yml`.
+
+- [ ] Add label `automerge` to a PR you want to auto-merge.
+- [ ] Ensure required checks pass.
+- [ ] GitHub will auto-merge the PR (squash) when branch protection conditions are satisfied.
 
 ## Copy-Paste PR Title Examples
 
