@@ -30,6 +30,7 @@ This repository is designed so a team can:
 - [17. Safe Push and Release Demo](#17-safe-push-and-release-demo)
 - [18. Contribution Guidelines](#18-contribution-guidelines)
 - [19. Additional Documents](#19-additional-documents)
+- [20. Deployment](#20-deployment)
 
 ## 1. What This Template Provides
 
@@ -500,3 +501,9 @@ For full details, see [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 - Windsurf rules: [`.windsurf/rules/project-guidelines.md`](./.windsurf/rules/project-guidelines.md)
 - Copilot instructions: [`.vscode/copilot-instructions.md`](./.vscode/copilot-instructions.md)
 - Kiro steering: [`.kiro/steering/product.md`](./.kiro/steering/product.md), [`.kiro/steering/tech.md`](./.kiro/steering/tech.md), [`.kiro/steering/structure.md`](./.kiro/steering/structure.md), [`.kiro/steering/code-quality.md`](./.kiro/steering/code-quality.md)
+
+## 20. Deployment
+
+For complete runtime requirements and multi-platform deployment steps (Vercel, Docker, AWS, Azure, DigitalOcean), use:
+
+- [`DEPLOYMENT.md`](./DEPLOYMENT.md)
