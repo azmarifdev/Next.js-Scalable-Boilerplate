@@ -41,7 +41,7 @@ jobs:
         if: steps.dep-changes.outputs.any_changed == 'true'
         id: dependency_review
         continue-on-error: true
-        timeout-minutes: 2
+        timeout-minutes: 1
         uses: actions/dependency-review-action@v4
         with:
           # Fast-fail to avoid long waiting loops when snapshot is unavailable.
