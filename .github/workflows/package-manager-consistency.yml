@@ -74,22 +74,37 @@ jobs:
 
   bun-lockfile:
     name: bun lockfile check
-    if: ${{ hashFiles('bun.lock', 'bun.lockb') != '' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Detect bun lockfile
+        id: bun-lock
+        run: |
+          if [ -f bun.lock ] || [ -f bun.lockb ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Setup Bun
+        if: steps.bun-lock.outputs.exists == 'true'
         uses: oven-sh/setup-bun@v2
 
       - name: Install via Bun
+        if: steps.bun-lock.outputs.exists == 'true'
         run: bun install --frozen-lockfile
 
       - name: Verify bun lockfile is unchanged
+        if: steps.bun-lock.outputs.exists == 'true'
         run: |
           if [ -f bun.lock ]; then
             git diff --exit-code -- bun.lock
           elif [ -f bun.lockb ]; then
             git diff --exit-code -- bun.lockb
           fi
+
+      - name: Skip bun check (no bun lockfile)
+        if: steps.bun-lock.outputs.exists != 'true'
+        run: echo "bun.lock/bun.lockb not found; skipping bun lockfile consistency check."
