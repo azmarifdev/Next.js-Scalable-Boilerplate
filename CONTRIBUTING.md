@@ -7,6 +7,7 @@
    - or `npm run install:yarn`
    - or `npm run install:pnpm`
    - or `npm run install:bun` (if Bun is installed)
+   - for first-time Bun use, run `bun install` once to generate `bun.lock`/`bun.lockb`
 2. Start development server:
    - `npm run dev`
 

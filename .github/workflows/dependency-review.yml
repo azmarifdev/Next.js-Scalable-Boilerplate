@@ -45,6 +45,8 @@ jobs:
           # for new commits; retrying avoids transient "No snapshots found" failures.
           retry-on-snapshot-warnings: true
           retry-on-snapshot-warnings-timeout: 600
+          # Keep PRs unblocked when dependency snapshot generation is delayed.
+          warn-only: true
 
       - name: Skip (no dependency file changes)
         if: steps.dep-changes.outputs.any_changed != 'true'

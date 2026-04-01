@@ -224,6 +224,7 @@ Included lock/config files:
 - `yarn.lock` + `.yarnrc.yml` (yarn)
 - `pnpm-lock.yaml` (pnpm)
 - `codehawk.json` (for CodeHawk scan config)
+- `bun.lock` or `bun.lockb` (generated when a user runs Bun install)
 
 Install commands:
 
@@ -242,6 +243,14 @@ Important:
 Manual verification:
 
 - Run GitHub Action `Package Manager Consistency` from Actions tab to validate lockfiles across package managers.
+- Run GitHub Action `Bun Compatibility` from Actions tab for Bun-specific lint/typecheck/build verification.
+
+How template users can initialize Bun lockfile:
+
+```bash
+bun install
+# then commit generated bun.lock or bun.lockb
+```
 
 ## 11. Database Workflow
 
@@ -293,6 +302,7 @@ Configured workflows:
 - `codeql.yml`: security scan for JavaScript/TypeScript.
 - `codehawk.yml`: weekly/manual CodeHawk scan.
 - `package-manager-consistency.yml`: manual lockfile consistency verification for npm/yarn/pnpm (and bun when lockfile exists).
+- `bun-compatibility.yml`: manual Bun verification flow (`bun install`, lint, typecheck, vitest, build).
 
 ## 14. Manual GitHub Setup (Required)
 
