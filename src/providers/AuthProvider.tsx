@@ -1,9 +1,10 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import { ReactNode, useEffect } from "react";
 import { useDispatch } from "react-redux";
 
-import { authService } from "@/services/auth.service";
+import { authService } from "@/modules/auth/services/auth.service";
 import { AppDispatch } from "@/store";
 import { clearAuthUser, setAuthLoading, setAuthUser } from "@/store/slices/authSlice";
 
@@ -13,20 +14,24 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps): ReactNode {
   const dispatch = useDispatch<AppDispatch>();
+  const meQuery = useQuery({
+    queryKey: ["auth", "me"],
+    queryFn: authService.getMe,
+    retry: false
+  });
 
   useEffect(() => {
-    const run = async (): Promise<void> => {
-      dispatch(setAuthLoading(true));
-      try {
-        const me = await authService.getMe();
-        dispatch(setAuthUser(me));
-      } catch {
-        dispatch(clearAuthUser());
-      }
-    };
+    dispatch(setAuthLoading(meQuery.isLoading));
 
-    void run();
-  }, [dispatch]);
+    if (meQuery.data) {
+      dispatch(setAuthUser(meQuery.data));
+      return;
+    }
+
+    if (meQuery.isError) {
+      dispatch(clearAuthUser());
+    }
+  }, [dispatch, meQuery.data, meQuery.isError, meQuery.isLoading]);
 
   return children;
 }

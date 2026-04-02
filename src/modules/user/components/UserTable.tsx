@@ -3,15 +3,19 @@
 import { useTranslations } from "next-intl";
 
 import { EmptyState } from "@/components/common/empty-state";
-import { Loader } from "@/components/common/loader";
+import { Skeleton } from "@/components/common/skeleton";
 import { useUsers } from "@/modules/user/hooks/useUsers";
 
 export function UserTable() {
   const t = useTranslations("users");
-  const { users, isLoading } = useUsers();
+  const { users, isLoading, isError } = useUsers();
 
   if (isLoading) {
-    return <Loader label={t("loading")} />;
+    return <Skeleton lines={5} />;
+  }
+
+  if (isError) {
+    return <EmptyState title={t("errorTitle")} description={t("errorDescription")} />;
   }
 
   if (users.length === 0) {

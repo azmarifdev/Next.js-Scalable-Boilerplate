@@ -48,6 +48,8 @@
     "loading": "ইউজার লোড হচ্ছে",
     "emptyTitle": "কোনো ইউজার পাওয়া যায়নি",
     "emptyDescription": "ডেটা পাওয়া গেলে ইউজার এখানে দেখাবে।",
+    "errorTitle": "ইউজার লোড করা যায়নি",
+    "errorDescription": "একটু পরে আবার চেষ্টা করুন।",
     "columns": {
       "name": "নাম",
       "email": "ইমেইল",
@@ -55,10 +57,18 @@
     }
   },
   "projects": {
-    "owner": "মালিক"
+    "owner": "মালিক",
+    "emptyTitle": "এখনও কোনো প্রজেক্ট নেই",
+    "emptyDescription": "ডেটা পাওয়া গেলে প্রজেক্ট এখানে দেখাবে।",
+    "errorTitle": "প্রজেক্ট লোড করা যায়নি",
+    "errorDescription": "একটু পরে আবার চেষ্টা করুন।"
   },
   "tasks": {
     "assignee": "দায়িত্বপ্রাপ্ত",
-    "priority": "অগ্রাধিকার"
+    "priority": "অগ্রাধিকার",
+    "emptyTitle": "এখনও কোনো টাস্ক নেই",
+    "emptyDescription": "ডেটা পাওয়া গেলে টাস্ক এখানে দেখাবে।",
+    "errorTitle": "টাস্ক লোড করা যায়নি",
+    "errorDescription": "একটু পরে আবার চেষ্টা করুন।"
   }
 }

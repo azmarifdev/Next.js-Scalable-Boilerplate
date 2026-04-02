@@ -1,25 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import { taskService } from "@/modules/task/services/task.service";
-import { TaskItem } from "@/modules/task/types";
 
 export function useTasks() {
-  const [tasks, setTasks] = useState<TaskItem[]>([]);
+  const query = useQuery({
+    queryKey: ["tasks"],
+    queryFn: taskService.listTasks
+  });
 
-  useEffect(() => {
-    const run = async (): Promise<void> => {
-      try {
-        const response = await taskService.listTasks();
-        setTasks(response);
-      } catch {
-        setTasks([]);
-      }
-    };
-
-    void run();
-  }, []);
-
-  return { tasks };
+  return {
+    tasks: query.data ?? [],
+    isLoading: query.isLoading,
+    isError: query.isError
+  };
 }

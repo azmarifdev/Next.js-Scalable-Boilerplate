@@ -10,8 +10,9 @@ export interface ApiErrorBody {
 
 export interface ApiEnvelope<T> {
   success: boolean;
-  data: T | null;
-  error: ApiErrorBody | null;
+  data?: T;
+  message?: string;
+  error?: ApiErrorBody | null;
 }
 
 interface ResponseOptions {
@@ -36,7 +37,7 @@ export function apiSuccess<T>(
     {
       success: true,
       data,
-      error: null
+      message: "Request completed successfully"
     },
     { status: options.status ?? 200 }
   );
@@ -75,7 +76,7 @@ export function apiError(
   const response = NextResponse.json<ApiEnvelope<never>>(
     {
       success: false,
-      data: null,
+      message: error.message,
       error
     },
     { status }

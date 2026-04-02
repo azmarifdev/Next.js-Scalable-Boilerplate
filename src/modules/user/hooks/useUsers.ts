@@ -1,28 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import { userService } from "@/modules/user/services/user.service";
-import { UserListItem } from "@/modules/user/types";
 
 export function useUsers() {
-  const [users, setUsers] = useState<UserListItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const query = useQuery({
+    queryKey: ["users"],
+    queryFn: userService.listUsers
+  });
 
-  useEffect(() => {
-    const run = async (): Promise<void> => {
-      try {
-        const response = await userService.listUsers();
-        setUsers(response);
-      } catch {
-        setUsers([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    void run();
-  }, []);
-
-  return { users, isLoading };
+  return {
+    users: query.data ?? [],
+    isLoading: query.isLoading,
+    isError: query.isError
+  };
 }

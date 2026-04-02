@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { hasPermission } from "@/lib/auth/rbac";
+import { isFeatureEnabled } from "@/lib/config/feature-flags";
 import { AUTH_COOKIE_NAME } from "@/lib/constants";
 import {
   getOrCreateRequestId,
@@ -9,7 +10,7 @@ import {
 } from "@/lib/observability/request-id";
 import { verifySessionToken } from "@/lib/session";
 
-const protectedRoutes = ["/dashboard", "/users", "/projects", "/tasks"];
+const protectedRoutes = ["/dashboard", "/projects", "/tasks", "/users"];
 const authRoutes = ["/login", "/register"];
 
 const routePermissions: Record<
@@ -27,6 +28,14 @@ function attachRequestId(response: NextResponse, requestId: string): NextRespons
   return response;
 }
 
+function isRouteFeatureDisabled(pathname: string): boolean {
+  if (pathname === "/users" || pathname.startsWith("/users/")) {
+    return !isFeatureEnabled("admin");
+  }
+
+  return false;
+}
+
 export async function proxy(request: NextRequest) {
   const requestId = getOrCreateRequestId(request.headers);
   const requestHeaders = new Headers(request.headers);
@@ -39,6 +48,10 @@ export async function proxy(request: NextRequest) {
     (route) => pathname === route || pathname.startsWith(`${route}/`)
   );
   const isAuthRoute = authRoutes.includes(pathname);
+
+  if (isRouteFeatureDisabled(pathname)) {
+    return attachRequestId(NextResponse.redirect(new URL("/dashboard", request.url)), requestId);
+  }
 
   const session = token ? await verifySessionToken(token) : null;
   const isSignedIn = Boolean(session);
@@ -80,9 +93,9 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     "/dashboard/:path*",
-    "/users/:path*",
     "/projects/:path*",
     "/tasks/:path*",
+    "/users/:path*",
     "/login",
     "/register",
     "/api/:path*"

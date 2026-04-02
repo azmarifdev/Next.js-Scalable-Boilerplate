@@ -1,3 +1,4 @@
+import { appConfig } from "@/lib/config/app-config";
 import type { Permission, UserRole } from "@/types/auth";
 
 const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
@@ -10,5 +11,13 @@ export function getRolePermissions(role: UserRole): Permission[] {
 }
 
 export function hasPermission(role: UserRole, permission: Permission): boolean {
+  if (!appConfig.auth.roles.includes(role)) {
+    return false;
+  }
+
+  if (!appConfig.auth.permissions.includes(permission)) {
+    return false;
+  }
+
   return ROLE_PERMISSIONS[role].includes(permission);
 }

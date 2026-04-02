@@ -1,25 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import { projectService } from "@/modules/project/services/project.service";
-import { ProjectItem } from "@/modules/project/types";
 
 export function useProjects() {
-  const [projects, setProjects] = useState<ProjectItem[]>([]);
+  const query = useQuery({
+    queryKey: ["projects"],
+    queryFn: projectService.listProjects
+  });
 
-  useEffect(() => {
-    const run = async (): Promise<void> => {
-      try {
-        const response = await projectService.listProjects();
-        setProjects(response);
-      } catch {
-        setProjects([]);
-      }
-    };
-
-    void run();
-  }, []);
-
-  return { projects };
+  return {
+    projects: query.data ?? [],
+    isLoading: query.isLoading,
+    isError: query.isError
+  };
 }

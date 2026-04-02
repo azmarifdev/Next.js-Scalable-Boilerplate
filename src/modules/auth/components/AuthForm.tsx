@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { resolveApiEndpoint } from "@/lib/config/runtime";
 import { useAuthForm } from "@/modules/auth/hooks/useAuthForm";
 
 interface AuthFormProps {
@@ -14,7 +15,7 @@ interface AuthFormProps {
 
 export function AuthForm({ mode }: AuthFormProps) {
   const t = useTranslations("auth");
-  const { form, serverError, onSubmit } = useAuthForm({ mode });
+  const { form, serverError, onSubmit, isSubmitting } = useAuthForm({ mode });
   const formRef = useRef<HTMLFormElement | null>(null);
 
   useEffect(() => {
@@ -23,13 +24,13 @@ export function AuthForm({ mode }: AuthFormProps) {
 
   const {
     register,
-    formState: { errors, isSubmitting }
+    formState: { errors }
   } = form;
 
   const actionPath =
     mode === "login"
-      ? "/api/v1/auth/login?redirect=/dashboard"
-      : "/api/v1/auth/register?redirect=/dashboard";
+      ? `${resolveApiEndpoint("/auth/login")}?redirect=/dashboard`
+      : `${resolveApiEndpoint("/auth/register")}?redirect=/dashboard`;
 
   return (
     <form

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { requireInternalBackend } from "@/lib/api/internal-backend";
 import { withApiHandler } from "@/lib/api-handler";
 import { apiError, apiSuccess, resolveRequestId } from "@/lib/api-response";
 import {
@@ -78,6 +79,10 @@ async function parsePayload(request: NextRequest): Promise<unknown> {
 async function loginHandler(request: NextRequest): Promise<Response> {
   const requestId = resolveRequestId(request.headers);
   const route = "/api/v1/auth/login";
+  const backendError = requireInternalBackend({ requestId, route });
+  if (backendError) {
+    return backendError;
+  }
   const wantsHtml = prefersHtmlResponse(request);
   const successRedirectPath = getSafeRedirectPath(request.nextUrl.searchParams.get("redirect"));
 

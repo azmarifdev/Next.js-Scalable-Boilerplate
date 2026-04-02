@@ -1,595 +1,364 @@
-# Next Starter Template
+# Next.js Advanced Starter Platform
 
-Production-ready Next.js App Router starter focused on fast delivery, safe defaults, and strong engineering workflow.
+A production-focused, config-driven Next.js App Router boilerplate for SaaS apps, ecommerce products, and admin dashboards.
 
-This repository is designed so a team can:
+This template is designed for real teams shipping real products: modular architecture, predictable data flow, scalable feature boundaries, and strong defaults.
 
-- start quickly with a modern SaaS-ready baseline
-- maintain consistent code quality across contributors
-- automate release and maintenance workflows on GitHub
-- reduce manual mistakes in CI, PR, and release processes
+## Why This Template
 
-## Table of Contents
+- Config-driven platform behavior, not hardcoded decisions.
+- MongoDB-first by default, PostgreSQL-ready.
+- REST-first by default, GraphQL-ready.
+- External backend-first by default, internal API-ready.
+- Full auth system with custom JWT flow and optional NextAuth.
+- Feature-toggle support for ecommerce, billing, and admin modules.
+- TanStack Query-first data fetching architecture.
 
-- [1. What This Template Provides](#1-what-this-template-provides)
-- [2. Why These Tools Were Added](#2-why-these-tools-were-added)
-- [3. Tech Stack](#3-tech-stack)
-- [4. Repository Structure](#4-repository-structure)
-- [5. Prerequisites](#5-prerequisites)
-- [6. Local Setup (Step by Step)](#6-local-setup-step-by-step)
-- [7. Environment Variables](#7-environment-variables)
-- [8. Daily Development Workflow](#8-daily-development-workflow)
-- [9. Scripts Reference](#9-scripts-reference)
-- [10. Package Manager Support (npm, yarn, pnpm, bun)](#10-package-manager-support-npm-yarn-pnpm-bun)
-- [11. Database Workflow](#11-database-workflow)
-- [12. Testing Strategy](#12-testing-strategy)
-- [13. GitHub Automation Overview](#13-github-automation-overview)
-- [14. Manual GitHub Setup (Required)](#14-manual-github-setup-required)
-- [15. AI Assistant Instructions (Optional but Recommended)](#15-ai-assistant-instructions-optional-but-recommended)
-- [16. Common Problems and Manual Fixes](#16-common-problems-and-manual-fixes)
-- [17. Safe Push and Release Demo](#17-safe-push-and-release-demo)
-- [18. Contribution Guidelines](#18-contribution-guidelines)
-- [19. Additional Documents](#19-additional-documents)
-- [20. Deployment](#20-deployment)
-- [21. Production Hardening Checklist](#21-production-hardening-checklist)
+## Core Configuration
 
-## 1. What This Template Provides
+Main configuration lives in `src/lib/config/app-config.ts`.
 
-- Next.js App Router + React + TypeScript baseline.
-- Modular app structure under `src/` for long-term maintainability.
-- Authentication foundation with signed HTTP-only session cookies.
-- Standard API response envelope: `{ success, data, error }`.
-- RBAC scaffold with role-permission guard helpers.
-- Reusable in-memory rate-limit utility and example endpoint.
-- Structured logging + request-id propagation + tracing hook boilerplate.
+```ts
+export const appConfig = {
+  apiMode: "rest", // "rest" | "graphql"
+  backendMode: "external", // "external" | "internal"
 
-Additional API hardening included in this template:
+  dbProvider: "mongo", // "mongo" | "postgres"
+  authProvider: "custom", // "custom" | "nextauth"
 
-- same-origin enforcement for state-changing auth endpoints
-- centralized API exception envelope via `withApiHandler`
-- safe redirect validation for `redirect` query params
-- bounded in-memory rate-limit store with pruning
-- Runtime validation and schema safety with Zod.
-- SQL-ready layer with Drizzle ORM.
-- Domain-neutral service layer scaffold for API integrations.
-- i18n-ready architecture.
-- Full quality tooling for lint, format, type checks, and tests.
-- End-to-end GitHub automation for PR checks, dependency updates, security scans, and releases.
-
-## 2. Why These Tools Were Added
-
-- `TypeScript (strict)`: prevents runtime bugs by catching issues at compile time.
-- `ESLint + Prettier`: ensures consistent style and avoids review noise.
-- `Husky + lint-staged`: blocks low-quality changes before they are committed.
-- `Commitlint + semantic PR title`: enforces machine-readable commit history.
-- `Vitest + React Testing Library + Playwright`: combines fast unit feedback with browser-level confidence.
-- `Release Please`: automates changelog, version bump, release PR, and tags.
-- `Dependabot + dependency review`: keeps dependencies updated with security visibility.
-- `CodeQL`: static security analysis in CI.
-
-## 3. Tech Stack
-
-### Application Layer
-
-- Next.js 16
-- React 19
-- TypeScript 5
-- Tailwind CSS 4
-- Redux Toolkit
-- Zod
-- Drizzle ORM
-
-### Quality and Tooling
-
-- ESLint
-- Prettier
-- Husky
-- lint-staged
-- Commitlint
-- Knip
-- Storybook
-
-### Test Stack
-
-- Vitest + React Testing Library
-- Playwright
-
-### CI/CD and Automation
-
-- GitHub Actions
-- Release Please
-- Dependabot
-- CodeQL
-
-## 4. Repository Structure
-
-```text
-nextjs-starter-template/
-  .github/
-    workflows/                 # CI, release, lint, label, security workflows
-  drizzle/                     # DB migration SQL snapshots
-  public/                      # Static assets
-  src/
-    app/                       # Next.js App Router pages and routes
-    components/                # Shared UI components
-    lib/                       # Utilities and service helpers
-    store/                     # Redux setup
-    i18n/                      # Internationalization setup
-    styles/                    # Global styles
-  CHANGELOG.md
-  CONTRIBUTING.md
-  GITHUB_SETUP_CHECKLIST.md
-  package.json
+  features: {
+    ecommerce: true,
+    billing: true,
+    admin: true
+  }
+};
 ```
 
-## 5. Prerequisites
+You control behavior through env variables in `.env.local`.
 
-- Node.js `22.x` recommended for CI parity.
-- npm `10+` recommended.
-- GitHub repository admin access (for one-time automation settings).
+## Architectural Principles
 
-## 6. Local Setup (Step by Step)
+### 1) Feature Modules First
 
-### 6.1 Clone and install
+Every business feature uses this structure:
+
+```txt
+modules/{feature}/
+  components/
+  hooks/
+  services/
+  types.ts
+  validation.ts
+```
+
+### 2) Strict Layer Separation
+
+- `components/`: reusable UI only.
+- `modules/`: business logic and feature orchestration.
+- `services/`: transport and API communication.
+- `lib/`: framework/system internals.
+- `providers/`: global app providers.
+
+### 3) Standard Data Flow
+
+`Page -> Module -> Service -> API Layer -> Backend`
+
+No direct API calls in UI components.
+
+## Tech Stack
+
+### Framework & Language
+
+- Next.js (App Router)
+- React 19
+- TypeScript
+
+### Styling & UI
+
+- Tailwind CSS v4
+- Radix UI primitives
+
+### State & Data
+
+- TanStack Query (server-state, caching, retries)
+- Redux Toolkit (client-state where needed)
+- Axios + unified API client abstraction
+
+### Forms & Validation
+
+- React Hook Form
+- Zod
+
+### Auth
+
+- Custom auth (JWT/session cookie + refresh endpoint)
+- Optional NextAuth (Credentials + optional Google OAuth)
+
+### Database
+
+- MongoDB provider (default)
+- PostgreSQL provider via Drizzle (optional)
+- Prisma provider scaffold (optional)
+
+### Internationalization
+
+- next-intl
+
+### Testing
+
+- Vitest (unit + integration)
+- Playwright (e2e)
+
+### Deployment
+
+- Docker (default)
+- Vercel (optional)
+- AWS/Azure docs included
+
+## Folder Structure
+
+```txt
+src/
+  app/
+    (auth)/
+    (dashboard)/
+    api/
+  components/
+  hooks/
+  i18n/
+  lib/
+    api/
+    auth/
+    config/
+    db/
+      providers/
+    errors/
+    observability/
+    security/
+  modules/
+    auth/
+    user/
+    project/
+    task/
+    ecommerce/
+    billing/
+  providers/
+  services/
+    apiClient.ts
+    rest/
+    graphql/
+  store/
+  styles/
+  tests/
+```
+
+Detailed docs:
+
+- `docs/architecture.md`
+- `docs/folder-structure.md`
+- `docs/auth-flow.md`
+- `docs/how-to-use.md`
+
+## Getting Started
+
+### 1) Install dependencies
 
 ```bash
-git clone https://github.com/azmarifdev/nextjs-starter-template.git
-cd nextjs-starter-template
-npm install
+npm ci
 ```
 
-### 6.2 Configure environment
+### 2) Configure environment
 
 ```bash
 cp .env.example .env.local
 ```
 
-Set real values in `.env.local`.
+Set values in `.env.local`:
 
-### 6.3 Run application
+```env
+NEXT_PUBLIC_API_MODE=rest
+NEXT_PUBLIC_BACKEND_MODE=external
+NEXT_PUBLIC_DB_PROVIDER=mongo
+NEXT_PUBLIC_AUTH_PROVIDER=custom
+
+NEXT_PUBLIC_FEATURE_ECOMMERCE=true
+NEXT_PUBLIC_FEATURE_BILLING=true
+NEXT_PUBLIC_FEATURE_ADMIN=true
+
+NEXT_PUBLIC_API_BASE_URL=http://localhost:3000
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+
+MONGODB_URI=
+MONGODB_DB_NAME=nextjs_starter_template
+DATABASE_URL=
+
+AUTH_SESSION_SECRET=
+AUTH_SESSION_SECRETS=
+AUTH_GOOGLE_CLIENT_ID=
+AUTH_GOOGLE_CLIENT_SECRET=
+```
+
+### 3) Run development server
 
 ```bash
 npm run dev
 ```
 
-### 6.4 Validate project health locally
+## Configuration Modes
+
+### API Mode
+
+- `rest` (default): calls REST endpoints.
+- `graphql` (optional): uses GraphQL transport client.
+
+### Backend Mode
+
+- `external` (default): frontend targets external backend via `NEXT_PUBLIC_API_BASE_URL`.
+- `internal` (optional): enables internal API routes under `src/app/api/v1/*`.
+
+### DB Provider
+
+- `mongo` (default): MongoDB provider.
+- `postgres` (optional): Drizzle/Postgres provider.
+
+### Auth Provider
+
+- `custom` (default): custom session/JWT flow.
+- `nextauth` (optional): NextAuth integration.
+
+## Auth System Overview
+
+### Custom Auth (Default)
+
+- Login, register, logout, me endpoint.
+- Refresh endpoint: `POST /api/v1/auth/refresh`.
+- Role-based guards via proxy and server permissions.
+
+### NextAuth (Optional)
+
+- Route: `src/app/api/auth/[...nextauth]/route.ts`.
+- Credentials provider included.
+- Google provider auto-enabled when Google env vars exist.
+
+## Role & Permission Model
+
+Roles:
+
+- `admin`
+- `user`
+
+Permissions include:
+
+- `dashboard:read`
+- `users:read`
+- `projects:read`
+- `tasks:read`
+- `auth:manage`
+
+Enforcement points:
+
+- `src/proxy.ts` route protection.
+- `src/lib/auth/session-guard.ts` API permission checks.
+- Feature/UI rendering guards.
+
+## Feature Toggles
+
+Control optional modules through config flags:
+
+```ts
+features: {
+  ecommerce: true,
+  billing: false,
+  admin: true
+}
+```
+
+Current usage:
+
+- Admin flag controls user/admin surfaces and route behavior.
+- Ecommerce and billing module scaffolds are included and config-gated.
+
+## Data Fetching Rules
+
+- TanStack Query is mandatory for async server data.
+- Module hooks own query keys and query/mutation logic.
+- Components consume hooks and render loading/error/empty states.
+
+## API Response Standard
+
+```ts
+type ApiResponse<T> = {
+  success: boolean;
+  data?: T;
+  message?: string;
+};
+```
+
+The client layer normalizes error handling before data reaches modules.
+
+## Error, Loading, and Notifications
+
+- Global error boundary: `src/app/global-error.tsx`
+- API error normalization in service client layer
+- Module-level empty/loading/error UI states
+- Global toast notifications for success/error/info
+
+## Scripts
+
+Core scripts:
+
+- `npm run dev`
+- `npm run build`
+- `npm run start`
+- `npm run lint`
+- `npm run typecheck`
+- `npm run test`
+- `npm run test:integration`
+- `npm run e2e`
+
+Database and Docker scripts are available in `package.json`.
+
+## Testing
+
+- Unit/integration with Vitest under `src/tests`.
+- E2E with Playwright.
+- Jest is not used.
+
+## Deployment
+
+### Docker (Default)
 
 ```bash
-npm run lint
-npm run typecheck
-npm run format:check
-npm run test
-npm run build
+npm run docker:build
+npm run docker:run
 ```
 
-## 7. Environment Variables
-
-- `.env.example` is the baseline template.
-- `.env.local` is for local secrets and must not be committed.
-- CI and production should use repository/platform secrets.
-
-Recommended practice:
-
-- rotate credentials periodically
-- never hardcode secrets in source files
-- keep naming aligned between `.env.example`, app code, and CI secrets
-
-Auth-specific notes:
-
-- `AUTH_SESSION_SECRET` or `AUTH_SESSION_SECRETS` is required for all secure environments.
-- `ALLOW_INSECURE_DEV_AUTH=true` must be explicitly set to allow local insecure secret fallback.
-- `ALLOW_DEMO_AUTH=true` enables demo login only when no database is configured.
-
-## 8. Daily Development Workflow
-
-1. Sync with latest `main`.
-2. Create a dedicated feature/fix branch.
-3. Implement code changes.
-4. Run local quality and tests.
-5. Commit with Conventional Commit format.
-6. Push branch.
-7. Open PR to `main`.
-8. Resolve review comments and failed checks.
-9. Merge after all required checks pass.
-
-## 9. Scripts Reference
-
-### App Lifecycle
-
-- `npm run dev`: start local development server.
-- `npm run build`: create production build.
-- `npm run start`: start production server.
-- `npm run preview`: build + run production locally.
-- `npm run analyze`: run build with bundle analysis.
-
-### Quality
-
-- `npm run lint`: run ESLint.
-- `npm run lint:fix`: apply lint auto-fixes.
-- `npm run typecheck`: run TypeScript checks.
-- `npm run format:check`: validate formatting.
-- `npm run format:write`: rewrite files with Prettier.
-
-### Testing
-
-- `npm run test`: run Vitest unit tests.
-- `npm run test:integration`: run API integration tests.
-- `npm run test:watch`: Vitest watch mode.
-- `npm run test:coverage`: Vitest coverage report.
-- `npm run e2e`: Playwright end-to-end tests.
-- `npm run e2e:ui`: Playwright interactive mode.
-
-### Data and Tooling
-
-- `npm run db:generate`: generate Drizzle migrations.
-- `npm run db:migrate`: run migrations.
-- `npm run db:seed`: seed repeatable template users/data.
-- `npm run db:reset`: migrate + seed (requires `ALLOW_DB_RESET=true`).
-- `npm run db:studio`: open Drizzle Studio.
-- `npm run storybook`: run Storybook.
-- `npm run build-storybook`: build Storybook.
-- `npm run knip`: detect unused files/deps.
-- `npm run codehawk`: run CodeHawk scan.
-- `npm run clean`: remove local build artifacts (`.next`, coverage, dist, storybook cache).
-
-## 10. Package Manager Support (npm, yarn, pnpm, bun)
-
-This template is primarily CI-verified with `npm`, and also prepared for `yarn` and `pnpm`.
-
-Included lock/config files:
-
-- `package-lock.json` (npm)
-- `yarn.lock` + `.yarnrc.yml` (yarn)
-- `pnpm-lock.yaml` (pnpm)
-- `codehawk.json` (for CodeHawk scan config)
-- `bun.lock` or `bun.lockb` (generated when a user runs Bun install)
-
-Install commands:
-
-- npm: `npm run install:npm`
-- yarn: `npm run install:yarn`
-- pnpm: `npm run install:pnpm`
-- bun (if installed): `npm run install:bun`
-
-Important:
-
-- In CI, `npm` remains the default for stability.
-- If your team decides to switch primary manager, keep lockfiles synchronized intentionally.
-- `bun` is optional and requires Bun runtime installed locally.
-- Before switching manager on the same machine, run a clean install (`rm -rf node_modules` then fresh install) to avoid mixed dependency states.
-
-Manual verification:
-
-- Run GitHub Action `Package Manager Consistency` from Actions tab to validate lockfiles across package managers.
-- Run GitHub Action `Bun Compatibility` from Actions tab for Bun-specific lint/typecheck/build verification.
-
-How template users can initialize Bun lockfile:
+Or compose:
 
 ```bash
-bun install
-# then commit generated bun.lock or bun.lockb
+npm run docker:up
 ```
 
-## 11. Database Workflow
+### Vercel (Optional)
 
-Typical migration cycle:
+- `vercel.json` is included.
+- Set env vars in Vercel project settings.
 
-1. Update schema files.
-2. Generate migration:
+### AWS/Azure
 
-```bash
-npm run db:generate
-```
+- Use deployment guides under `deploy/`.
 
-3. Apply migration:
+## Cleanup and Tooling Notes
 
-```bash
-npm run db:migrate
-```
+Editor/AI assistant configs are stored under `docs/tools/` to keep project root production-focused.
 
-4. Verify with studio if needed:
+## Contributing
 
-```bash
-npm run db:studio
-```
+1. Create a feature branch.
+2. Keep changes module-scoped and config-driven.
+3. Run lint, typecheck, and tests before opening PR.
+4. Update docs when architecture behavior changes.
 
-Seed/reset workflow:
+## License
 
-```bash
-npm run db:seed
-ALLOW_DB_RESET=true npm run db:reset
-```
-
-Default seeded accounts:
-
-- `admin@example.com` (role: `admin`)
-- `user@example.com` (role: `user`)
-
-## 12. Testing Strategy
-
-- Use Vitest + React Testing Library for unit and component behavior.
-- Use integration tests for API auth flow (`login/register/me/protected`).
-- Use Playwright for browser-level end-to-end flows.
-
-Suggested CI-parity local check before PR:
-
-```bash
-npm run lint && npm run typecheck && npm run format:check && npm run test && npm run build
-```
-
-## 13. GitHub Automation Overview
-
-Configured workflows:
-
-- `ci.yml`: main quality gate (`lint`, `typecheck`, `format`, `test`, `build`).
-- `ci.yml` includes path filters and a task matrix to reduce unnecessary CI cost.
-- `commitlint.yml`: validates commit messages in PR context.
-- `pr-title.yml`: validates semantic PR title.
-- `dependency-review.yml`: reviews dependency risk in PRs.
-- `dependabot-auto-merge.yml`: auto-merges safe Dependabot patch/minor updates.
-- `labeler.yml`: auto-labels PRs based on changed files.
-- `stale.yml`: marks/closes stale issues and PRs.
-- `release-please.yml`: automates changelog, release PR, version/tag, GitHub release notes.
-- `codeql.yml`: security scan for JavaScript/TypeScript.
-- `codehawk.yml`: weekly/manual CodeHawk scan (report-focused, non-blocking).
-- `package-manager-consistency.yml`: manual lockfile consistency verification for npm/yarn/pnpm (and bun when lockfile exists).
-- `bun-compatibility.yml`: manual Bun verification flow (`bun install`, lint, typecheck, vitest, build).
-
-Release mapping highlights:
-
-- `feat` -> `Features`
-- `fix` -> `Bug Fixes`
-- `perf` -> `Performance`
-- `refactor` -> `Refactoring`
-- `docs` -> `Documentation`
-- `ci` / `build` / `test` -> dedicated technical sections
-- `chore` and `style` are hidden from changelog by default
-
-## 14. Manual GitHub Setup (Required)
-
-These are one-time repository settings that must be done manually.
-
-### 14.1 Enable action permissions for release automation
-
-Path: `Settings -> Actions -> General`
-
-- Set `Workflow permissions` to `Read and write permissions`.
-- Enable `Allow GitHub Actions to create and approve pull requests`.
-
-Why: required by `release-please` to open/update release PRs.
-
-### 14.2 Enable auto-merge
-
-Path: `Settings -> General -> Pull Requests`
-
-- Enable `Allow auto-merge`.
-
-Why: required for Dependabot safe auto-merge flow.
-
-### 14.3 Configure branch protection/ruleset for `main`
-
-Path: `Settings -> Rules -> Rulesets` or `Settings -> Branches`
-
-Enable:
-
-- Require pull request before merging
-- Require approvals (recommended: 1+)
-- Dismiss stale approvals on new commits
-- Require status checks to pass
-- Require branches to be up to date
-- Require conversation resolution
-
-Required checks to add:
-
-- `CI / CI`
-- `Commit Lint / commitlint`
-- `PR Title Check / semantic-pr-title`
-- `Dependency Review / dependency-review`
-- `CodeQL / Analyze (JavaScript/TypeScript)`
-
-Important note:
-
-- A check name appears in ruleset selection only after it has run at least once successfully.
-
-### 14.4 Optional but recommended repository settings
-
-- Enable `Automatically delete head branches`.
-- Keep only one merge strategy (usually squash merge).
-
-## 15. AI Assistant Instructions (Optional but Recommended)
-
-To improve output quality from coding agents, this template includes project-specific AI guidance files:
-
-- `.claude/CLAUDE.md`: high-level engineering rules and validation flow.
-- `.cursor/rules/project-agent.mdc`: Cursor rule file with repository-specific constraints.
-
-Why this helps:
-
-- reduces generic AI output
-- keeps changes aligned with your architecture
-- reminds agents to run the same quality gates as CI
-- improves consistency across contributors using different AI tools
-
-If your team does not use AI coding tools, these files are harmless and can be ignored.
-
-## 16. Common Problems and Manual Fixes
-
-### Problem A: Release Please cannot create PR
-
-Error:
-
-`GitHub Actions is not permitted to create or approve pull requests`
-
-Fix:
-
-1. Go to `Settings -> Actions -> General`.
-2. Enable write workflow permissions.
-3. Enable Actions create/approve PRs.
-4. Re-run `Release Please` job.
-
-### Problem B: PR title check fails
-
-Error:
-
-`No release type found in pull request title`
-
-Fix:
-
-Use semantic PR title:
-
-- `feat(ci): improve github automation`
-- `fix(ci): ensure commitlint reads repo config`
-- `chore(docs): update setup guide`
-
-### Problem C: CI check not visible in ruleset
-
-Fix:
-
-1. Ensure `CI` workflow ran successfully at least once on target branch context.
-2. Return to ruleset and search again.
-
-### Problem D: Push succeeded but cannot merge
-
-Fix:
-
-1. Push branch.
-2. Open PR from feature branch to `main`.
-3. Wait for checks and approvals.
-4. Merge PR.
-
-Note:
-
-- Push to branch does not auto-merge into `main`.
-- If you want auto-merge behavior, add `automerge` label to the PR (this repository includes `PR Auto Merge` workflow for that).
-
-### Problem E: Commit lint fails unexpectedly
-
-Fix checklist:
-
-1. Verify commit format is Conventional Commit.
-2. Verify PR title is semantic (separate workflow requirement).
-3. Push updated commit/title and re-run failed jobs.
-
-### Problem F: Release Please logs parsing warnings for old commits
-
-Example warning:
-
-`commit could not be parsed ... unexpected token`
-
-What it means:
-
-- Old non-conventional commits exist in history.
-
-What to do:
-
-1. Keep all new commits in Conventional Commit format.
-2. Continue using semantic PR titles.
-3. Treat old-history parse warnings as non-blocking unless release PR generation stops.
-
-### Problem G: Release PR not appearing after merge
-
-Checklist:
-
-1. Confirm merge happened into `main`.
-2. Confirm `Release Please` workflow ran on that push.
-3. Confirm action permissions in `Settings -> Actions -> General`.
-4. Confirm `.release-please-config.json` and `.release-please-manifest.json` exist in `main`.
-
-## 17. Safe Push and Release Demo
-
-### 17.1 Standard safe push flow
-
-```bash
-git checkout main
-git pull origin main
-git checkout -b feat/your-change-name
-npm run lint
-npm run typecheck
-npm run format:check
-npm run test
-git add .
-git commit -m "feat(scope): short clear message"
-git push -u origin feat/your-change-name
-```
-
-Then open PR to `main`.
-
-### 17.2 After opening PR
-
-- fix PR title if semantic check fails
-- wait for all required checks to pass
-- resolve reviews
-- merge PR
-
-### 17.3 Release process after merge
-
-- `release-please` updates/creates release PR
-- merge release PR
-- version + tag + changelog + GitHub release notes generated automatically
-
-### 17.4 Example release-friendly commit and PR title
-
-- Commit: `feat(auth): add password reset flow`
-- PR title: `feat(auth): add password reset flow`
-
-## 18. Contribution Guidelines
-
-### Commit message format
-
-```text
-<type>(optional-scope): <short description>
-```
-
-Common `type` values:
-
-- `feat`
-- `fix`
-- `docs`
-- `refactor`
-- `test`
-- `chore`
-- `ci`
-
-### PR standards
-
-- keep PR focused and reasonably small
-- add/update tests for behavior changes
-- use semantic PR title
-- ensure all checks pass before merge
-
-For full details, see [`CONTRIBUTING.md`](./CONTRIBUTING.md).
-
-## 19. Additional Documents
-
-- Contribution policy: [`CONTRIBUTING.md`](./CONTRIBUTING.md)
-- Manual GitHub setup checklist: [`GITHUB_SETUP_CHECKLIST.md`](./GITHUB_SETUP_CHECKLIST.md)
-- Commit examples: [`.github-commit-message-examples.txt`](./.github-commit-message-examples.txt)
-- Changelog: [`CHANGELOG.md`](./CHANGELOG.md)
-- Release automation guide: [`RELEASE_AUTOMATION.md`](./RELEASE_AUTOMATION.md)
-- Cross-agent guide: [`AGENTS.md`](./AGENTS.md)
-- Claude AI guide: [`.claude/CLAUDE.md`](./.claude/CLAUDE.md)
-- Cursor rules: [`.cursor/rules/project-agent.mdc`](./.cursor/rules/project-agent.mdc)
-- Windsurf rules: [`.windsurf/rules/project-guidelines.md`](./.windsurf/rules/project-guidelines.md)
-- Copilot instructions: [`.vscode/copilot-instructions.md`](./.vscode/copilot-instructions.md)
-- Kiro steering: [`.kiro/steering/product.md`](./.kiro/steering/product.md), [`.kiro/steering/tech.md`](./.kiro/steering/tech.md), [`.kiro/steering/structure.md`](./.kiro/steering/structure.md), [`.kiro/steering/code-quality.md`](./.kiro/steering/code-quality.md)
-
-## 20. Deployment
-
-For complete runtime requirements and multi-platform deployment steps (Vercel, Docker, AWS, Azure, DigitalOcean), use:
-
-- [`DEPLOYMENT.md`](./DEPLOYMENT.md)
-
-## 21. Production Hardening Checklist
-
-- Configure `AUTH_SESSION_SECRET`/`AUTH_SESSION_SECRETS`, rotate regularly, and retire old keys safely.
-- Keep `ALLOW_INSECURE_DEV_AUTH=false` and `ALLOW_DEMO_AUTH=false` in production.
-- Enforce strict CORS, CSP, secure cookies, and HTTPS-only traffic.
-- Set cookie domain/path explicitly per environment.
-- Enable structured logs and request-id propagation in your platform logs.
-- Add error monitoring/tracing sink to replace template boilerplate hooks.
-- Protect sensitive routes with role/permission guards.
-- Keep migration policy explicit: backup before migrate, rollback strategy documented.
-- Automate backup/restore validation for production database.
-- Ensure TLS certificates, renewal, and HSTS policy are managed at the edge.
-
-A. Z. M. Arif
+See project license file and repository policy.

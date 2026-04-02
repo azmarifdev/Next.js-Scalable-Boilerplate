@@ -13,7 +13,7 @@ import { APP_NAME } from "@/lib/constants";
 export function Navbar() {
   const t = useTranslations("common");
   const router = useRouter();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, logout, isLoggingOut } = useAuth();
 
   const handleLogout = async (): Promise<void> => {
     await logout();
@@ -34,7 +34,7 @@ export function Navbar() {
           {isAuthenticated ? (
             <>
               <span className="badge">{user?.name}</span>
-              <Button variant="danger" onClick={handleLogout}>
+              <Button variant="danger" onClick={handleLogout} disabled={isLoggingOut}>
                 {t("logout")}
               </Button>
             </>

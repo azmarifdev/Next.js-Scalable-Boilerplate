@@ -582,3 +582,57 @@ main {
     gap: 6px;
   }
 }
+
+.skeleton-wrap {
+  display: grid;
+  gap: 10px;
+}
+
+.skeleton-line {
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--card-border), var(--border-strong), var(--card-border));
+  background-size: 220% 100%;
+  animation: skeleton-shimmer 1.2s linear infinite;
+}
+
+.toast-stack {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 50;
+  display: grid;
+  gap: 10px;
+  width: min(360px, calc(100vw - 32px));
+}
+
+.toast {
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: var(--text-primary);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(10px);
+  background: color-mix(in srgb, var(--surface) 80%, white 20%);
+}
+
+.toast-success {
+  border-color: color-mix(in srgb, var(--primary) 55%, transparent);
+}
+
+.toast-error {
+  border-color: color-mix(in srgb, #ef4444 55%, transparent);
+}
+
+.toast-info {
+  border-color: color-mix(in srgb, var(--text-secondary) 40%, transparent);
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

@@ -5,6 +5,7 @@ export interface ApiError {
 
 export interface ApiResponse<T> {
   success: boolean;
-  data: T | null;
-  error: ApiError | null;
+  data?: T;
+  message?: string;
+  error?: ApiError | null;
 }
