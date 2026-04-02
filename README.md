@@ -198,6 +198,75 @@ AUTH_GOOGLE_CLIENT_ID=
 AUTH_GOOGLE_CLIENT_SECRET=
 ```
 
+## Required Manual Configuration
+
+These values depend on each user/team and must be set before real usage.
+
+| Variable                                              | Required When                                | Example                     |
+| ----------------------------------------------------- | -------------------------------------------- | --------------------------- |
+| `NEXT_PUBLIC_BACKEND_MODE`                            | Always                                       | `external`                  |
+| `NEXT_PUBLIC_API_BASE_URL`                            | `backendMode=external`                       | `https://api.myapp.com`     |
+| `NEXT_PUBLIC_API_MODE`                                | Always                                       | `rest`                      |
+| `NEXT_PUBLIC_DB_PROVIDER`                             | Always                                       | `mongo`                     |
+| `NEXT_PUBLIC_AUTH_PROVIDER`                           | Always                                       | `custom`                    |
+| `MONGODB_URI` + `MONGODB_DB_NAME`                     | `dbProvider=mongo` and internal auth/data    | `mongodb://localhost:27017` |
+| `DATABASE_URL`                                        | `dbProvider=postgres` and internal auth/data | `postgres://...`            |
+| `AUTH_SESSION_SECRET` or `AUTH_SESSION_SECRETS`       | internal custom auth                         | `long-random-secret`        |
+| `AUTH_GOOGLE_CLIENT_ID` + `AUTH_GOOGLE_CLIENT_SECRET` | NextAuth Google OAuth                        | values from Google Cloud    |
+
+## Setup Path By Use Case
+
+### Path A: External Backend (Default, Recommended)
+
+Use this when your API/auth/database are in a separate backend service.
+
+```env
+NEXT_PUBLIC_BACKEND_MODE=external
+NEXT_PUBLIC_API_MODE=rest
+NEXT_PUBLIC_API_BASE_URL=https://api.example.com
+NEXT_PUBLIC_AUTH_PROVIDER=custom
+```
+
+Notes:
+
+- Internal `src/app/api/v1/*` routes are disabled in this mode.
+- Your external backend must expose equivalent endpoints/contracts.
+
+### Path B: Internal API (Optional)
+
+Use this when you want Next.js route handlers to serve API/auth.
+
+```env
+NEXT_PUBLIC_BACKEND_MODE=internal
+NEXT_PUBLIC_API_MODE=rest
+NEXT_PUBLIC_DB_PROVIDER=mongo
+NEXT_PUBLIC_AUTH_PROVIDER=custom
+MONGODB_URI=...
+MONGODB_DB_NAME=...
+AUTH_SESSION_SECRET=...
+```
+
+### Path C: NextAuth (Optional)
+
+```env
+NEXT_PUBLIC_AUTH_PROVIDER=nextauth
+```
+
+Optional Google OAuth:
+
+```env
+AUTH_GOOGLE_CLIENT_ID=...
+AUTH_GOOGLE_CLIENT_SECRET=...
+```
+
+### Path D: GraphQL (Optional)
+
+```env
+NEXT_PUBLIC_API_MODE=graphql
+```
+
+Then implement/point to a GraphQL endpoint compatible with your selected backend mode.
+
 ### 3) Run development server
 
 ```bash
@@ -323,6 +392,19 @@ Database and Docker scripts are available in `package.json`.
 - Unit/integration with Vitest under `src/tests`.
 - E2E with Playwright.
 - Jest is not used.
+
+### E2E Important Note
+
+Playwright config uses `NEXT_PUBLIC_BACKEND_MODE=internal` for the test web server so built-in auth E2E flows can run against internal routes.
+
+This is test-only behavior in [playwright.config.ts](/data/Code/Template/Frontend/nextjs-starter-template/playwright.config.ts) and does not change your app's default runtime mode (`external`).
+
+## Common Misconfigurations
+
+1. `backendMode=external` but missing `NEXT_PUBLIC_API_BASE_URL`.
+2. `backendMode=internal` but missing DB connection values.
+3. `authProvider=nextauth` without provider credentials/config.
+4. Enabling GraphQL mode without a working GraphQL backend endpoint.
 
 ## Deployment
 
