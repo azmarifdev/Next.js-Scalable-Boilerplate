@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "node .next/standalone/server.js",
+    "start": "node scripts/start.mjs",
     "preview": "npm run build && npm run start",
     "analyze": "ANALYZE=true next build",
     "lint": "eslint src --ext .ts,.tsx --cache",
@@ -17,6 +17,7 @@
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,css,json,md,mdx}\"",
     "format:write": "prettier --write \"**/*.{js,jsx,ts,tsx,css,json,md,mdx}\"",
     "test": "vitest run",
+    "test:integration": "vitest run src/tests/integration",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "e2e": "playwright test",
@@ -25,6 +26,8 @@
     "build-storybook": "storybook build",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:seed": "node scripts/seed.mjs",
+    "db:reset": "node scripts/db-reset.mjs",
     "db:studio": "drizzle-kit studio",
     "knip": "knip",
     "codehawk": "codehawk src",
@@ -59,7 +62,6 @@
     "react-dom": "^19.2.0",
     "react-hook-form": "^7.65.0",
     "react-redux": "^9.2.0",
-    "react-scan": "^0.5.3",
     "tailwind-merge": "^3.5.0",
     "zod": "^4.1.12"
   },

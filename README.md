@@ -31,12 +31,24 @@ This repository is designed so a team can:
 - [18. Contribution Guidelines](#18-contribution-guidelines)
 - [19. Additional Documents](#19-additional-documents)
 - [20. Deployment](#20-deployment)
+- [21. Production Hardening Checklist](#21-production-hardening-checklist)
 
 ## 1. What This Template Provides
 
 - Next.js App Router + React + TypeScript baseline.
 - Modular app structure under `src/` for long-term maintainability.
 - Authentication foundation with signed HTTP-only session cookies.
+- Standard API response envelope: `{ success, data, error }`.
+- RBAC scaffold with role-permission guard helpers.
+- Reusable in-memory rate-limit utility and example endpoint.
+- Structured logging + request-id propagation + tracing hook boilerplate.
+
+Additional API hardening included in this template:
+
+- same-origin enforcement for state-changing auth endpoints
+- centralized API exception envelope via `withApiHandler`
+- safe redirect validation for `redirect` query params
+- bounded in-memory rate-limit store with pruning
 - Runtime validation and schema safety with Zod.
 - SQL-ready layer with Drizzle ORM.
 - Domain-neutral service layer scaffold for API integrations.
@@ -162,6 +174,12 @@ Recommended practice:
 - never hardcode secrets in source files
 - keep naming aligned between `.env.example`, app code, and CI secrets
 
+Auth-specific notes:
+
+- `AUTH_SESSION_SECRET` or `AUTH_SESSION_SECRETS` is required for all secure environments.
+- `ALLOW_INSECURE_DEV_AUTH=true` must be explicitly set to allow local insecure secret fallback.
+- `ALLOW_DEMO_AUTH=true` enables demo login only when no database is configured.
+
 ## 8. Daily Development Workflow
 
 1. Sync with latest `main`.
@@ -195,6 +213,7 @@ Recommended practice:
 ### Testing
 
 - `npm run test`: run Vitest unit tests.
+- `npm run test:integration`: run API integration tests.
 - `npm run test:watch`: Vitest watch mode.
 - `npm run test:coverage`: Vitest coverage report.
 - `npm run e2e`: Playwright end-to-end tests.
@@ -204,6 +223,8 @@ Recommended practice:
 
 - `npm run db:generate`: generate Drizzle migrations.
 - `npm run db:migrate`: run migrations.
+- `npm run db:seed`: seed repeatable template users/data.
+- `npm run db:reset`: migrate + seed (requires `ALLOW_DB_RESET=true`).
 - `npm run db:studio`: open Drizzle Studio.
 - `npm run storybook`: run Storybook.
 - `npm run build-storybook`: build Storybook.
@@ -272,9 +293,22 @@ npm run db:migrate
 npm run db:studio
 ```
 
+Seed/reset workflow:
+
+```bash
+npm run db:seed
+ALLOW_DB_RESET=true npm run db:reset
+```
+
+Default seeded accounts:
+
+- `admin@example.com` (role: `admin`)
+- `user@example.com` (role: `user`)
+
 ## 12. Testing Strategy
 
 - Use Vitest + React Testing Library for unit and component behavior.
+- Use integration tests for API auth flow (`login/register/me/protected`).
 - Use Playwright for browser-level end-to-end flows.
 
 Suggested CI-parity local check before PR:
@@ -288,6 +322,7 @@ npm run lint && npm run typecheck && npm run format:check && npm run test && npm
 Configured workflows:
 
 - `ci.yml`: main quality gate (`lint`, `typecheck`, `format`, `test`, `build`).
+- `ci.yml` includes path filters and a task matrix to reduce unnecessary CI cost.
 - `commitlint.yml`: validates commit messages in PR context.
 - `pr-title.yml`: validates semantic PR title.
 - `dependency-review.yml`: reviews dependency risk in PRs.
@@ -543,5 +578,18 @@ For full details, see [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 For complete runtime requirements and multi-platform deployment steps (Vercel, Docker, AWS, Azure, DigitalOcean), use:
 
 - [`DEPLOYMENT.md`](./DEPLOYMENT.md)
+
+## 21. Production Hardening Checklist
+
+- Configure `AUTH_SESSION_SECRET`/`AUTH_SESSION_SECRETS`, rotate regularly, and retire old keys safely.
+- Keep `ALLOW_INSECURE_DEV_AUTH=false` and `ALLOW_DEMO_AUTH=false` in production.
+- Enforce strict CORS, CSP, secure cookies, and HTTPS-only traffic.
+- Set cookie domain/path explicitly per environment.
+- Enable structured logs and request-id propagation in your platform logs.
+- Add error monitoring/tracing sink to replace template boilerplate hooks.
+- Protect sensitive routes with role/permission guards.
+- Keep migration policy explicit: backup before migrate, rollback strategy documented.
+- Automate backup/restore validation for production database.
+- Ensure TLS certificates, renewal, and HSTS policy are managed at the edge.
 
 A. Z. M. Arif

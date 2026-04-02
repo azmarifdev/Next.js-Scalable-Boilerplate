@@ -1,11 +1,18 @@
-import { NextResponse } from "next/server";
+import { withApiHandler } from "@/lib/api-handler";
+import { apiSuccess, resolveRequestId } from "@/lib/api-response";
 
 export const runtime = "edge";
 
-export async function GET() {
-  return NextResponse.json({
-    status: "ok",
-    runtime: "edge",
-    timestamp: new Date().toISOString()
-  });
+async function healthHandler(request: Request): Promise<Response> {
+  const requestId = resolveRequestId(request.headers);
+  return apiSuccess(
+    {
+      status: "ok",
+      runtime: "edge",
+      timestamp: new Date().toISOString()
+    },
+    { requestId }
+  );
 }
+
+export const GET = withApiHandler("/api/v1/health", healthHandler);

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { useEffect, useRef } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,14 +15,31 @@ interface AuthFormProps {
 export function AuthForm({ mode }: AuthFormProps) {
   const t = useTranslations("auth");
   const { form, serverError, onSubmit } = useAuthForm({ mode });
+  const formRef = useRef<HTMLFormElement | null>(null);
+
+  useEffect(() => {
+    formRef.current?.setAttribute("data-hydrated", "true");
+  }, []);
 
   const {
     register,
     formState: { errors, isSubmitting }
   } = form;
 
+  const actionPath =
+    mode === "login"
+      ? "/api/v1/auth/login?redirect=/dashboard"
+      : "/api/v1/auth/register?redirect=/dashboard";
+
   return (
-    <form onSubmit={onSubmit} className="card form-grid auth-card">
+    <form
+      ref={formRef}
+      onSubmit={onSubmit}
+      method="post"
+      action={actionPath}
+      className="card form-grid auth-card"
+      data-hydrated="false"
+    >
       <div>
         <h1 className="card-title">{mode === "login" ? t("loginTitle") : t("registerTitle")}</h1>
         <p className="card-subtitle">

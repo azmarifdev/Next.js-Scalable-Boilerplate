@@ -83,10 +83,13 @@ All three should use the same runtime env keys from `.env.example`.
 Typical required keys:
 
 - `AUTH_SESSION_SECRET`
+- `AUTH_SESSION_SECRETS` (recommended for key rotation)
 - `DATABASE_URL`
 - `NEXT_PUBLIC_APP_NAME`
 - `NEXT_PUBLIC_API_BASE_URL`
 - `NEXT_PUBLIC_SITE_URL` (recommended for correct sitemap/metadata URL)
+- `ALLOW_DEMO_AUTH=false`
+- `ALLOW_INSECURE_DEV_AUTH=false`
 
 ## 7) Health Endpoint
 
@@ -111,3 +114,18 @@ If switching manager on same machine:
 ```bash
 rm -rf node_modules
 ```
+
+## 9) Production Hardening Checklist
+
+- Rotate `AUTH_SESSION_SECRET`/`AUTH_SESSION_SECRETS` and keep old keys only during transition.
+- Keep demo/insecure auth flags disabled:
+  - `ALLOW_DEMO_AUTH=false`
+  - `ALLOW_INSECURE_DEV_AUTH=false`
+- Enforce TLS everywhere (edge, CDN, load balancer, origin).
+- Set strict CORS allowlist and tighten CSP for scripts/images/connect-src.
+- Validate same-origin policy for auth POST endpoints when behind reverse proxies.
+- Validate cookie settings by environment (domain, sameSite, secure, httpOnly).
+- Enable centralized structured logging and request-id tracing.
+- Wire external error monitoring/tracing provider into instrumentation hooks.
+- Run backups before schema migrations and document rollback steps.
+- Use repeatable migration + seed workflows for staging verification before production.

@@ -1,5 +1,8 @@
+import { logger } from "@/lib/observability/logger";
+
 export async function register() {
-  if (process.env.NODE_ENV === "development") {
-    console.info("Instrumentation registered");
-  }
+  logger.info("instrumentation:register", {
+    nodeEnv: process.env.NODE_ENV,
+    tracing: "boilerplate-enabled"
+  });
 }

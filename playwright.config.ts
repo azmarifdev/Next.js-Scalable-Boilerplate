@@ -22,7 +22,8 @@ export default defineConfig({
     url: "http://127.0.0.1:3000",
     env: {
       ...process.env,
-      AUTH_SESSION_SECRET: process.env.AUTH_SESSION_SECRET ?? "e2e-local-secret"
+      AUTH_SESSION_SECRET: process.env.AUTH_SESSION_SECRET ?? "e2e-local-secret",
+      ALLOW_DEMO_AUTH: process.env.ALLOW_DEMO_AUTH ?? "true"
     },
     reuseExistingServer: !process.env.CI
   }

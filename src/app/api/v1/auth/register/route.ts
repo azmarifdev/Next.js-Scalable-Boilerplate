@@ -1,40 +1,159 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { withApiHandler } from "@/lib/api-handler";
+import { apiError, apiSuccess, resolveRequestId } from "@/lib/api-response";
+import {
+  createAuthUser,
+  findAuthUserByEmail,
+  isAuthDatabaseConfigured
+} from "@/lib/auth-user.repository";
 import { AUTH_COOKIE_NAME, AUTH_SESSION_TTL_SECONDS } from "@/lib/constants";
-import { createDemoUser } from "@/lib/demo-auth-store";
+import { setRequestIdHeader } from "@/lib/observability/request-id";
+import { withTrace } from "@/lib/observability/tracing";
+import { hashPassword } from "@/lib/password";
+import { getSafeRedirectPath } from "@/lib/security/redirect";
+import { requireSameOrigin } from "@/lib/security/request-origin";
 import { createSessionToken } from "@/lib/session";
 import { registerSchema } from "@/modules/auth/validation";
 
-export async function POST(request: NextRequest) {
-  const payload = await request.json().catch(() => null);
-  const parsed = registerSchema.safeParse(payload);
+function prefersHtmlResponse(request: NextRequest): boolean {
+  const accept = request.headers.get("accept") ?? "";
+  return accept.includes("text/html");
+}
 
-  if (!parsed.success) {
-    return NextResponse.json({ message: "Invalid registration data" }, { status: 400 });
-  }
+function buildRedirectUrl(request: NextRequest, path: string): URL {
+  const host =
+    request.headers.get("x-forwarded-host") ?? request.headers.get("host") ?? request.nextUrl.host;
+  const protocol =
+    request.headers.get("x-forwarded-proto") ?? request.nextUrl.protocol.replace(":", "");
 
-  const user = createDemoUser({
-    name: parsed.data.name,
-    email: parsed.data.email,
-    password: parsed.data.password
-  });
-  if (!user) {
-    return NextResponse.json({ message: "Email already exists" }, { status: 409 });
-  }
+  return new URL(path, `${protocol}://${host}`);
+}
 
-  const token = await createSessionToken(
-    { sub: user.id, name: user.name, email: user.email },
-    AUTH_SESSION_TTL_SECONDS
-  );
-  const response = NextResponse.json({ user });
-
-  response.cookies.set(AUTH_COOKIE_NAME, token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    path: "/",
-    maxAge: AUTH_SESSION_TTL_SECONDS
-  });
-
+function redirectWithRequestId(
+  request: NextRequest,
+  path: string,
+  requestId: string
+): NextResponse {
+  const response = NextResponse.redirect(buildRedirectUrl(request, path), 303);
+  setRequestIdHeader(response, requestId);
   return response;
 }
+
+async function parsePayload(request: NextRequest): Promise<unknown> {
+  const contentType = request.headers.get("content-type") ?? "";
+  if (contentType.includes("application/json")) {
+    return request.json().catch(() => null);
+  }
+
+  if (
+    contentType.includes("application/x-www-form-urlencoded") ||
+    contentType.includes("multipart/form-data")
+  ) {
+    const formData = await request.formData().catch(() => null);
+    if (!formData) {
+      return null;
+    }
+
+    return {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      password: formData.get("password")
+    };
+  }
+
+  return request.json().catch(() => null);
+}
+
+async function registerHandler(request: NextRequest): Promise<Response> {
+  const requestId = resolveRequestId(request.headers);
+  const route = "/api/v1/auth/register";
+  const wantsHtml = prefersHtmlResponse(request);
+  const successRedirectPath = getSafeRedirectPath(request.nextUrl.searchParams.get("redirect"));
+
+  const originError = requireSameOrigin(request, { requestId, route });
+  if (originError) {
+    return originError;
+  }
+
+  return withTrace(
+    "auth.register",
+    async () => {
+      if (!isAuthDatabaseConfigured()) {
+        if (wantsHtml) {
+          return redirectWithRequestId(request, "/register?error=service_unavailable", requestId);
+        }
+
+        return apiError(
+          {
+            code: "AUTH_UNAVAILABLE",
+            message: "Registration is unavailable. Configure DATABASE_URL first."
+          },
+          { status: 503, requestId, route }
+        );
+      }
+
+      const payload = await parsePayload(request);
+      const parsed = registerSchema.safeParse(payload);
+
+      if (!parsed.success) {
+        if (wantsHtml) {
+          return redirectWithRequestId(request, "/register?error=invalid_format", requestId);
+        }
+
+        return apiError(
+          { code: "VALIDATION_ERROR", message: "Invalid registration data" },
+          { status: 400, requestId, route }
+        );
+      }
+
+      const existingUser = await findAuthUserByEmail(parsed.data.email.toLowerCase());
+      if (existingUser) {
+        if (wantsHtml) {
+          return redirectWithRequestId(request, "/register?error=email_exists", requestId);
+        }
+
+        return apiError(
+          { code: "EMAIL_EXISTS", message: "Email already exists" },
+          { status: 409, requestId, route }
+        );
+      }
+
+      const passwordHash = await hashPassword(parsed.data.password);
+      const createdUser = await createAuthUser({
+        name: parsed.data.name,
+        email: parsed.data.email,
+        passwordHash,
+        role: "user"
+      });
+
+      const user = {
+        id: createdUser.id,
+        name: createdUser.name,
+        email: createdUser.email,
+        role: createdUser.role
+      };
+
+      const token = await createSessionToken(
+        { sub: user.id, name: user.name, email: user.email, role: user.role },
+        AUTH_SESSION_TTL_SECONDS
+      );
+      const response = wantsHtml
+        ? redirectWithRequestId(request, successRedirectPath, requestId)
+        : apiSuccess({ user }, { requestId });
+
+      response.cookies.set(AUTH_COOKIE_NAME, token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/",
+        maxAge: AUTH_SESSION_TTL_SECONDS
+      });
+
+      return response;
+    },
+    { requestId, route }
+  );
+}
+
+export const POST = withApiHandler<NextRequest>("/api/v1/auth/register", registerHandler);

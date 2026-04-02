@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import { env } from "@/lib/env";
+import type { ApiResponse } from "@/types/api";
 
 export const apiClient = axios.create({
   baseURL: env.NEXT_PUBLIC_API_BASE_URL || "",
@@ -13,7 +14,17 @@ export const apiClient = axios.create({
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    const message = error.response?.data?.message ?? "Unexpected API error";
+    const envelope = error.response?.data as ApiResponse<unknown> | undefined;
+    const message =
+      envelope?.error?.message ?? error.response?.data?.message ?? "Unexpected API error";
     return Promise.reject(new Error(message));
   }
 );
+
+export function unwrapApiData<T>(payload: ApiResponse<T>): T {
+  if (!payload.success || payload.data === null) {
+    throw new Error(payload.error?.message ?? "Unexpected API error");
+  }
+
+  return payload.data;
+}
