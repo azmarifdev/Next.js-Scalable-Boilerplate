@@ -2,7 +2,7 @@
   "name": "nextjs-starter-template",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "pnpm@10.33.0",
+  "packageManager": "npm@10.8.2",
   "engines": {
     "node": ">=20 <23"
   },
@@ -10,7 +10,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "node scripts/start.mjs",
-    "preview": "pnpm run build && pnpm run start",
+    "preview": "npm run build && npm run start",
     "analyze": "ANALYZE=true next build",
     "lint": "eslint src --ext .ts,.tsx --cache",
     "lint:fix": "eslint src --ext .ts,.tsx --fix --cache",
