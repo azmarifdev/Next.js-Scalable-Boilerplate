@@ -1,0 +1,58 @@
+name: Dependency Review
+
+on:
+  pull_request:
+    branches:
+      - "**"
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Detect dependency file changes
+        id: dep-changes
+        uses: tj-actions/changed-files@v45
+        with:
+          files: |
+            package.json
+            package-lock.json
+            npm-shrinkwrap.json
+            yarn.lock
+            pnpm-lock.yaml
+            bun.lock
+            bun.lockb
+            **/package.json
+            **/package-lock.json
+            **/npm-shrinkwrap.json
+            **/yarn.lock
+            **/pnpm-lock.yaml
+            **/bun.lock
+            **/bun.lockb
+
+      - name: Dependency review
+        if: steps.dep-changes.outputs.any_changed == 'true'
+        id: dependency_review
+        continue-on-error: true
+        timeout-minutes: 1
+        uses: actions/dependency-review-action@v4
+        with:
+          # Fast-fail to avoid long waiting loops when snapshot is unavailable.
+          retry-on-snapshot-warnings: false
+          # Keep PRs unblocked when dependency snapshot generation is delayed.
+          warn-only: true
+
+      - name: Dependency review warning
+        if: steps.dependency_review.outcome == 'failure'
+        run: echo "Dependency snapshot was unavailable; this check is non-blocking and should not block merge."
+
+      - name: Skip (no dependency file changes)
+        if: steps.dep-changes.outputs.any_changed != 'true'
+        run: echo "No dependency manifest/lockfile changes detected. Skipping dependency review."

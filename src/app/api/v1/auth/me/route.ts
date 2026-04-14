@@ -1,21 +1,34 @@
-import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
+import { requireSession } from "@/lib/auth/session-guard";
+import { apiSuccess, resolveRequestId } from "@/lib/utils/api-response";
 
-import { USER_COOKIE_NAME } from "@/lib/constants";
-import { User } from "@/types/user";
+import { requireCustomAuthProvider, requireInternalBackend, withApiHandler } from "../route-utils";
 
-export async function GET() {
-  const cookieStore = await cookies();
-  const userCookie = cookieStore.get(USER_COOKIE_NAME)?.value;
-
-  if (!userCookie) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+async function meHandler(request: Request): Promise<Response> {
+  const requestId = resolveRequestId(request.headers);
+  const route = "/api/v1/auth/me";
+  const backendError = requireInternalBackend({ requestId, route });
+  if (backendError) {
+    return backendError;
+  }
+  const providerError = requireCustomAuthProvider({ requestId, route });
+  if (providerError) {
+    return providerError;
   }
 
-  try {
-    const user = JSON.parse(userCookie) as User;
-    return NextResponse.json(user);
-  } catch {
-    return NextResponse.json({ message: "Invalid session" }, { status: 401 });
+  const { session, response } = await requireSession({ request, requestId, route });
+  if (!session) {
+    return response;
   }
+
+  return apiSuccess(
+    {
+      id: session.sub,
+      name: session.name,
+      email: session.email,
+      role: session.role
+    },
+    { requestId }
+  );
 }
+
+export const GET = withApiHandler("/api/v1/auth/me", meHandler);

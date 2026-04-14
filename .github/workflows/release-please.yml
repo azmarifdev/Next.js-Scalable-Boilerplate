@@ -1,0 +1,39 @@
+name: Release Please
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: release-please-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      prs_created: ${{ steps.release.outputs.prs_created }}
+    steps:
+      - name: Release Please
+        id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          config-file: .release-please-config.json
+          manifest-file: .release-please-manifest.json
+          skip-github-pull-request: false
+          skip-github-release: false
+
+      - name: Release summary
+        if: always()
+        run: |
+          echo "release_created=${{ steps.release.outputs.release_created }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "prs_created=${{ steps.release.outputs.prs_created }}" >> "$GITHUB_STEP_SUMMARY"

@@ -1,10 +1,92 @@
 {
   "common": {
     "welcome": "Welcome",
-    "logout": "Logout"
+    "logout": "Logout",
+    "login": "Login",
+    "toggleLanguage": "Toggle language"
   },
   "home": {
-    "title": "Next Starter Template",
-    "subtitle": "A scalable Next.js starter with feature modules and production tooling."
+    "title": "Nextjs Starter Template",
+    "titleSuffix": "starter template",
+    "subtitle": "A production-ready Next.js starter template for SaaS, dashboards, and modern web apps. Built for quick launch, maintainable growth, and production-grade development workflow.",
+    "signIn": "Sign in",
+    "getStarted": "Get started",
+    "badge": "By A. Z. M. Arif · Full Stack Software Developer",
+    "meta": "azmarif.dev · @azmarifdev"
+  },
+  "auth": {
+    "loginTitle": "Welcome back",
+    "registerTitle": "Create account",
+    "loginSubtitle": "Log in to continue.",
+    "registerSubtitle": "Start with your new account.",
+    "loading": "Please wait...",
+    "actions": {
+      "login": "Login",
+      "register": "Register"
+    },
+    "fields": {
+      "fullName": "Full name",
+      "email": "Email",
+      "password": "Password"
+    },
+    "loginSwitchText": "No account yet?",
+    "registerSwitchText": "Already have an account?"
+  },
+  "dashboard": {
+    "overviewTitle": "Dashboard Overview",
+    "overviewSubtitle": "This is a domain-neutral starter template for SaaS, internal tools, and admin dashboards.",
+    "projectsTitle": "Projects at a glance",
+    "projectsSubtitle": "Track project progress, ownership, and status in one place.",
+    "tasksTitle": "Task workflow",
+    "tasksSubtitle": "Use tasks to model work queues for any product or operations team.",
+    "ecommerceTitle": "Ecommerce performance",
+    "ecommerceSubtitle": "Monitor orders and revenue signals.",
+    "billingTitle": "Billing insights",
+    "billingSubtitle": "Track subscription and recurring revenue metrics.",
+    "overviewNav": "Overview",
+    "usersNav": "Users",
+    "projectsNav": "Projects",
+    "tasksNav": "Tasks",
+    "ecommerceNav": "Ecommerce",
+    "billingNav": "Billing"
+  },
+  "users": {
+    "loading": "Loading users",
+    "emptyTitle": "No users found",
+    "emptyDescription": "Users will appear here when available.",
+    "errorTitle": "Unable to load users",
+    "errorDescription": "Please retry in a moment.",
+    "columns": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role"
+    }
+  },
+  "projects": {
+    "owner": "Owner",
+    "emptyTitle": "No projects yet",
+    "emptyDescription": "Projects will appear here when data is available.",
+    "errorTitle": "Unable to load projects",
+    "errorDescription": "Please retry in a moment."
+  },
+  "tasks": {
+    "assignee": "Assignee",
+    "priority": "Priority",
+    "emptyTitle": "No tasks yet",
+    "emptyDescription": "Tasks will appear here when data is available.",
+    "errorTitle": "Unable to load tasks",
+    "errorDescription": "Please retry in a moment."
+  },
+  "ecommerce": {
+    "orders": "Orders",
+    "revenue": "Revenue",
+    "errorTitle": "Unable to load ecommerce summary",
+    "errorDescription": "Please retry in a moment."
+  },
+  "billing": {
+    "activePlans": "Active plans",
+    "mrr": "MRR",
+    "errorTitle": "Unable to load billing summary",
+    "errorDescription": "Please retry in a moment."
   }
 }

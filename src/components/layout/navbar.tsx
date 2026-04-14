@@ -1,27 +1,24 @@
 "use client";
 
-import { Moon, Sun } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useTheme } from "next-themes";
+import { useTranslations } from "next-intl";
 
+import { LangSwitcher } from "@/components/layout/lang-switcher";
+import { ThemeSwitcher } from "@/components/layout/theme-switcher";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/useAuth";
-import { APP_NAME } from "@/lib/constants";
+import { useAuth } from "@/hooks/use-auth.hook";
+import { APP_NAME } from "@/lib/config/constants";
 
 export function Navbar() {
+  const t = useTranslations("common");
   const router = useRouter();
-  const { user, isAuthenticated, logout } = useAuth();
-  const { resolvedTheme, setTheme } = useTheme();
+  const { user, isAuthenticated, logout, isLoggingOut } = useAuth();
 
   const handleLogout = async (): Promise<void> => {
     await logout();
     router.push("/login");
     router.refresh();
-  };
-
-  const toggleTheme = (): void => {
-    setTheme(resolvedTheme === "dark" ? "light" : "dark");
   };
 
   return (
@@ -32,19 +29,18 @@ export function Navbar() {
         </Link>
 
         <div className="topbar-actions">
-          <Button variant="secondary" onClick={toggleTheme} aria-label="Toggle theme">
-            {resolvedTheme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-          </Button>
+          <LangSwitcher />
+          <ThemeSwitcher />
           {isAuthenticated ? (
             <>
               <span className="badge">{user?.name}</span>
-              <Button variant="danger" onClick={handleLogout}>
-                Logout
+              <Button variant="danger" onClick={handleLogout} disabled={isLoggingOut}>
+                {t("logout")}
               </Button>
             </>
           ) : (
             <Link href="/login" className="link-inline">
-              Login
+              {t("login")}
             </Link>
           )}
         </div>

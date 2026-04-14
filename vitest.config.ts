@@ -11,7 +11,11 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
-    include: ["src/tests/unit/**/*.vitest.{ts,tsx}"],
+    setupFiles: ["./src/tests/setup.ts"],
+    include: [
+      "src/tests/unit/**/*.{test,vitest}.{ts,tsx}",
+      "src/tests/integration/**/*.{test,vitest}.{ts,tsx}"
+    ],
     coverage: {
       provider: "v8",
       reporter: ["text", "html"]

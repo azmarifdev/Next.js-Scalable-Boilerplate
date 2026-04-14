@@ -1,49 +1,72 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { useEffect, useRef } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { SocialLoginButton } from "@/modules/auth/components/SocialLoginButton";
-import { useAuthForm } from "@/modules/auth/hooks/useAuthForm";
+import { appConfig } from "@/lib/config/app-config";
+import { resolveApiEndpoint } from "@/lib/config/runtime";
+import { useAuthForm } from "@/modules/auth/hooks/use-auth-form.hook";
 
 interface AuthFormProps {
   mode: "login" | "register";
 }
 
 export function AuthForm({ mode }: AuthFormProps) {
-  const { form, serverError, onSubmit } = useAuthForm({ mode });
+  const t = useTranslations("auth");
+  const { form, serverError, onSubmit, isSubmitting } = useAuthForm({ mode });
+  const formRef = useRef<HTMLFormElement | null>(null);
+  const isNextAuth = appConfig.authProvider === "nextauth";
+
+  useEffect(() => {
+    formRef.current?.setAttribute("data-hydrated", "true");
+  }, []);
 
   const {
     register,
-    formState: { errors, isSubmitting }
+    formState: { errors }
   } = form;
 
+  const actionPath = isNextAuth
+    ? undefined
+    : mode === "login"
+      ? `${resolveApiEndpoint("/auth/login")}?redirect=/dashboard`
+      : `${resolveApiEndpoint("/auth/register")}?redirect=/dashboard`;
+
   return (
-    <form onSubmit={onSubmit} className="card form-grid auth-card">
+    <form
+      ref={formRef}
+      onSubmit={onSubmit}
+      method="post"
+      action={actionPath}
+      className="card form-grid auth-card"
+      data-hydrated="false"
+    >
       <div>
-        <h1 className="card-title">{mode === "login" ? "Welcome back" : "Create account"}</h1>
+        <h1 className="card-title">{mode === "login" ? t("loginTitle") : t("registerTitle")}</h1>
         <p className="card-subtitle">
-          {mode === "login" ? "Log in to continue." : "Start with your new account."}
+          {mode === "login" ? t("loginSubtitle") : t("registerSubtitle")}
         </p>
       </div>
 
       {mode === "register" ? (
         <Input
-          placeholder="Full name"
+          placeholder={t("fields.fullName")}
           error={"name" in errors ? errors.name?.message : undefined}
           {...register("name")}
         />
       ) : null}
 
       <Input
-        placeholder="Email"
+        placeholder={t("fields.email")}
         type="email"
         error={errors.email?.message}
         {...register("email")}
       />
       <Input
-        placeholder="Password"
+        placeholder={t("fields.password")}
         type="password"
         error={errors.password?.message}
         {...register("password")}
@@ -52,16 +75,21 @@ export function AuthForm({ mode }: AuthFormProps) {
       {serverError ? <p className="error-text">{serverError}</p> : null}
 
       <Button type="submit" className="full-width" disabled={isSubmitting}>
-        {isSubmitting ? "Please wait..." : mode === "login" ? "Login" : "Register"}
+        {isSubmitting
+          ? t("loading")
+          : mode === "login"
+            ? t("actions.login")
+            : t("actions.register")}
       </Button>
-      <SocialLoginButton />
 
-      <p className="help-text">
-        {mode === "login" ? "No account yet?" : "Already have an account?"}{" "}
-        <Link href={mode === "login" ? "/register" : "/login"} className="link-inline">
-          {mode === "login" ? "Register" : "Login"}
-        </Link>
-      </p>
+      {!isNextAuth || mode === "register" ? (
+        <p className="help-text">
+          {mode === "login" ? t("loginSwitchText") : t("registerSwitchText")}{" "}
+          <Link href={mode === "login" ? "/register" : "/login"} className="link-inline">
+            {mode === "login" ? t("actions.register") : t("actions.login")}
+          </Link>
+        </p>
+      ) : null}
     </form>
   );
 }

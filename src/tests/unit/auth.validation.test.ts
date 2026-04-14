@@ -1,4 +1,4 @@
-import { loginSchema, registerSchema } from "@/modules/auth/validation";
+import { loginSchema, registerSchema } from "@/modules/auth/auth.validation";
 
 describe("auth validation", () => {
   it("validates a correct login payload", () => {

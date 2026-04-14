@@ -1,7 +1,25 @@
-import NextAuth from "next-auth";
+import { NextRequest } from "next/server";
 
-import { authOptions } from "@/lib/auth";
+import { appConfig } from "@/lib/config/app-config";
 
-const handler = NextAuth(authOptions);
+async function nextAuthDisabledResponse(): Promise<Response> {
+  return new Response("Not Found", { status: 404 });
+}
 
-export { handler as GET, handler as POST };
+export async function GET(request: NextRequest): Promise<Response> {
+  if (appConfig.authProvider !== "nextauth") {
+    return nextAuthDisabledResponse();
+  }
+
+  const { handlers } = await import("@/lib/auth/nextauth");
+  return handlers.GET(request);
+}
+
+export async function POST(request: NextRequest): Promise<Response> {
+  if (appConfig.authProvider !== "nextauth") {
+    return nextAuthDisabledResponse();
+  }
+
+  const { handlers } = await import("@/lib/auth/nextauth");
+  return handlers.POST(request);
+}

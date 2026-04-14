@@ -1,0 +1,80 @@
+---
+description: Strict project rules for AI edits in nextjs-starter-template
+globs:
+  - "**/*.{ts,tsx,js,jsx,json,md,yml,yaml}"
+alwaysApply: true
+---
+
+# Project Agent Rules
+
+## Goal
+
+Produce minimal, correct, CI-ready changes aligned with current repository patterns.
+
+## Priority Order
+
+1. `tsconfig.json`
+2. `eslint.config.mjs`
+3. Existing module patterns in `src/`
+4. Workflow constraints in `.github/workflows/`
+5. This rules file
+
+## Required Working Style
+
+- Inspect related files before editing.
+- Keep scope tight and avoid unrelated refactor.
+- Preserve existing directory/module boundaries.
+- Update docs when workflow/setup behavior changes.
+
+## Code Quality Rules
+
+- Avoid `any` unless isolated and justified.
+- Prefer explicit types, stable interfaces, and clear naming.
+- Keep functions/components focused.
+- Maintain accessibility in UI output.
+- Do not disable lint/type checks to bypass issues.
+
+## Next.js Rules
+
+- Prefer Server Components by default.
+- Add `"use client"` only when browser interactivity is needed.
+- Keep server/client boundaries intentional.
+
+## Security Rules
+
+- Never hardcode credentials or tokens.
+- Never expose env values in output/logs/docs.
+- Validate external input.
+
+## GitHub and Release Rules
+
+- Commit format: Conventional Commits.
+- PR title format: `type(scope): summary`.
+- Keep CI check names stable when branch protection depends on them.
+- Do not remove release automation files unless explicitly requested.
+
+## Validation Commands
+
+Run relevant checks; for most code changes run:
+
+```bash
+npm run lint
+npm run typecheck
+npm run format:check
+npm run test
+npm run test:vitest
+npm run build
+```
+
+Run E2E for user flow changes:
+
+```bash
+npm run e2e
+```
+
+## Done Criteria
+
+- feature/fix works as requested
+- relevant checks pass
+- no obvious regression
+- docs updated when behavior/setup changed

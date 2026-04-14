@@ -1,10 +1,92 @@
 {
   "common": {
     "welcome": "স্বাগতম",
-    "logout": "লগআউট"
+    "logout": "লগআউট",
+    "login": "লগইন",
+    "toggleLanguage": "ভাষা পরিবর্তন করুন"
   },
   "home": {
-    "title": "নেক্সট স্টার্টার টেমপ্লেট",
-    "subtitle": "ফিচার মডিউল এবং প্রোডাকশন টুলিংসহ স্কেলেবল নেক্সট.js স্টার্টার।"
+    "title": "Nextjs Starter Template",
+    "titleSuffix": "স্টার্টার টেমপ্লেট",
+    "subtitle": "SaaS, dashboard এবং modern web app এর জন্য production-ready Next.js starter template। দ্রুত launch, maintainable growth এবং production-grade development workflow-এর জন্য তৈরি।",
+    "signIn": "সাইন ইন",
+    "getStarted": "শুরু করুন",
+    "badge": "A. Z. M. Arif · ফুল-স্ট্যাক সফটওয়্যার ডেভেলপার",
+    "meta": "azmarif.dev · @azmarifdev"
+  },
+  "auth": {
+    "loginTitle": "ফিরে আসায় স্বাগতম",
+    "registerTitle": "অ্যাকাউন্ট তৈরি করুন",
+    "loginSubtitle": "চালিয়ে যেতে লগইন করুন।",
+    "registerSubtitle": "নতুন অ্যাকাউন্ট দিয়ে শুরু করুন।",
+    "loading": "অপেক্ষা করুন...",
+    "actions": {
+      "login": "লগইন",
+      "register": "রেজিস্টার"
+    },
+    "fields": {
+      "fullName": "পূর্ণ নাম",
+      "email": "ইমেইল",
+      "password": "পাসওয়ার্ড"
+    },
+    "loginSwitchText": "এখনও অ্যাকাউন্ট নেই?",
+    "registerSwitchText": "ইতিমধ্যে অ্যাকাউন্ট আছে?"
+  },
+  "dashboard": {
+    "overviewTitle": "ড্যাশবোর্ড ওভারভিউ",
+    "overviewSubtitle": "এটি SaaS, internal tools এবং admin dashboard-এর জন্য domain-neutral starter template।",
+    "projectsTitle": "প্রজেক্ট এক নজরে",
+    "projectsSubtitle": "এক জায়গায় project progress, ownership এবং status ট্র্যাক করুন।",
+    "tasksTitle": "টাস্ক ওয়ার্কফ্লো",
+    "tasksSubtitle": "যেকোনো product বা operations টিমের কাজের queue মডেল করতে tasks ব্যবহার করুন।",
+    "ecommerceTitle": "ইকমার্স পারফরম্যান্স",
+    "ecommerceSubtitle": "অর্ডার এবং রেভিনিউ ট্রেন্ড দেখুন।",
+    "billingTitle": "বিলিং ইনসাইটস",
+    "billingSubtitle": "সাবস্ক্রিপশন ও recurring revenue ট্র্যাক করুন।",
+    "overviewNav": "ওভারভিউ",
+    "usersNav": "ইউজার",
+    "projectsNav": "প্রজেক্ট",
+    "tasksNav": "টাস্ক",
+    "ecommerceNav": "ইকমার্স",
+    "billingNav": "বিলিং"
+  },
+  "users": {
+    "loading": "ইউজার লোড হচ্ছে",
+    "emptyTitle": "কোনো ইউজার পাওয়া যায়নি",
+    "emptyDescription": "ডেটা পাওয়া গেলে ইউজার এখানে দেখাবে।",
+    "errorTitle": "ইউজার লোড করা যায়নি",
+    "errorDescription": "একটু পরে আবার চেষ্টা করুন।",
+    "columns": {
+      "name": "নাম",
+      "email": "ইমেইল",
+      "role": "রোল"
+    }
+  },
+  "projects": {
+    "owner": "মালিক",
+    "emptyTitle": "এখনও কোনো প্রজেক্ট নেই",
+    "emptyDescription": "ডেটা পাওয়া গেলে প্রজেক্ট এখানে দেখাবে।",
+    "errorTitle": "প্রজেক্ট লোড করা যায়নি",
+    "errorDescription": "একটু পরে আবার চেষ্টা করুন।"
+  },
+  "tasks": {
+    "assignee": "দায়িত্বপ্রাপ্ত",
+    "priority": "অগ্রাধিকার",
+    "emptyTitle": "এখনও কোনো টাস্ক নেই",
+    "emptyDescription": "ডেটা পাওয়া গেলে টাস্ক এখানে দেখাবে।",
+    "errorTitle": "টাস্ক লোড করা যায়নি",
+    "errorDescription": "একটু পরে আবার চেষ্টা করুন।"
+  },
+  "ecommerce": {
+    "orders": "অর্ডার",
+    "revenue": "রেভিনিউ",
+    "errorTitle": "ইকমার্স সামারি লোড করা যায়নি",
+    "errorDescription": "একটু পরে আবার চেষ্টা করুন।"
+  },
+  "billing": {
+    "activePlans": "অ্যাকটিভ প্ল্যান",
+    "mrr": "MRR",
+    "errorTitle": "বিলিং সামারি লোড করা যায়নি",
+    "errorDescription": "একটু পরে আবার চেষ্টা করুন।"
   }
 }

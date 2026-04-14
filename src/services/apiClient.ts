@@ -1,19 +1,60 @@
-import axios from "axios";
+import { appConfig } from "@/lib/config/app-config";
+import { ApiClientError } from "@/lib/errors/api-error";
+import { graphqlRequest } from "@/services/graphql/client";
+import { restGet, restPost } from "@/services/rest/client";
+import type { ApiResponse } from "@/types/api";
 
-import { env } from "@/lib/env";
-
-export const apiClient = axios.create({
-  baseURL: env.NEXT_PUBLIC_API_BASE_URL || "",
-  withCredentials: true,
-  headers: {
-    "Content-Type": "application/json"
+function unwrapGraphqlData<T>(payload: unknown): T {
+  if (payload == null) {
+    throw new ApiClientError("GraphQL response returned no data");
   }
-});
 
-apiClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    const message = error.response?.data?.message ?? "Unexpected API error";
-    return Promise.reject(new Error(message));
+  if (typeof payload === "object" && !Array.isArray(payload)) {
+    const entries = Object.entries(payload as Record<string, unknown>);
+    if (entries.length === 1) {
+      return entries[0][1] as T;
+    }
   }
-);
+
+  return payload as T;
+}
+
+export function unwrapApiData<T>(payload: ApiResponse<T>): T {
+  if (!payload.success) {
+    const message = payload.error?.message ?? payload.message ?? "Unexpected API error";
+    throw new ApiClientError(message, undefined, payload.error?.code);
+  }
+
+  if (payload.data === undefined || payload.data === null) {
+    throw new ApiClientError(payload.message ?? "API response did not include data");
+  }
+
+  return payload.data;
+}
+
+export const apiClient = {
+  async get<T>(path: string, graphqlQuery?: string): Promise<T> {
+    if (appConfig.apiMode === "graphql" && graphqlQuery) {
+      const response = await graphqlRequest<unknown>(graphqlQuery);
+      return unwrapGraphqlData<T>(response);
+    }
+
+    const payload = await restGet<T>(path);
+    return unwrapApiData(payload);
+  },
+
+  async post<T, TPayload = unknown>(
+    path: string,
+    body?: TPayload,
+    graphqlQuery?: string,
+    variables?: Record<string, unknown>
+  ): Promise<T> {
+    if (appConfig.apiMode === "graphql" && graphqlQuery) {
+      const response = await graphqlRequest<unknown>(graphqlQuery, variables);
+      return unwrapGraphqlData<T>(response);
+    }
+
+    const payload = await restPost<T, TPayload>(path, body);
+    return unwrapApiData(payload);
+  }
+};
