@@ -42,6 +42,18 @@ describe("session token", () => {
     expect(verifiedPayload).toBeNull();
   });
 
+  it("rejects tokens with malformed base64 signature without throwing", async () => {
+    process.env.AUTH_SESSION_SECRET = "test-secret";
+    const token = await createSessionToken(
+      { sub: "u_4", name: "Malformed Sig", email: "sig@example.com", role: "user" },
+      60
+    );
+    const [header, body] = token.split(".");
+    const malformedSignatureToken = `${header}.${body}.%%%`;
+
+    await expect(verifySessionToken(malformedSignatureToken)).resolves.toBeNull();
+  });
+
   it("fails fast when secret is missing and insecure fallback is disabled", async () => {
     delete process.env.AUTH_SESSION_SECRET;
     delete process.env.AUTH_SESSION_SECRETS;

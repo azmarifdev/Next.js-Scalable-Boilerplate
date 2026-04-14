@@ -32,6 +32,14 @@ function base64UrlToUint8(base64Url: string): Uint8Array {
   return Uint8Array.from(bin, (char) => char.charCodeAt(0));
 }
 
+function tryBase64UrlToUint8(base64Url: string): Uint8Array | null {
+  try {
+    return base64UrlToUint8(base64Url);
+  } catch {
+    return null;
+  }
+}
+
 function getSessionKeys(): SessionKey[] {
   const fromList = (process.env.AUTH_SESSION_SECRETS ?? "")
     .split(",")
@@ -131,14 +139,20 @@ export async function verifySessionToken(token: string): Promise<SessionPayload 
   const signingInput = `${encodedHeader}.${encodedPayload}`;
   const keyCandidates = keys.filter((key) => key.kid === header.kid);
   const candidates = keyCandidates.length > 0 ? keyCandidates : keys;
+  const providedSignatureBytes = tryBase64UrlToUint8(providedSignature);
+  if (!providedSignatureBytes) {
+    return null;
+  }
 
   let signatureValid = false;
   for (const candidate of candidates) {
     const expectedSignature = await sign(signingInput, candidate.value);
-    signatureValid = timingSafeEqualBytes(
-      base64UrlToUint8(expectedSignature),
-      base64UrlToUint8(providedSignature)
-    );
+    const expectedSignatureBytes = tryBase64UrlToUint8(expectedSignature);
+    if (!expectedSignatureBytes) {
+      continue;
+    }
+
+    signatureValid = timingSafeEqualBytes(expectedSignatureBytes, providedSignatureBytes);
     if (signatureValid) {
       break;
     }

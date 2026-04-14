@@ -12,7 +12,7 @@ Production-ready Next.js App Router boilerplate by **Azmarif Dev** for SaaS dash
 - Custom auth and NextAuth support
 - Clean module boundaries with scalable feature structure
 - Docker-first deployment
-- pnpm-only package management
+- npm-first workflow (pnpm lockfile also included)
 
 ## Core Rules
 
