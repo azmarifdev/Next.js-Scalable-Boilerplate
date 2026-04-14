@@ -13,6 +13,10 @@ updates:
       - automerge-candidate
     commit-message:
       prefix: "chore(deps)"
+    ignore:
+      - dependency-name: "eslint"
+        update-types:
+          - "version-update:semver-major"
     groups:
       dev-dependencies:
         dependency-type: development
