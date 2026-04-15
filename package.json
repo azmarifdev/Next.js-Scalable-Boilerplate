@@ -2,6 +2,7 @@
   "name": "nextjs-starter-template",
   "version": "0.1.2",
   "private": true,
+  "packageManager": "pnpm@10.33.0",
   "engines": {
     "node": ">=20 <23"
   },
@@ -32,6 +33,9 @@
     "knip": "knip --dependencies",
     "codehawk": "codehawk src",
     "docs:check": "node scripts/check-docs.mjs",
+    "setup:ci": "node scripts/setup-ci.mjs",
+    "setup:postgres": "node scripts/setup-postgres.mjs",
+    "setup:graphql": "node scripts/setup-graphql.mjs",
     "clean": "node scripts/clean.mjs",
     "docker:build": "docker build -t nextjs-starter-template .",
     "docker:run": "docker run --env-file .env.local -p 3000:3000 nextjs-starter-template",
@@ -39,8 +43,8 @@
     "docker:up:db": "docker compose --profile db up --build",
     "docker:down": "docker compose down",
     "prepare": "husky",
-    "install:npm": "npm ci",
     "install:pnpm": "pnpm install --frozen-lockfile",
+    "install:npm": "npm ci",
     "install:yarn": "yarn install --frozen-lockfile --non-interactive",
     "install:bun": "bun install --frozen-lockfile"
   },
