@@ -4,6 +4,12 @@ This boilerplate ships with a Docker-first deployment model.
 
 Use these notes as starting points when running the same container on managed cloud platforms.
 
+## Runtime Baseline
+
+- Build image with Node `22.x` baseline.
+- Keep runtime aligned with `.nvmrc` and CI-tested version.
+- Use one package manager strategy per repository (default template strategy is npm).
+
 ## AWS
 
 Recommended services:

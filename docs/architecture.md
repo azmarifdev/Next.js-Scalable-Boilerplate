@@ -47,6 +47,10 @@ Important switches:
 - `dbProvider`: `mongo | postgres` (mongo default)
 - `authProvider`: `custom | nextauth`
 
+Current guardrail:
+
+- `backendMode=internal` + `authProvider=custom` supports `apiMode=rest` only in this template.
+
 ## Auth Architecture
 
 - `src/modules/auth/*`: auth UI and feature orchestration.

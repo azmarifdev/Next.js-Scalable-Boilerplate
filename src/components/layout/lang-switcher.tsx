@@ -22,7 +22,7 @@ export function LangSwitcher() {
   return (
     <Button variant="secondary" onClick={toggleLocale} aria-label={t("toggleLanguage")}>
       <span className="icon-inline icon-gap-sm">
-        <Languages size={16} />
+        <Languages size={16} suppressHydrationWarning />
       </span>
       {locale.toUpperCase()}
     </Button>

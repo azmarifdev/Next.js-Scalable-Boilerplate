@@ -2,7 +2,6 @@
   "name": "nextjs-starter-template",
   "version": "0.1.2",
   "private": true,
-  "packageManager": "npm@10.8.2",
   "engines": {
     "node": ">=20 <23"
   },
@@ -10,7 +9,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "node scripts/start.mjs",
-    "preview": "npm run build && npm run start",
+    "preview": "next build && node scripts/start.mjs",
     "analyze": "ANALYZE=true next build",
     "lint": "eslint src --ext .ts,.tsx --cache",
     "lint:fix": "eslint src --ext .ts,.tsx --fix --cache",
@@ -40,7 +39,10 @@
     "docker:up:db": "docker compose --profile db up --build",
     "docker:down": "docker compose down",
     "prepare": "husky",
-    "install:pnpm": "pnpm install --frozen-lockfile"
+    "install:npm": "npm ci",
+    "install:pnpm": "pnpm install --frozen-lockfile",
+    "install:yarn": "yarn install --frozen-lockfile --non-interactive",
+    "install:bun": "bun install --frozen-lockfile"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

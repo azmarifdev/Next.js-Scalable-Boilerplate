@@ -1,10 +1,10 @@
-# Azmarif Dev Next.js Starter
+# Next.js Starter Boilerplate
 
-Production-ready Next.js App Router boilerplate by **Azmarif Dev** for SaaS dashboards and product frontends.
+Production-ready Next.js App Router boilerplate by **[A. Z. M. Arif](https://azmarif.dev)** for SaaS dashboards and product frontends.
 
 ## Highlights
 
-- Built and maintained by **Azmarif Dev**
+- Built and maintained by **[Azmarif Dev](https://azmarif.dev)**
 - External backend-first architecture
 - REST + GraphQL transport layer support
 - Config-driven runtime modes
@@ -12,7 +12,13 @@ Production-ready Next.js App Router boilerplate by **Azmarif Dev** for SaaS dash
 - Custom auth and NextAuth support
 - Clean module boundaries with scalable feature structure
 - Docker-first deployment
-- npm-first workflow (pnpm lockfile also included)
+- Supports npm, pnpm, yarn, and bun workflows
+
+## Runtime Baseline
+
+- Node.js: `22.x` (see `.nvmrc`)
+- npm: `10.x` (default CI manager)
+- Engines: `>=20 <23` (for compatibility window)
 
 ## Core Rules
 
@@ -29,9 +35,18 @@ Data flow:
 ## Quick Start
 
 ```bash
-pnpm install --frozen-lockfile
+nvm use
+npm ci
 cp .env.example .env.local
-pnpm run dev
+npm run dev
+```
+
+Alternative install commands:
+
+```bash
+pnpm install --frozen-lockfile
+yarn install --frozen-lockfile --non-interactive
+bun install --frozen-lockfile
 ```
 
 ## Required Config
@@ -52,6 +67,17 @@ export const appConfig = {
 };
 ```
 
+Important guardrail:
+
+- `backendMode=internal` + `authProvider=custom` supports only `apiMode=rest` in this template.
+
+## Package Manager Policy
+
+- Contributors may use npm, pnpm, yarn, or bun locally.
+- CI quality pipeline runs with npm, and lockfile consistency is validated across npm/pnpm/yarn (bun when lockfile exists).
+- When dependencies change, keep lockfiles consistent and do not submit partial lockfile updates.
+- Manager migration strategy and guardrails are documented in `docs/migrations/package-manager.md`.
+
 ## API Strategy
 
 - External backend is default.
@@ -67,23 +93,25 @@ export const appConfig = {
 - `docs/auth-flow.md`
 - `docs/how-to-use.md`
 - `docs/deployment/cloud-providers.md`
+- `docs/migrations/package-manager.md`
+- `docs/guides/README.md`
 
 ## Branding
 
-- Author: **A. Z. M. Arif (Azmarif Dev)**
+- Author: **[A. Z. M. Arif (Azmarif Dev)](https://azmarif.dev)**
 - Website: `https://azmarif.dev`
 - GitHub: `https://github.com/azmarifdev`
 
 ## Commands
 
 ```bash
-pnpm run dev
-pnpm run build
-pnpm run start
-pnpm run lint
-pnpm run typecheck
-pnpm run test
-pnpm run e2e
-pnpm run docs:check
-pnpm run docker:up
+npm run dev
+npm run build
+npm run start
+npm run lint
+npm run typecheck
+npm run test
+npm run e2e
+npm run docs:check
+npm run docker:up
 ```

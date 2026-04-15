@@ -27,7 +27,7 @@ export default async function HomePage() {
 
       <section className="showcase-hero container">
         <p className="showcase-badge">
-          <Sparkles size={14} />
+          <Sparkles size={14} suppressHydrationWarning />
           {t("badge")}
         </p>
         <h1 className="showcase-title">
@@ -35,11 +35,11 @@ export default async function HomePage() {
         </h1>
         <p className="showcase-subtitle">{t("subtitle")}</p>
         <p className="showcase-meta">
-          <Globe size={14} /> {t("meta")}
+          <Globe size={14} suppressHydrationWarning /> {t("meta")}
         </p>
         <div className="showcase-actions">
           <Link className="showcase-btn-primary" href={getStartedHref}>
-            {t("getStarted")} <ArrowRight size={15} />
+            {t("getStarted")} <ArrowRight size={15} suppressHydrationWarning />
           </Link>
           <a
             className="showcase-btn-secondary"

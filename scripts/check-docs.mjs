@@ -4,7 +4,9 @@ const requiredDocs = [
   "docs/architecture.md",
   "docs/folder-structure.md",
   "docs/auth-flow.md",
-  "docs/how-to-use.md"
+  "docs/how-to-use.md",
+  "docs/migrations/package-manager.md",
+  "docs/guides/README.md"
 ];
 
 const missingDocs = requiredDocs.filter((file) => !existsSync(file));
@@ -21,7 +23,9 @@ const requiredMentions = [
   "docs/architecture.md",
   "docs/folder-structure.md",
   "docs/auth-flow.md",
-  "docs/how-to-use.md"
+  "docs/how-to-use.md",
+  "docs/migrations/package-manager.md",
+  "docs/guides/README.md"
 ];
 
 const missingMentions = requiredMentions.filter((item) => !readme.includes(item));
