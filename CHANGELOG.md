@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.3](https://github.com/azmarifdev/Nextjs-Starter-Template/compare/nextjs-starter-template-v0.1.2...nextjs-starter-template-v0.1.3) (2026-04-15)
+
+
+### Bug Fixes
+
+* **ci:** allow multi-manager installs and sync pnpm lockfile ([1b21f35](https://github.com/azmarifdev/Nextjs-Starter-Template/commit/1b21f3549fb2a573757e169cc74a9d3b31467586))
+
+
+### Documentation
+
+* organize guides and align multi-package-manager workflow ([a173274](https://github.com/azmarifdev/Nextjs-Starter-Template/commit/a1732740cbf68a863ff4698a427a84d64cedd624))
+* organize guides and align multi-package-manager workflow ([012f790](https://github.com/azmarifdev/Nextjs-Starter-Template/commit/012f790ac867cf7e8d425c4597b44763428e5eec))
+
 ## [0.1.2](https://github.com/azmarifdev/Nextjs-Starter-Template/compare/nextjs-starter-template-v0.1.1...nextjs-starter-template-v0.1.2) (2026-04-14)
 
 ### Bug Fixes
