@@ -7,7 +7,7 @@ Use this guide for two cases:
 
 ## Current Baseline in This Template
 
-- `packageManager`: npm
+- `packageManager` field is intentionally unset to allow npm/pnpm/yarn/bun
 - CI quality jobs run via npm
 - Lockfile consistency workflow validates npm/pnpm/yarn (and bun if bun lockfile exists)
 
@@ -28,7 +28,7 @@ Migrate only if your team wants a single enforced manager policy.
 
 ### Target: pnpm
 
-1. Set `package.json -> packageManager` to pnpm version
+1. (Optional) Set `package.json -> packageManager` to pnpm version if your team wants strict enforcement
 2. Remove non-target lockfiles your team will no longer maintain
 3. Regenerate target lockfile
 4. Update CI install commands and caches for pnpm
@@ -37,7 +37,7 @@ Migrate only if your team wants a single enforced manager policy.
 
 ### Target: yarn
 
-1. Set `package.json -> packageManager` to yarn version
+1. (Optional) Set `package.json -> packageManager` to yarn version if your team wants strict enforcement
 2. Remove non-target lockfiles your team will no longer maintain
 3. Regenerate target lockfile
 4. Update CI install commands and caches for yarn
@@ -46,7 +46,7 @@ Migrate only if your team wants a single enforced manager policy.
 
 ### Target: bun
 
-1. Set `package.json -> packageManager` to bun version (if team policy requires)
+1. (Optional) Set `package.json -> packageManager` to bun version if your team wants strict enforcement
 2. Generate and commit bun lockfile (`bun.lock` or `bun.lockb`)
 3. Update CI jobs to use bun as primary quality pipeline
 4. Update docs and contributing instructions
