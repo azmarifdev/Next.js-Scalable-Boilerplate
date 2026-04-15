@@ -1,7 +1,35 @@
 name: Package Manager Consistency
 
 on:
+  pull_request:
+    branches:
+      - "**"
+    paths:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "bun.lock"
+      - "bun.lockb"
+      - ".github/workflows/package-manager-consistency.yml"
+  push:
+    branches:
+      - main
+      - master
+      - develop
+    paths:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "bun.lock"
+      - "bun.lockb"
+      - ".github/workflows/package-manager-consistency.yml"
   workflow_dispatch:
+
+concurrency:
+  group: package-manager-consistency-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read

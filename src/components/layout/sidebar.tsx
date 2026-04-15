@@ -70,7 +70,7 @@ export function Sidebar() {
           return (
             <Link key={item.href} href={item.href as Route} className="sidebar-link">
               <span className="icon-inline icon-gap-sm">
-                <Icon size={16} />
+                <Icon size={16} suppressHydrationWarning />
               </span>
               {t(item.key)}
             </Link>

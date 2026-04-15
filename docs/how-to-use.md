@@ -3,7 +3,16 @@
 ## 1) Install
 
 ```bash
+nvm use
+npm ci
+```
+
+Any one of these alternatives also works:
+
+```bash
 pnpm install --frozen-lockfile
+yarn install --frozen-lockfile --non-interactive
+bun install --frozen-lockfile
 ```
 
 ## 2) Configure Environment
@@ -23,17 +32,17 @@ Set at minimum:
 ## 3) Start Dev Server
 
 ```bash
-pnpm run dev
+npm run dev
 ```
 
 ## 4) Run Quality Checks
 
 ```bash
-pnpm run lint
-pnpm run typecheck
-pnpm run test
-pnpm run e2e
-pnpm run docs:check
+npm run lint
+npm run typecheck
+npm run test
+npm run e2e
+npm run docs:check
 ```
 
 ## 5) Choose Runtime Modes
@@ -46,13 +55,24 @@ pnpm run docs:check
 ### Internal auth APIs (optional)
 
 - `NEXT_PUBLIC_BACKEND_MODE=internal`
-- uses `src/app/api/v1/auth/*`
+- Uses `src/app/api/v1/auth/*`
 
 ### NextAuth (optional)
 
 - `NEXT_PUBLIC_AUTH_PROVIDER=nextauth`
 
-## 6) Deploy
+### Important mode rule
+
+- `NEXT_PUBLIC_BACKEND_MODE=internal` + `NEXT_PUBLIC_AUTH_PROVIDER=custom` requires `NEXT_PUBLIC_API_MODE=rest`.
+
+## 6) Package Manager Alternatives
+
+- You can use npm, pnpm, yarn, or bun locally.
+- CI still validates npm quality flow and lockfile consistency across managers.
+- If dependencies are changed, update lockfiles consistently in the same PR.
+- If you want a different canonical policy for your fork/team, follow `docs/migrations/package-manager.md`.
+
+## 7) Deploy
 
 - Docker-first: `Dockerfile`, `docker-compose.yml`
 - Vercel optional

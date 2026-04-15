@@ -29,18 +29,20 @@ These instructions apply to all automated or semi-automated agents working in th
 Use this default verification set:
 
 ```bash
-pnpm run lint
-pnpm run typecheck
-pnpm run format:check
-pnpm run test
-pnpm run build
+npm run lint
+npm run typecheck
+npm run format:check
+npm run test
+npm run build
 ```
 
 For user journey changes, also run:
 
 ```bash
-pnpm run e2e
+npm run e2e
 ```
+
+Equivalent manager-specific commands are acceptable if lockfiles remain consistent.
 
 ## GitHub Automation Awareness
 

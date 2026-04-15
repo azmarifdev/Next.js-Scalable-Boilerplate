@@ -2,12 +2,11 @@
 
 ## [0.1.2](https://github.com/azmarifdev/Nextjs-Starter-Template/compare/nextjs-starter-template-v0.1.1...nextjs-starter-template-v0.1.2) (2026-04-14)
 
-
 ### Bug Fixes
 
-* harden auth token validation and runtime mode guards ([8a03c21](https://github.com/azmarifdev/Nextjs-Starter-Template/commit/8a03c218bb86d4e51f3947b09879ec4410425aea))
-* harden auth token validation and runtime mode guards ([456806b](https://github.com/azmarifdev/Nextjs-Starter-Template/commit/456806b412747190ac8f1ddc72c718ecfa872ce4))
-* restore ci installs and align lint tooling ([0e0bc84](https://github.com/azmarifdev/Nextjs-Starter-Template/commit/0e0bc842ad1e67c5204a92092112a218763ed1a0))
+- harden auth token validation and runtime mode guards ([8a03c21](https://github.com/azmarifdev/Nextjs-Starter-Template/commit/8a03c218bb86d4e51f3947b09879ec4410425aea))
+- harden auth token validation and runtime mode guards ([456806b](https://github.com/azmarifdev/Nextjs-Starter-Template/commit/456806b412747190ac8f1ddc72c718ecfa872ce4))
+- restore ci installs and align lint tooling ([0e0bc84](https://github.com/azmarifdev/Nextjs-Starter-Template/commit/0e0bc842ad1e67c5204a92092112a218763ed1a0))
 
 ## [0.1.1](https://github.com/azmarifdev/Nextjs-Starter-Template/compare/nextjs-starter-template-v0.1.0...nextjs-starter-template-v0.1.1) (2026-04-07)
 
@@ -90,4 +89,4 @@ Maintainer notes:
 
 - Do not manually edit released version blocks.
 - Use Conventional Commits (`feat`, `fix`, `perf`, etc.) so entries are categorized correctly.
-- For release pipeline troubleshooting, use `RELEASE_AUTOMATION.md`.
+- For release pipeline troubleshooting, use `docs/guides/release-automation.md`.

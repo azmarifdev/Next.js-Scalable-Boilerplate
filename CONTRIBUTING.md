@@ -2,23 +2,34 @@
 
 ## Development Setup
 
-1. Install dependencies:
-   - `npm install`
-   - or `npm run install:yarn`
-   - or `npm run install:pnpm`
-   - or `npm run install:bun` (if Bun is installed)
-   - for first-time Bun use, run `bun install` once to generate `bun.lock`/`bun.lockb`
-2. Start development server:
-   - `npm run dev`
+1. Use the project Node version:
+   - `nvm use`
+2. Install dependencies with your preferred manager:
+   - npm: `npm ci`
+   - pnpm: `pnpm install --frozen-lockfile`
+   - yarn: `yarn install --frozen-lockfile --non-interactive`
+   - bun: `bun install --frozen-lockfile`
+3. Start development server:
+   - `npm run dev` (or equivalent manager command)
+
+## Package Manager Policy
+
+- This repository supports npm, pnpm, yarn, and bun for local development.
+- CI quality checks run with npm, and lockfile consistency workflow validates npm/pnpm/yarn lockfiles (bun when lockfile exists).
+- If you modify dependencies, keep lockfiles consistent in the same PR.
+- Do not leave dependency updates with only one lockfile updated.
+- If your team wants to switch canonical manager policy, follow `docs/migrations/package-manager.md`.
 
 ## Quality Checks
 
 Before creating a PR, run:
 
+- install command for your chosen manager
 - `npm run lint`
 - `npm run typecheck`
 - `npm run test`
 - `npm run format:check`
+- `npm run build`
 
 ## Commit Convention (Commitlint)
 
@@ -71,7 +82,7 @@ Release quality notes:
 - `chore` and `style` are hidden from release notes by default to reduce noise.
 - Non-conventional legacy commits may appear as parse warnings; keep all new commits conventional.
 
-For operational troubleshooting and manual fallback steps, see `RELEASE_AUTOMATION.md`.
+For operational troubleshooting and manual fallback steps, see `docs/guides/release-automation.md`.
 
 ## GitHub Automation Checks
 

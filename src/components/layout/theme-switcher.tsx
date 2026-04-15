@@ -14,8 +14,8 @@ export function ThemeSwitcher() {
 
   return (
     <Button variant="secondary" onClick={toggleTheme} aria-label="Toggle theme">
-      <Sun size={16} className="theme-icon-sun" />
-      <Moon size={16} className="theme-icon-moon" />
+      <Sun size={16} className="theme-icon-sun" suppressHydrationWarning />
+      <Moon size={16} className="theme-icon-moon" suppressHydrationWarning />
     </Button>
   );
 }
