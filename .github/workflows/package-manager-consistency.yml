@@ -6,11 +6,7 @@ on:
       - "**"
     paths:
       - "package.json"
-      - "package-lock.json"
       - "pnpm-lock.yaml"
-      - "yarn.lock"
-      - "bun.lock"
-      - "bun.lockb"
       - ".github/workflows/package-manager-consistency.yml"
   push:
     branches:
@@ -19,11 +15,7 @@ on:
       - develop
     paths:
       - "package.json"
-      - "package-lock.json"
       - "pnpm-lock.yaml"
-      - "yarn.lock"
-      - "bun.lock"
-      - "bun.lockb"
       - ".github/workflows/package-manager-consistency.yml"
   workflow_dispatch:
 
@@ -35,48 +27,6 @@ permissions:
   contents: read
 
 jobs:
-  npm-lockfile:
-    name: npm lockfile check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Install via npm
-        run: npm ci
-
-      - name: Verify package-lock is unchanged
-        run: git diff --exit-code -- package-lock.json
-
-  yarn-lockfile:
-    name: yarn lockfile check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
-
-      - name: Enable Yarn
-        run: |
-          corepack enable
-          corepack prepare yarn@1.22.22 --activate
-
-      - name: Install via Yarn
-        run: yarn install --frozen-lockfile --non-interactive --ignore-scripts
-
-      - name: Verify yarn.lock is unchanged
-        run: git diff --exit-code -- yarn.lock
-
   pnpm-lockfile:
     name: pnpm lockfile check
     runs-on: ubuntu-latest
@@ -84,55 +34,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
           node-version: 22
-
-      - name: Enable pnpm
-        run: |
-          corepack enable
-          corepack prepare pnpm@10.33.0 --activate
+          cache: pnpm
 
       - name: Install via pnpm
         run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Verify pnpm-lock.yaml is unchanged
         run: git diff --exit-code -- pnpm-lock.yaml
-
-  bun-lockfile:
-    name: bun lockfile check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Detect bun lockfile
-        id: bun-lock
-        run: |
-          if [ -f bun.lock ] || [ -f bun.lockb ]; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Setup Bun
-        if: steps.bun-lock.outputs.exists == 'true'
-        uses: oven-sh/setup-bun@v2
-
-      - name: Install via Bun
-        if: steps.bun-lock.outputs.exists == 'true'
-        run: bun install --frozen-lockfile
-
-      - name: Verify bun lockfile is unchanged
-        if: steps.bun-lock.outputs.exists == 'true'
-        run: |
-          if [ -f bun.lock ]; then
-            git diff --exit-code -- bun.lock
-          elif [ -f bun.lockb ]; then
-            git diff --exit-code -- bun.lockb
-          fi
-
-      - name: Skip bun check (no bun lockfile)
-        if: steps.bun-lock.outputs.exists != 'true'
-        run: echo "bun.lock/bun.lockb not found; skipping bun lockfile consistency check."

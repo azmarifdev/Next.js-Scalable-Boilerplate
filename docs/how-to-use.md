@@ -4,15 +4,7 @@
 
 ```bash
 nvm use
-npm ci
-```
-
-Any one of these alternatives also works:
-
-```bash
 pnpm install --frozen-lockfile
-yarn install --frozen-lockfile --non-interactive
-bun install --frozen-lockfile
 ```
 
 ## 2) Configure Environment
@@ -32,17 +24,17 @@ Set at minimum:
 ## 3) Start Dev Server
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 ## 4) Run Quality Checks
 
 ```bash
-npm run lint
-npm run typecheck
-npm run test
-npm run e2e
-npm run docs:check
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm e2e
+pnpm docs:check
 ```
 
 ## 5) Choose Runtime Modes
@@ -65,12 +57,11 @@ npm run docs:check
 
 - `NEXT_PUBLIC_BACKEND_MODE=internal` + `NEXT_PUBLIC_AUTH_PROVIDER=custom` requires `NEXT_PUBLIC_API_MODE=rest`.
 
-## 6) Package Manager Alternatives
+## 6) Package Manager Policy
 
-- You can use npm, pnpm, yarn, or bun locally.
-- CI still validates npm quality flow and lockfile consistency across managers.
-- If dependencies are changed, update lockfiles consistently in the same PR.
-- If you want a different canonical policy for your fork/team, follow `docs/migrations/package-manager.md`.
+- This template uses `pnpm` as the canonical package manager.
+- Use `pnpm` commands for local development and CI.
+- If dependencies are changed, update `pnpm-lock.yaml` in the same PR.
 
 ## 7) Deploy
 

@@ -12,12 +12,12 @@ Production-ready Next.js App Router boilerplate by **[A. Z. M. Arif](https://azm
 - Custom auth and NextAuth support
 - Clean module boundaries with scalable feature structure
 - Docker-first deployment
-- Supports npm, pnpm, yarn, and bun workflows
+- Uses pnpm workflow
 
 ## Runtime Baseline
 
 - Node.js: `22.x` (see `.nvmrc`)
-- npm: `10.x` (default CI manager)
+- pnpm: `10.x`
 - Engines: `>=20 <23` (for compatibility window)
 
 ## Core Rules
@@ -36,17 +36,9 @@ Data flow:
 
 ```bash
 nvm use
-npm ci
-cp .env.example .env.local
-npm run dev
-```
-
-Alternative install commands:
-
-```bash
 pnpm install --frozen-lockfile
-yarn install --frozen-lockfile --non-interactive
-bun install --frozen-lockfile
+cp .env.example .env.local
+pnpm dev
 ```
 
 ## Required Config
@@ -73,9 +65,8 @@ Important guardrail:
 
 ## Package Manager Policy
 
-- Contributors may use npm, pnpm, yarn, or bun locally.
-- CI quality pipeline runs with npm, and lockfile consistency is validated across npm/pnpm/yarn (bun when lockfile exists).
-- When dependencies change, keep lockfiles consistent and do not submit partial lockfile updates.
+- Use pnpm for local and CI workflows.
+- When dependencies change, update `pnpm-lock.yaml` in the same PR.
 - Manager migration strategy and guardrails are documented in `docs/migrations/package-manager.md`.
 
 ## API Strategy
@@ -105,13 +96,13 @@ Important guardrail:
 ## Commands
 
 ```bash
-npm run dev
-npm run build
-npm run start
-npm run lint
-npm run typecheck
-npm run test
-npm run e2e
-npm run docs:check
-npm run docker:up
+pnpm dev
+pnpm build
+pnpm start
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm e2e
+pnpm docs:check
+pnpm docker:up
 ```

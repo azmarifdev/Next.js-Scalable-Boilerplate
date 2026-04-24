@@ -2,6 +2,7 @@
   "name": "nextjs-starter-template",
   "version": "0.1.4",
   "private": true,
+  "packageManager": "pnpm@10.33.0",
   "engines": {
     "node": ">=20 <23"
   },
@@ -20,7 +21,9 @@
     "test:integration": "vitest run src/tests/integration",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "pree2e": "pnpm exec playwright install chromium",
     "e2e": "playwright test",
+    "e2e:install": "pnpm exec playwright install chromium",
     "e2e:ui": "playwright test --ui",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
@@ -39,10 +42,7 @@
     "docker:up:db": "docker compose --profile db up --build",
     "docker:down": "docker compose down",
     "prepare": "husky",
-    "install:npm": "npm ci",
-    "install:pnpm": "pnpm install --frozen-lockfile",
-    "install:yarn": "yarn install --frozen-lockfile --non-interactive",
-    "install:bun": "bun install --frozen-lockfile"
+    "install:pnpm": "pnpm install --frozen-lockfile"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
