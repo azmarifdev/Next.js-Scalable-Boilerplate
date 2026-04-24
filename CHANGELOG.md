@@ -2,11 +2,10 @@
 
 ## [0.1.4](https://github.com/azmarifdev/Next.js-Scalable-Boilerplate/compare/nextjs-starter-template-v0.1.3...nextjs-starter-template-v0.1.4) (2026-04-24)
 
-
 ### CI
 
-* verify package-lock sync before npm ci ([4084bfb](https://github.com/azmarifdev/Next.js-Scalable-Boilerplate/commit/4084bfb800b9e0c2796c28a799e42cd094052732))
-* verify package-lock sync before npm ci ([4a4c075](https://github.com/azmarifdev/Next.js-Scalable-Boilerplate/commit/4a4c075c0153eab0e5e6c018ec913a0bb3b78bc3))
+- verify package-lock sync before npm ci ([4084bfb](https://github.com/azmarifdev/Next.js-Scalable-Boilerplate/commit/4084bfb800b9e0c2796c28a799e42cd094052732))
+- verify package-lock sync before npm ci ([4a4c075](https://github.com/azmarifdev/Next.js-Scalable-Boilerplate/commit/4a4c075c0153eab0e5e6c018ec913a0bb3b78bc3))
 
 ## [0.1.3](https://github.com/azmarifdev/Nextjs-Starter-Template/compare/nextjs-starter-template-v0.1.2...nextjs-starter-template-v0.1.3) (2026-04-15)
 
