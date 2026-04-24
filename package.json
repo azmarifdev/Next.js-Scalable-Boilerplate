@@ -2,6 +2,7 @@
   "name": "nextjs-starter-template",
   "version": "0.1.4",
   "private": true,
+  "packageManager": "pnpm@10.33.0",
   "engines": {
     "node": ">=20 <23"
   },
@@ -39,10 +40,7 @@
     "docker:up:db": "docker compose --profile db up --build",
     "docker:down": "docker compose down",
     "prepare": "husky",
-    "install:npm": "npm ci",
-    "install:pnpm": "pnpm install --frozen-lockfile",
-    "install:yarn": "yarn install --frozen-lockfile --non-interactive",
-    "install:bun": "bun install --frozen-lockfile"
+    "install:pnpm": "pnpm install --frozen-lockfile"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
