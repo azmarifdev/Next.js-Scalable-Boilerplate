@@ -38,6 +38,10 @@ export async function tryDevAuthLogin(input: {
   email: string;
   password: string;
 }): Promise<{ user?: User; status: number; message?: string }> {
+  if (process.env.ALLOW_DEMO_AUTH !== "true") {
+    return { status: 503, message: "Demo auth is disabled" };
+  }
+
   const normalizedEmail = input.email.toLowerCase();
   if (normalizedEmail !== devUser.email) {
     return { status: 401, message: "Invalid email or password" };
