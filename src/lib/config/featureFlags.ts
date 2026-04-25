@@ -40,6 +40,8 @@ export function getFeatureFlags(): FeatureFlags {
   };
 }
 
+export const featureFlags: FeatureFlags = getFeatureFlags();
+
 export function isFeatureEnabled(feature: FeatureFlag): boolean {
   return getFeatureFlags()[feature];
 }

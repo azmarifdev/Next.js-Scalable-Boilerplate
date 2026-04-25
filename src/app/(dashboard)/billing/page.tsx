@@ -1,15 +1,13 @@
 import { getTranslations } from "next-intl/server";
 
-import { getFeatureFlags } from "@/lib/config/featureFlags";
+import { featureFlags } from "@/lib/config/featureFlags";
 import { BillingPanel } from "@/modules/optional/billing/components/BillingPanel";
 
 export default async function BillingPage() {
-  const featureFlags = getFeatureFlags();
-  const t = await getTranslations("dashboard");
-
   if (!featureFlags.ENABLE_BILLING) {
     return null;
   }
+  const t = await getTranslations("dashboard");
 
   return (
     <div className="stack">

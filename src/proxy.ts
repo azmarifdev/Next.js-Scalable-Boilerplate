@@ -4,7 +4,7 @@ import { hasPermission } from "@/lib/auth/rbac";
 import { verifySessionToken } from "@/lib/auth/session";
 import { AUTH_COOKIE_NAME } from "@/lib/config/constants";
 
-// This proxy only protects routes by redirecting unauthenticated or unauthorized users.
+// Handles authentication and route protection
 const protectedRoutes = ["/dashboard", "/projects", "/tasks", "/ecommerce", "/billing", "/users"];
 const authRoutes = ["/login", "/register"];
 
