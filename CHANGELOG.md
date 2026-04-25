@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.7](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/Next.js-Boilerplate-PostgresQL-Drizzle-v0.1.6...Next.js-Boilerplate-PostgresQL-Drizzle-v0.1.7) (2026-04-25)
+
+
+### Bug Fixes
+
+* format changelog and align release-please title pattern ([87147d6](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/87147d69bbd20b7898ba00a4863aaec69f79ea5f))
+* format changelog and align release-please title pattern ([1e6e7a3](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/1e6e7a3b1c8a947c6b1a1deb37b184d39e25163d))
+
 ## [0.1.6](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/Next.js-Boilerplate-PostgresQL-Drizzle-v0.1.5...Next.js-Boilerplate-PostgresQL-Drizzle-v0.1.6) (2026-04-25)
 
 ### Features
