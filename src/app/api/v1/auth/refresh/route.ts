@@ -5,7 +5,7 @@ import { AUTH_COOKIE_NAME, AUTH_SESSION_TTL_SECONDS } from "@/lib/config/constan
 import { requireSameOrigin } from "@/lib/security/request-origin";
 import { apiSuccess, resolveRequestId } from "@/lib/utils/api-response";
 
-import { requireBetterAuthProvider, requireInternalBackend, withApiHandler } from "../route-utils";
+import { requireInternalBackend, withApiHandler } from "../route-utils";
 
 async function refreshHandler(request: Request): Promise<Response> {
   const requestId = resolveRequestId(request.headers);
@@ -14,11 +14,6 @@ async function refreshHandler(request: Request): Promise<Response> {
   if (backendError) {
     return backendError;
   }
-  const providerError = requireBetterAuthProvider({ requestId, route });
-  if (providerError) {
-    return providerError;
-  }
-
   const originError = requireSameOrigin(request, { requestId, route });
   if (originError) {
     return originError;

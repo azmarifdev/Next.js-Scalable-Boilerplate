@@ -1,7 +1,11 @@
 import { getTranslations } from "next-intl/server";
 
+import { isFeatureEnabled } from "@/lib/config/featureFlags";
+
 export default async function DashboardMainPage() {
   const t = await getTranslations("dashboard");
+  const billingEnabled = isFeatureEnabled("ENABLE_BILLING");
+  const ecommerceEnabled = isFeatureEnabled("ENABLE_ECOMMERCE");
 
   return (
     <div className="stack">
@@ -21,15 +25,19 @@ export default async function DashboardMainPage() {
           <p className="help-text">{t("tasksSubtitle")}</p>
         </article>
 
-        <article className="card">
-          <h2 className="card-title text-title-sm">{t("ecommerceTitle")}</h2>
-          <p className="help-text">{t("ecommerceSubtitle")}</p>
-        </article>
+        {ecommerceEnabled ? (
+          <article className="card">
+            <h2 className="card-title text-title-sm">{t("ecommerceTitle")}</h2>
+            <p className="help-text">{t("ecommerceSubtitle")}</p>
+          </article>
+        ) : null}
 
-        <article className="card">
-          <h2 className="card-title text-title-sm">{t("billingTitle")}</h2>
-          <p className="help-text">{t("billingSubtitle")}</p>
-        </article>
+        {billingEnabled ? (
+          <article className="card">
+            <h2 className="card-title text-title-sm">{t("billingTitle")}</h2>
+            <p className="help-text">{t("billingSubtitle")}</p>
+          </article>
+        ) : null}
       </section>
     </div>
   );

@@ -1,7 +1,7 @@
 import { requireSession } from "@/lib/auth/session-guard";
 import { apiSuccess, resolveRequestId } from "@/lib/utils/api-response";
 
-import { requireBetterAuthProvider, requireInternalBackend, withApiHandler } from "../route-utils";
+import { requireInternalBackend, withApiHandler } from "../route-utils";
 
 async function meHandler(request: Request): Promise<Response> {
   const requestId = resolveRequestId(request.headers);
@@ -10,11 +10,6 @@ async function meHandler(request: Request): Promise<Response> {
   if (backendError) {
     return backendError;
   }
-  const providerError = requireBetterAuthProvider({ requestId, route });
-  if (providerError) {
-    return providerError;
-  }
-
   const { session, response } = await requireSession({ request, requestId, route });
   if (!session) {
     return response;

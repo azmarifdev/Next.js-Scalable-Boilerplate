@@ -6,13 +6,13 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import type { AuthPayload } from "@/modules/auth/auth.types";
 import {
   type LoginFormValues,
   loginSchema,
   type RegisterFormValues,
   registerSchema
-} from "@/modules/auth/auth.validation";
+} from "@/modules/auth/auth.schema";
+import type { AuthPayload } from "@/modules/auth/auth.types";
 import { authService } from "@/modules/auth/services/auth.service";
 import { useToast } from "@/providers/toast.provider";
 

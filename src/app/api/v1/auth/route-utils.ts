@@ -1,4 +1,3 @@
-import { appConfig } from "@/lib/config/app-config";
 import { validateRuntimeConfig } from "@/lib/config/validate";
 import { logger } from "@/lib/observability/logger";
 import { apiError, resolveRequestId } from "@/lib/utils/api-response";
@@ -36,30 +35,11 @@ export function withApiHandler<TRequest extends Request>(
 }
 
 export function requireInternalBackend(options: { requestId: string; route: string }) {
-  if (appConfig.backendMode !== "internal") {
+  if (process.env.NEXT_PUBLIC_BACKEND_MODE === "external") {
     return apiError(
       {
         code: "INTERNAL_API_DISABLED",
         message: "Internal API is disabled. Set NEXT_PUBLIC_BACKEND_MODE=internal to enable it."
-      },
-      {
-        status: 404,
-        requestId: options.requestId,
-        route: options.route
-      }
-    );
-  }
-
-  return null;
-}
-
-export function requireBetterAuthProvider(options: { requestId: string; route: string }) {
-  if (appConfig.authProvider !== "better-auth") {
-    return apiError(
-      {
-        code: "AUTH_PROVIDER_DISABLED",
-        message:
-          "Better Auth API is disabled. Set NEXT_PUBLIC_AUTH_PROVIDER=better-auth to enable it."
       },
       {
         status: 404,

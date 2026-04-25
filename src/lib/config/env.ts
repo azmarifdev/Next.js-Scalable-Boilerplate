@@ -24,17 +24,21 @@ export const env = createEnv({
     AUTH_SESSION_SECRET: optionalString,
     AUTH_SESSION_SECRETS: optionalString,
     ALLOW_DEMO_AUTH: optionalBooleanString,
-    ALLOW_INSECURE_DEV_AUTH: optionalBooleanString
+    ALLOW_INSECURE_DEV_AUTH: optionalBooleanString,
+    ENABLE_BILLING: optionalBooleanString,
+    ENABLE_ECOMMERCE: optionalBooleanString,
+    ENABLE_CUSTOM_AUTH: optionalBooleanString
   },
   client: {
     NEXT_PUBLIC_APP_NAME: appName,
     NEXT_PUBLIC_API_BASE_URL: optionalString,
     NEXT_PUBLIC_SITE_URL: optionalUrl,
     NEXT_PUBLIC_BACKEND_MODE: z.enum(["external", "internal"]).default("internal"),
-    NEXT_PUBLIC_AUTH_PROVIDER: z.enum(["better-auth", "custom"]).default("better-auth"),
-    NEXT_PUBLIC_ENABLE_REDUX: z.enum(["true", "false"]).default("false"),
-    NEXT_PUBLIC_FEATURE_ECOMMERCE: optionalBooleanString,
-    NEXT_PUBLIC_FEATURE_BILLING: optionalBooleanString,
+    NEXT_PUBLIC_AUTH_PROVIDER: z.enum(["better-auth"]).default("better-auth"),
+    NEXT_PUBLIC_ENABLE_REDUX: z.enum(["false"]).default("false"),
+    NEXT_PUBLIC_ENABLE_ECOMMERCE: optionalBooleanString,
+    NEXT_PUBLIC_ENABLE_BILLING: optionalBooleanString,
+    NEXT_PUBLIC_ENABLE_CUSTOM_AUTH: optionalBooleanString,
     NEXT_PUBLIC_FEATURE_ADMIN: optionalBooleanString
   },
   runtimeEnv: {
@@ -43,14 +47,18 @@ export const env = createEnv({
     AUTH_SESSION_SECRETS: process.env.AUTH_SESSION_SECRETS,
     ALLOW_DEMO_AUTH: process.env.ALLOW_DEMO_AUTH,
     ALLOW_INSECURE_DEV_AUTH: process.env.ALLOW_INSECURE_DEV_AUTH,
+    ENABLE_BILLING: process.env.ENABLE_BILLING,
+    ENABLE_ECOMMERCE: process.env.ENABLE_ECOMMERCE,
+    ENABLE_CUSTOM_AUTH: process.env.ENABLE_CUSTOM_AUTH,
     NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
     NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
     NEXT_PUBLIC_BACKEND_MODE: process.env.NEXT_PUBLIC_BACKEND_MODE,
     NEXT_PUBLIC_AUTH_PROVIDER: process.env.NEXT_PUBLIC_AUTH_PROVIDER,
     NEXT_PUBLIC_ENABLE_REDUX: process.env.NEXT_PUBLIC_ENABLE_REDUX,
-    NEXT_PUBLIC_FEATURE_ECOMMERCE: process.env.NEXT_PUBLIC_FEATURE_ECOMMERCE,
-    NEXT_PUBLIC_FEATURE_BILLING: process.env.NEXT_PUBLIC_FEATURE_BILLING,
+    NEXT_PUBLIC_ENABLE_ECOMMERCE: process.env.NEXT_PUBLIC_ENABLE_ECOMMERCE,
+    NEXT_PUBLIC_ENABLE_BILLING: process.env.NEXT_PUBLIC_ENABLE_BILLING,
+    NEXT_PUBLIC_ENABLE_CUSTOM_AUTH: process.env.NEXT_PUBLIC_ENABLE_CUSTOM_AUTH,
     NEXT_PUBLIC_FEATURE_ADMIN: process.env.NEXT_PUBLIC_FEATURE_ADMIN
   }
 });

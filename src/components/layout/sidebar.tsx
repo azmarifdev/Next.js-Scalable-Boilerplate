@@ -22,7 +22,8 @@ const links = [
     href: "/users",
     key: "usersNav",
     icon: Users,
-    requiresFeature: featureRegistry.find((feature) => feature.route === "/users")?.key ?? "admin",
+    requiresFeature:
+      featureRegistry.find((feature) => feature.route === "/users")?.key ?? "ENABLE_ADMIN",
     requiresRole: "admin"
   },
   { href: "/projects", key: "projectsNav", icon: BriefcaseBusiness },
@@ -32,14 +33,14 @@ const links = [
     key: "ecommerceNav",
     icon: ShoppingCart,
     requiresFeature:
-      featureRegistry.find((feature) => feature.route === "/ecommerce")?.key ?? "ecommerce"
+      featureRegistry.find((feature) => feature.route === "/ecommerce")?.key ?? "ENABLE_ECOMMERCE"
   },
   {
     href: "/billing",
     key: "billingNav",
     icon: CreditCard,
     requiresFeature:
-      featureRegistry.find((feature) => feature.route === "/billing")?.key ?? "billing"
+      featureRegistry.find((feature) => feature.route === "/billing")?.key ?? "ENABLE_BILLING"
   }
 ] as const;
 

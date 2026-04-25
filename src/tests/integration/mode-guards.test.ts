@@ -53,25 +53,6 @@ describe("mode guards", () => {
     expect(payload.error?.code).toBe("INTERNAL_API_DISABLED");
   });
 
-  it("returns 404 for Better Auth APIs when auth provider is custom", async () => {
-    process.env.NEXT_PUBLIC_BACKEND_MODE = "internal";
-    process.env.NEXT_PUBLIC_AUTH_PROVIDER = "custom";
-
-    const { POST } = await import("@/app/api/v1/auth/login/route");
-    const { NextRequest } = await import("next/server");
-    const response = await POST(
-      new NextRequest("http://localhost/api/v1/auth/login", {
-        method: "POST",
-        headers: { "content-type": "application/json", accept: "application/json" },
-        body: JSON.stringify({ email: "admin@example.com", password: "secret123" })
-      })
-    );
-    const payload = await response.json();
-
-    expect(response.status).toBe(404);
-    expect(payload.error?.code).toBe("AUTH_PROVIDER_DISABLED");
-  });
-
   it("keeps external mode strict for REST client calls", async () => {
     process.env.NEXT_PUBLIC_BACKEND_MODE = "external";
     process.env.NEXT_PUBLIC_API_BASE_URL = "";

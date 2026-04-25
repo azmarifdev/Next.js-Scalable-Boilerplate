@@ -18,9 +18,9 @@ import { attachRateLimitHeaders, consumeRateLimit } from "@/lib/security/rate-li
 import { getSafeRedirectPath } from "@/lib/security/redirect";
 import { requireSameOrigin } from "@/lib/security/request-origin";
 import { apiError, apiSuccess, resolveRequestId } from "@/lib/utils/api-response";
-import { loginSchema } from "@/modules/auth/auth.validation";
+import { loginSchema } from "@/modules/auth/auth.schema";
 
-import { requireBetterAuthProvider, requireInternalBackend, withApiHandler } from "../route-utils";
+import { requireInternalBackend, withApiHandler } from "../route-utils";
 
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCK_WINDOW_MS = 15 * 60 * 1000;
@@ -79,10 +79,6 @@ async function loginHandler(request: NextRequest): Promise<Response> {
   const backendError = requireInternalBackend({ requestId, route });
   if (backendError) {
     return backendError;
-  }
-  const providerError = requireBetterAuthProvider({ requestId, route });
-  if (providerError) {
-    return providerError;
   }
   const wantsHtml = prefersHtmlResponse(request);
   const successRedirectPath = getSafeRedirectPath(request.nextUrl.searchParams.get("redirect"));
@@ -189,7 +185,7 @@ async function loginHandler(request: NextRequest): Promise<Response> {
           email: authUser.email,
           role: authUser.role
         };
-      } else {
+      } else if (allowDevFallback) {
         const devAuth = await tryDevAuthLogin({
           email: parsed.data.email,
           password: parsed.data.password
@@ -207,6 +203,18 @@ async function loginHandler(request: NextRequest): Promise<Response> {
           );
         }
         user = devAuth.user;
+      } else {
+        if (wantsHtml) {
+          return redirectWithRequestId(request, "/login?error=service_unavailable", requestId);
+        }
+
+        return apiError(
+          {
+            code: "AUTH_UNAVAILABLE",
+            message: "Authentication is unavailable. Configure DATABASE_URL first."
+          },
+          { status: 503, requestId, route }
+        );
       }
 
       const token = await createSessionToken(
