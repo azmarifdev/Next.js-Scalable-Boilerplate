@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.13](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/Next.js-Boilerplate-PostgresQL-Drizzle-v0.1.12...Next.js-Boilerplate-PostgresQL-Drizzle-v0.1.13) (2026-04-25)
+
+
+### Refactoring
+
+* **flags:** hard-gate optional dashboard routes and standardize … ([8a667b3](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/8a667b305860170a4b358de7c8e00e28111a4ce5))
+* **flags:** hard-gate optional dashboard routes and standardize featureFlags usage ([a5ed6dd](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/a5ed6dd536c2ef968348595ccb39a701a907f89f))
+
 ## [0.1.12](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/Next.js-Boilerplate-PostgresQL-Drizzle-v0.1.11...Next.js-Boilerplate-PostgresQL-Drizzle-v0.1.12) (2026-04-25)
 
 
