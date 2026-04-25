@@ -15,9 +15,9 @@ import { withTrace } from "@/lib/observability/tracing";
 import { getSafeRedirectPath } from "@/lib/security/redirect";
 import { requireSameOrigin } from "@/lib/security/request-origin";
 import { apiError, apiSuccess, resolveRequestId } from "@/lib/utils/api-response";
-import { registerSchema } from "@/modules/auth/auth.validation";
+import { registerSchema } from "@/modules/auth/auth.schema";
 
-import { requireBetterAuthProvider, requireInternalBackend, withApiHandler } from "../route-utils";
+import { requireInternalBackend, withApiHandler } from "../route-utils";
 
 function prefersHtmlResponse(request: NextRequest): boolean {
   const accept = request.headers.get("accept") ?? "";
@@ -70,10 +70,6 @@ async function registerHandler(request: NextRequest): Promise<Response> {
   const backendError = requireInternalBackend({ requestId, route });
   if (backendError) {
     return backendError;
-  }
-  const providerError = requireBetterAuthProvider({ requestId, route });
-  if (providerError) {
-    return providerError;
   }
   const wantsHtml = prefersHtmlResponse(request);
   const successRedirectPath = getSafeRedirectPath(request.nextUrl.searchParams.get("redirect"));

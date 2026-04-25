@@ -11,20 +11,20 @@ export interface FeatureDefinition {
 
 export const featureRegistry: FeatureDefinition[] = [
   {
-    key: "admin",
+    key: "ENABLE_ADMIN",
     route: "/users",
     permission: "users:read",
     navLabelKey: "usersNav",
     requiresRole: "admin"
   },
   {
-    key: "ecommerce",
+    key: "ENABLE_ECOMMERCE",
     route: "/ecommerce",
     permission: "ecommerce:read",
     navLabelKey: "ecommerceNav"
   },
   {
-    key: "billing",
+    key: "ENABLE_BILLING",
     route: "/billing",
     permission: "billing:read",
     navLabelKey: "billingNav"

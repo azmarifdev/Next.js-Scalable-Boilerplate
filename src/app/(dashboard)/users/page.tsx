@@ -6,7 +6,7 @@ import { UserTable } from "@/modules/user/components/UserTable";
 
 export default async function UsersPage() {
   const t = await getTranslations("dashboard");
-  const usersEnabled = isFeatureEnabled("admin");
+  const usersEnabled = isFeatureEnabled("ENABLE_ADMIN");
 
   if (!usersEnabled) {
     return (

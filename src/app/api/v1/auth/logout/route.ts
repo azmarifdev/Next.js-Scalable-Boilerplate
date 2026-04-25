@@ -3,7 +3,7 @@ import { AUTH_COOKIE_NAME } from "@/lib/config/constants";
 import { requireSameOrigin } from "@/lib/security/request-origin";
 import { apiSuccess, resolveRequestId } from "@/lib/utils/api-response";
 
-import { requireBetterAuthProvider, requireInternalBackend, withApiHandler } from "../route-utils";
+import { requireInternalBackend, withApiHandler } from "../route-utils";
 
 async function logoutHandler(request: Request): Promise<Response> {
   const requestId = resolveRequestId(request.headers);
@@ -12,11 +12,6 @@ async function logoutHandler(request: Request): Promise<Response> {
   if (backendError) {
     return backendError;
   }
-  const providerError = requireBetterAuthProvider({ requestId, route });
-  if (providerError) {
-    return providerError;
-  }
-
   const originError = requireSameOrigin(request, { requestId, route });
   if (originError) {
     return originError;
