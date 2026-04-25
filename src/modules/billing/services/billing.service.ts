@@ -4,16 +4,6 @@ import { apiClient } from "@/services/apiClient";
 
 export const billingService = {
   async summary(): Promise<BillingSummary> {
-    return apiClient.get<BillingSummary>(
-      `${API_PREFIX}/billing/summary`,
-      `
-      query BillingSummary {
-        billingSummary {
-          activePlans
-          mrr
-        }
-      }
-      `
-    );
+    return apiClient.get<BillingSummary>(`${API_PREFIX}/billing/summary`);
   }
 };

@@ -1,23 +1,9 @@
 import { and, eq } from "drizzle-orm";
 
 import type { AuthAdapter, AuthUserRecord } from "@/lib/auth/adapter";
-import { appConfig } from "@/lib/config/app-config";
 import { getDrizzleClient } from "@/lib/db/providers/drizzle";
-import { getMongoDb } from "@/lib/db/providers/mongo";
 import { authUsers } from "@/lib/db/schema";
 import type { UserRole } from "@/types/auth";
-
-interface MongoAuthUserDocument {
-  id: string;
-  name: string;
-  email: string;
-  role: UserRole;
-  passwordHash: string;
-  failedLoginAttempts: number;
-  lockedUntil: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
-}
 
 export class AuthEmailExistsError extends Error {
   constructor() {
@@ -28,129 +14,6 @@ export class AuthEmailExistsError extends Error {
 
 export function isAuthEmailExistsError(error: unknown): boolean {
   return error instanceof AuthEmailExistsError;
-}
-
-class MongoAuthAdapter implements AuthAdapter {
-  isConfigured(): boolean {
-    return Boolean(process.env.MONGODB_URI && process.env.MONGODB_DB_NAME);
-  }
-
-  private async getCollection() {
-    const mongoDb = await getMongoDb();
-    if (!mongoDb) {
-      return null;
-    }
-
-    return mongoDb.collection<MongoAuthUserDocument>("auth_users");
-  }
-
-  async findByEmail(email: string): Promise<AuthUserRecord | null> {
-    const collection = await this.getCollection();
-    if (!collection) {
-      return null;
-    }
-
-    const row = await collection.findOne({ email: email.toLowerCase() });
-
-    if (!row) {
-      return null;
-    }
-
-    return {
-      id: row.id,
-      name: row.name,
-      email: row.email,
-      role: row.role,
-      passwordHash: row.passwordHash,
-      failedLoginAttempts: row.failedLoginAttempts,
-      lockedUntil: row.lockedUntil
-    };
-  }
-
-  async createUser(input: {
-    name: string;
-    email: string;
-    role?: UserRole;
-    passwordHash: string;
-  }): Promise<AuthUserRecord> {
-    const collection = await this.getCollection();
-    if (!collection) {
-      throw new Error("MongoDB auth provider is not configured");
-    }
-
-    const normalizedEmail = input.email.toLowerCase();
-    const user: MongoAuthUserDocument = {
-      id: `u_${crypto.randomUUID()}`,
-      name: input.name,
-      email: normalizedEmail,
-      role: input.role ?? "user",
-      passwordHash: input.passwordHash,
-      failedLoginAttempts: 0,
-      lockedUntil: null,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-
-    const result = await collection.updateOne(
-      { email: normalizedEmail },
-      {
-        $setOnInsert: user
-      },
-      { upsert: true }
-    );
-    if (!result.upsertedId) {
-      throw new AuthEmailExistsError();
-    }
-
-    return {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      passwordHash: user.passwordHash,
-      failedLoginAttempts: user.failedLoginAttempts,
-      lockedUntil: user.lockedUntil
-    };
-  }
-
-  async resetFailedLoginAttempts(userId: string): Promise<void> {
-    const collection = await this.getCollection();
-    if (!collection) {
-      return;
-    }
-
-    await collection.updateOne(
-      { id: userId },
-      {
-        $set: {
-          failedLoginAttempts: 0,
-          lockedUntil: null,
-          updatedAt: new Date()
-        }
-      }
-    );
-  }
-
-  async recordFailedLoginAttempt(
-    user: Pick<AuthUserRecord, "id" | "failedLoginAttempts">,
-    lockUntil: Date | null
-  ): Promise<void> {
-    const collection = await this.getCollection();
-    if (!collection) {
-      return;
-    }
-
-    await collection.updateOne(
-      { id: user.id, failedLoginAttempts: user.failedLoginAttempts },
-      {
-        $set: {
-          failedLoginAttempts: user.failedLoginAttempts + 1,
-          lockedUntil: lockUntil,
-          updatedAt: new Date()
-        }
-      }
-    );
-  }
 }
 
 class PostgresAuthAdapter implements AuthAdapter {
@@ -255,31 +118,20 @@ class PostgresAuthAdapter implements AuthAdapter {
   }
 }
 
-const adapters: Record<"mongo" | "postgres", AuthAdapter> = {
-  mongo: new MongoAuthAdapter(),
-  postgres: new PostgresAuthAdapter()
-};
-
-function getActiveAdapter(): AuthAdapter {
-  return adapters[appConfig.dbProvider];
-}
+const adapter: AuthAdapter = new PostgresAuthAdapter();
 
 export type { AuthAdapter, AuthUserRecord } from "@/lib/auth/adapter";
 
 export function getAuthAdapter(): AuthAdapter {
-  return getActiveAdapter();
+  return adapter;
 }
 
 export function isAuthDatabaseConfigured(): boolean {
-  if (appConfig.backendMode === "external") {
-    return false;
-  }
-
-  return getActiveAdapter().isConfigured();
+  return adapter.isConfigured();
 }
 
 export async function findAuthUserByEmail(email: string): Promise<AuthUserRecord | null> {
-  return getActiveAdapter().findByEmail(email);
+  return adapter.findByEmail(email);
 }
 
 export async function createAuthUser(input: {
@@ -288,16 +140,16 @@ export async function createAuthUser(input: {
   role?: UserRole;
   passwordHash: string;
 }): Promise<AuthUserRecord> {
-  return getActiveAdapter().createUser(input);
+  return adapter.createUser(input);
 }
 
 export async function resetFailedLoginAttempts(userId: string): Promise<void> {
-  await getActiveAdapter().resetFailedLoginAttempts(userId);
+  await adapter.resetFailedLoginAttempts(userId);
 }
 
 export async function recordFailedLoginAttempt(
   user: Pick<AuthUserRecord, "id" | "failedLoginAttempts">,
   lockUntil: Date | null
 ): Promise<void> {
-  await getActiveAdapter().recordFailedLoginAttempt(user, lockUntil);
+  await adapter.recordFailedLoginAttempt(user, lockUntil);
 }

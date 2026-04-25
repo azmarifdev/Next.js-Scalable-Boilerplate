@@ -1,4 +1,5 @@
-export const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME ?? "Next Starter Template";
+export const APP_NAME =
+  process.env.NEXT_PUBLIC_APP_NAME ?? "Next.js-Boilerplate-PostgresQL-Drizzle";
 export const API_VERSION = "v1";
 export const API_PREFIX = `/api/${API_VERSION}`;
 

@@ -39,19 +39,6 @@ export function resolveApiEndpoint(path: string): string {
   return `${base}${API_PREFIX}${normalized}`;
 }
 
-export function getGraphqlEndpoint(): string {
-  if (appConfig.backendMode === "internal") {
-    return "/graphql";
-  }
-
-  const base = getApiBaseUrl();
-  if (!base) {
-    return "/graphql";
-  }
-
-  return `${base}/graphql`;
-}
-
 export function assertExternalApiBaseUrlConfigured(): void {
   if (appConfig.backendMode !== "external") {
     return;

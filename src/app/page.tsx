@@ -4,17 +4,15 @@ import { getTranslations } from "next-intl/server";
 
 import { LangSwitcher } from "@/components/layout/lang-switcher";
 import { ThemeSwitcher } from "@/components/layout/theme-switcher";
-import { appConfig } from "@/lib/config/app-config";
 
 export default async function HomePage() {
   const t = await getTranslations("home");
-  const getStartedHref = appConfig.authProvider === "nextauth" ? "/login" : "/register";
 
   return (
     <main className="landing-wrap">
       <header className="showcase-topbar">
         <div className="showcase-topbar-inner container">
-          <p className="showcase-brand">Azmarif Dev</p>
+          <p className="showcase-brand">Next.js-Boilerplate-PostgresQL-Drizzle</p>
           <div className="showcase-topbar-actions">
             <LangSwitcher />
             <ThemeSwitcher />
@@ -38,12 +36,12 @@ export default async function HomePage() {
           <Globe size={14} suppressHydrationWarning /> {t("meta")}
         </p>
         <div className="showcase-actions">
-          <Link className="showcase-btn-primary" href={getStartedHref}>
+          <Link className="showcase-btn-primary" href="/register">
             {t("getStarted")} <ArrowRight size={15} suppressHydrationWarning />
           </Link>
           <a
             className="showcase-btn-secondary"
-            href="https://github.com/azmarifdev/nextjs-starter-template"
+            href="https://github.com/azmarifdev/next-js-boilerplate-postgresql-drizzle"
             target="_blank"
             rel="noreferrer"
           >

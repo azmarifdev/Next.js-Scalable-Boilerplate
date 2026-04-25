@@ -9,7 +9,6 @@ import {
 import { shouldUseSecureCookies } from "@/lib/auth/cookie-security";
 import { hashPassword } from "@/lib/auth/password";
 import { createSessionToken } from "@/lib/auth/session";
-import { appConfig } from "@/lib/config/app-config";
 import { AUTH_COOKIE_NAME, AUTH_SESSION_TTL_SECONDS } from "@/lib/config/constants";
 import { setRequestIdHeader } from "@/lib/observability/request-id";
 import { withTrace } from "@/lib/observability/tracing";
@@ -18,7 +17,7 @@ import { requireSameOrigin } from "@/lib/security/request-origin";
 import { apiError, apiSuccess, resolveRequestId } from "@/lib/utils/api-response";
 import { registerSchema } from "@/modules/auth/auth.validation";
 
-import { requireCustomAuthProvider, requireInternalBackend, withApiHandler } from "../route-utils";
+import { requireBetterAuthProvider, requireInternalBackend, withApiHandler } from "../route-utils";
 
 function prefersHtmlResponse(request: NextRequest): boolean {
   const accept = request.headers.get("accept") ?? "";
@@ -65,14 +64,6 @@ async function parsePayload(request: NextRequest): Promise<unknown> {
   return request.json().catch(() => null);
 }
 
-function getRegistrationUnavailableMessage(): string {
-  if (appConfig.dbProvider === "mongo") {
-    return "Registration is unavailable. Configure MONGODB_URI and MONGODB_DB_NAME first.";
-  }
-
-  return "Registration is unavailable. Configure DATABASE_URL first.";
-}
-
 async function registerHandler(request: NextRequest): Promise<Response> {
   const requestId = resolveRequestId(request.headers);
   const route = "/api/v1/auth/register";
@@ -80,7 +71,7 @@ async function registerHandler(request: NextRequest): Promise<Response> {
   if (backendError) {
     return backendError;
   }
-  const providerError = requireCustomAuthProvider({ requestId, route });
+  const providerError = requireBetterAuthProvider({ requestId, route });
   if (providerError) {
     return providerError;
   }
@@ -103,7 +94,7 @@ async function registerHandler(request: NextRequest): Promise<Response> {
         return apiError(
           {
             code: "AUTH_UNAVAILABLE",
-            message: getRegistrationUnavailableMessage()
+            message: "Registration is unavailable. Configure DATABASE_URL first."
           },
           { status: 503, requestId, route }
         );

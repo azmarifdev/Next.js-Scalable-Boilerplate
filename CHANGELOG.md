@@ -2,17 +2,15 @@
 
 ## [0.1.5](https://github.com/azmarifdev/Next.js-Scalable-Boilerplate/compare/nextjs-starter-template-v0.1.4...nextjs-starter-template-v0.1.5) (2026-04-24)
 
-
 ### Bug Fixes
 
-* **ci:** setup pnpm before setup-node cache resolution ([d970fb7](https://github.com/azmarifdev/Next.js-Scalable-Boilerplate/commit/d970fb75bbc3d597728d010579d79c7c9b55757f))
-* make e2e reliable and standardize pnpm workflow docs ([aa6d820](https://github.com/azmarifdev/Next.js-Scalable-Boilerplate/commit/aa6d8203c23a4b8c13b428159e9559bb1a3a742e))
-* standardize pnpm workflow and stabilize playwright e2e setup ([9d5a1b9](https://github.com/azmarifdev/Next.js-Scalable-Boilerplate/commit/9d5a1b958d97e2ea93c4c9fb7453f8832d6ddb7c))
-
+- **ci:** setup pnpm before setup-node cache resolution ([d970fb7](https://github.com/azmarifdev/Next.js-Scalable-Boilerplate/commit/d970fb75bbc3d597728d010579d79c7c9b55757f))
+- make e2e reliable and standardize pnpm workflow docs ([aa6d820](https://github.com/azmarifdev/Next.js-Scalable-Boilerplate/commit/aa6d8203c23a4b8c13b428159e9559bb1a3a742e))
+- standardize pnpm workflow and stabilize playwright e2e setup ([9d5a1b9](https://github.com/azmarifdev/Next.js-Scalable-Boilerplate/commit/9d5a1b958d97e2ea93c4c9fb7453f8832d6ddb7c))
 
 ### CI
 
-* verify package-lock sync before npm ci issues ([b0bed70](https://github.com/azmarifdev/Next.js-Scalable-Boilerplate/commit/b0bed70272c1908cd7d76d9c2f24ece0f3a9cb24))
+- verify package-lock sync before npm ci issues ([b0bed70](https://github.com/azmarifdev/Next.js-Scalable-Boilerplate/commit/b0bed70272c1908cd7d76d9c2f24ece0f3a9cb24))
 
 ## [0.1.4](https://github.com/azmarifdev/Next.js-Scalable-Boilerplate/compare/nextjs-starter-template-v0.1.3...nextjs-starter-template-v0.1.4) (2026-04-24)
 

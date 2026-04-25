@@ -6,9 +6,9 @@
     "toggleLanguage": "ভাষা পরিবর্তন করুন"
   },
   "home": {
-    "title": "Nextjs Starter Template",
+    "title": "Next.js-Boilerplate-PostgresQL-Drizzle",
     "titleSuffix": "স্টার্টার টেমপ্লেট",
-    "subtitle": "SaaS, dashboard এবং modern web app এর জন্য production-ready Next.js starter template। দ্রুত launch, maintainable growth এবং production-grade development workflow-এর জন্য তৈরি।",
+    "subtitle": "SaaS, dashboard এবং modern web app এর জন্য production-ready Next.js-Boilerplate-PostgresQL-Drizzle। দ্রুত launch, maintainable growth এবং production-grade development workflow-এর জন্য তৈরি।",
     "signIn": "সাইন ইন",
     "getStarted": "শুরু করুন",
     "badge": "A. Z. M. Arif · ফুল-স্ট্যাক সফটওয়্যার ডেভেলপার",
@@ -34,7 +34,7 @@
   },
   "dashboard": {
     "overviewTitle": "ড্যাশবোর্ড ওভারভিউ",
-    "overviewSubtitle": "এটি SaaS, internal tools এবং admin dashboard-এর জন্য domain-neutral starter template।",
+    "overviewSubtitle": "এটি SaaS, internal tools এবং admin dashboard-এর জন্য domain-neutral Next.js-Boilerplate-PostgresQL-Drizzle।",
     "projectsTitle": "প্রজেক্ট এক নজরে",
     "projectsSubtitle": "এক জায়গায় project progress, ownership এবং status ট্র্যাক করুন।",
     "tasksTitle": "টাস্ক ওয়ার্কফ্লো",

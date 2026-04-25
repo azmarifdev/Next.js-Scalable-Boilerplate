@@ -1,10 +1,10 @@
 import type { Permission, UserRole } from "@/types/auth";
 import { permissions, roles } from "@/types/auth";
 
-export type ApiMode = "rest" | "graphql";
+export type ApiMode = "rest";
 export type BackendMode = "external" | "internal";
-export type DbProvider = "mongo" | "postgres";
-export type AuthProvider = "custom" | "nextauth";
+export type DbProvider = "postgres";
+export type AuthProvider = "better-auth" | "custom";
 
 interface FeatureConfig {
   ecommerce: boolean;
@@ -34,26 +34,18 @@ function parseBoolean(value: string | undefined, fallback: boolean): boolean {
   return value === "true";
 }
 
-function parseApiMode(value: string | undefined): ApiMode {
-  return value === "graphql" ? "graphql" : "rest";
-}
-
 function parseBackendMode(value: string | undefined): BackendMode {
   return value === "internal" ? "internal" : "external";
 }
 
-function parseDbProvider(value: string | undefined): DbProvider {
-  return value === "postgres" ? "postgres" : "mongo";
-}
-
 function parseAuthProvider(value: string | undefined): AuthProvider {
-  return value === "nextauth" ? "nextauth" : "custom";
+  return value === "custom" ? "custom" : "better-auth";
 }
 
 export const appConfig: AppConfig = {
-  apiMode: parseApiMode(process.env.NEXT_PUBLIC_API_MODE),
+  apiMode: "rest",
   backendMode: parseBackendMode(process.env.NEXT_PUBLIC_BACKEND_MODE),
-  dbProvider: parseDbProvider(process.env.NEXT_PUBLIC_DB_PROVIDER),
+  dbProvider: "postgres",
   authProvider: parseAuthProvider(process.env.NEXT_PUBLIC_AUTH_PROVIDER),
   features: {
     ecommerce: parseBoolean(process.env.NEXT_PUBLIC_FEATURE_ECOMMERCE, true),

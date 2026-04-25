@@ -7,7 +7,7 @@ import { AUTH_COOKIE_NAME } from "@/lib/config/constants";
 
 const ORIGINAL_ENV = {
   NEXT_PUBLIC_BACKEND_MODE: process.env.NEXT_PUBLIC_BACKEND_MODE,
-  NEXT_PUBLIC_DB_PROVIDER: process.env.NEXT_PUBLIC_DB_PROVIDER,
+  NEXT_PUBLIC_AUTH_PROVIDER: process.env.NEXT_PUBLIC_AUTH_PROVIDER,
   DATABASE_URL: process.env.DATABASE_URL,
   ALLOW_DEMO_AUTH: process.env.ALLOW_DEMO_AUTH,
   ALLOW_INSECURE_DEV_AUTH: process.env.ALLOW_INSECURE_DEV_AUTH,
@@ -21,7 +21,7 @@ beforeEach(() => {
 
 afterEach(() => {
   process.env.NEXT_PUBLIC_BACKEND_MODE = ORIGINAL_ENV.NEXT_PUBLIC_BACKEND_MODE;
-  process.env.NEXT_PUBLIC_DB_PROVIDER = ORIGINAL_ENV.NEXT_PUBLIC_DB_PROVIDER;
+  process.env.NEXT_PUBLIC_AUTH_PROVIDER = ORIGINAL_ENV.NEXT_PUBLIC_AUTH_PROVIDER;
   process.env.DATABASE_URL = ORIGINAL_ENV.DATABASE_URL;
   process.env.ALLOW_DEMO_AUTH = ORIGINAL_ENV.ALLOW_DEMO_AUTH;
   process.env.ALLOW_INSECURE_DEV_AUTH = ORIGINAL_ENV.ALLOW_INSECURE_DEV_AUTH;
@@ -43,7 +43,7 @@ function buildJsonRequest(url: string, body: Record<string, unknown>): NextReque
 describe("auth api integration", () => {
   it("returns service unavailable envelope for register when DB is missing", async () => {
     process.env.NEXT_PUBLIC_BACKEND_MODE = "internal";
-    process.env.NEXT_PUBLIC_DB_PROVIDER = "postgres";
+    process.env.NEXT_PUBLIC_AUTH_PROVIDER = "better-auth";
     delete process.env.DATABASE_URL;
     const { POST: registerPost } = await import("@/app/api/v1/auth/register/route");
 
@@ -63,7 +63,7 @@ describe("auth api integration", () => {
 
   it("supports login + me + protected resources with envelope", async () => {
     process.env.NEXT_PUBLIC_BACKEND_MODE = "internal";
-    process.env.NEXT_PUBLIC_DB_PROVIDER = "postgres";
+    process.env.NEXT_PUBLIC_AUTH_PROVIDER = "better-auth";
     delete process.env.DATABASE_URL;
     process.env.ALLOW_DEMO_AUTH = "true";
     process.env.ALLOW_INSECURE_DEV_AUTH = "true";

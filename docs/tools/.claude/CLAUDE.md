@@ -1,6 +1,6 @@
 # AI Collaboration Guide
 
-Repository: `nextjs-starter-template`
+Repository: `Next.js-Boilerplate-PostgresQL-Drizzle`
 Audience: Claude-style coding assistants and contributors using AI support.
 
 ## 1) Operating Contract

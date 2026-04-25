@@ -53,12 +53,13 @@ export function requireInternalBackend(options: { requestId: string; route: stri
   return null;
 }
 
-export function requireCustomAuthProvider(options: { requestId: string; route: string }) {
-  if (appConfig.authProvider !== "custom") {
+export function requireBetterAuthProvider(options: { requestId: string; route: string }) {
+  if (appConfig.authProvider !== "better-auth") {
     return apiError(
       {
         code: "AUTH_PROVIDER_DISABLED",
-        message: "Custom auth API is disabled. Set NEXT_PUBLIC_AUTH_PROVIDER=custom to enable it."
+        message:
+          "Better Auth API is disabled. Set NEXT_PUBLIC_AUTH_PROVIDER=better-auth to enable it."
       },
       {
         status: 404,
