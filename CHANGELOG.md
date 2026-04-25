@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.11](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/Next.js-Boilerplate-PostgresQL-Drizzle-v0.1.10...Next.js-Boilerplate-PostgresQL-Drizzle-v0.1.11) (2026-04-25)
+
+
+### Refactoring
+
+* **architecture:** enforce single-path stack and move tool confi… ([2837e24](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/2837e24fbeaad44a0378d931e6e14e1e6ff5a1fb))
+* **architecture:** enforce single-path stack and move tool configs to docs/tools ([41723f1](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/41723f1a3e4e9750b34c050521cda840f57f009a))
+
 ## [0.1.10](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/Next.js-Boilerplate-PostgresQL-Drizzle-v0.1.9...Next.js-Boilerplate-PostgresQL-Drizzle-v0.1.10) (2026-04-25)
 
 
