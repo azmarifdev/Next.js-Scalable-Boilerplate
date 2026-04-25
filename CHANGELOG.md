@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.12](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/Next.js-Boilerplate-PostgresQL-Drizzle-v0.1.11...Next.js-Boilerplate-PostgresQL-Drizzle-v0.1.12) (2026-04-25)
+
+
+### Refactoring
+
+* **routes:** gate billing and ecommerce pages behind featureFlags ([bedda52](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/bedda5284ab650d9709ebf047b99c781a72de464))
+
 ## [0.1.11](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/Next.js-Boilerplate-PostgresQL-Drizzle-v0.1.10...Next.js-Boilerplate-PostgresQL-Drizzle-v0.1.11) (2026-04-25)
 
 
