@@ -1,5 +1,5 @@
 {
-  "name": "nextjs-starter-template",
+  "name": "next-js-boilerplate-postgresql-drizzle",
   "version": "0.1.5",
   "private": true,
   "packageManager": "pnpm@10.33.0",
@@ -36,8 +36,8 @@
     "codehawk": "codehawk src",
     "docs:check": "node scripts/check-docs.mjs",
     "clean": "node scripts/clean.mjs",
-    "docker:build": "docker build -t nextjs-starter-template .",
-    "docker:run": "docker run --env-file .env.local -p 3000:3000 nextjs-starter-template",
+    "docker:build": "docker build -t next-js-boilerplate-postgresql-drizzle .",
+    "docker:run": "docker run --env-file .env.local -p 3000:3000 next-js-boilerplate-postgresql-drizzle",
     "docker:up": "docker compose up --build",
     "docker:up:db": "docker compose --profile db up --build",
     "docker:down": "docker compose down",
