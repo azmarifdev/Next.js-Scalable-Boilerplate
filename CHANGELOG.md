@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.9](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/Next.js-Boilerplate-PostgresQL-Drizzle-v0.1.8...Next.js-Boilerplate-PostgresQL-Drizzle-v0.1.9) (2026-04-25)
+
+
+### Bug Fixes
+
+* **ci:** ignore generated changelog from prettier check ([054c386](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/054c38641046eccdafd362289da7fae48431f040))
+
 ## [0.1.8](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/Next.js-Boilerplate-PostgresQL-Drizzle-v0.1.7...Next.js-Boilerplate-PostgresQL-Drizzle-v0.1.8) (2026-04-25)
 
 
