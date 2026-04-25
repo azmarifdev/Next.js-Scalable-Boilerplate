@@ -5,7 +5,6 @@ export type ApiMode = "rest";
 export type BackendMode = "external" | "internal";
 export type DbProvider = "postgres";
 export type AuthProvider = "better-auth";
-export type StateMode = "react-query";
 
 interface FeatureConfig {
   ecommerce: boolean;
@@ -23,7 +22,6 @@ export interface AppConfig {
   backendMode: BackendMode;
   dbProvider: DbProvider;
   authProvider: AuthProvider;
-  stateMode: StateMode;
   features: FeatureConfig;
   auth: AuthConfig;
 }
@@ -45,10 +43,15 @@ export const appConfig: AppConfig = {
   backendMode: parseBackendMode(process.env.NEXT_PUBLIC_BACKEND_MODE),
   dbProvider: "postgres",
   authProvider: "better-auth",
-  stateMode: "react-query",
   features: {
-    ecommerce: parseBoolean(process.env.NEXT_PUBLIC_ENABLE_ECOMMERCE, false),
-    billing: parseBoolean(process.env.NEXT_PUBLIC_ENABLE_BILLING, false),
+    ecommerce: parseBoolean(
+      process.env.NEXT_PUBLIC_ENABLE_ECOMMERCE ?? process.env.ENABLE_ECOMMERCE,
+      false
+    ),
+    billing: parseBoolean(
+      process.env.NEXT_PUBLIC_ENABLE_BILLING ?? process.env.ENABLE_BILLING,
+      false
+    ),
     admin: parseBoolean(process.env.NEXT_PUBLIC_FEATURE_ADMIN, true)
   },
   auth: {
