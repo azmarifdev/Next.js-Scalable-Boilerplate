@@ -1,108 +1,69 @@
-# Next.js Starter Boilerplate
+# Next.js-Boilerplate-PostgresQL-Drizzle
 
-Production-ready Next.js App Router boilerplate by **[A. Z. M. Arif](https://azmarif.dev)** for SaaS dashboards and product frontends.
+Production-ready Next.js boilerplate with a single, opinionated stack:
 
-## Highlights
+- PostgreSQL
+- Drizzle ORM
+- REST API (`/api/v1`)
+- Better Auth as default auth mode
 
-- Built and maintained by **[Azmarif Dev](https://azmarif.dev)**
-- External backend-first architecture
-- REST + GraphQL transport layer support
-- Config-driven runtime modes
-- MongoDB default, PostgreSQL optional
-- Custom auth and NextAuth support
-- Clean module boundaries with scalable feature structure
-- Docker-first deployment
-- Uses pnpm workflow
+## Requirements
 
-## Runtime Baseline
-
-- Node.js: `22.x` (see `.nvmrc`)
-- pnpm: `10.x`
-- Engines: `>=20 <23` (for compatibility window)
-
-## Core Rules
-
-- `modules/` contains business features only
-- `components/` contains reusable UI only
-- `services/` contains API communication only
-- `lib/` contains system internals only
-- `providers/` contains global providers composed in one place
-
-Data flow:
-
-`Page -> Module -> Service -> API -> Backend`
+- Node.js `>=20 <23`
+- pnpm `10.x`
+- PostgreSQL
 
 ## Quick Start
 
 ```bash
-nvm use
-pnpm install --frozen-lockfile
+pnpm install
 cp .env.example .env.local
+pnpm db:migrate
 pnpm dev
 ```
 
-## Required Config
+## Environment
 
-Main config is in `src/lib/config/app-config.ts`.
-
-```ts
-export const appConfig = {
-  apiMode: "rest", // rest | graphql
-  backendMode: "external", // external | internal
-  dbProvider: "mongo", // mongo | postgres
-  authProvider: "custom", // custom | nextauth
-  features: {
-    ecommerce: true,
-    billing: true,
-    admin: true
-  }
-};
+```env
+NEXT_PUBLIC_BACKEND_MODE=internal
+NEXT_PUBLIC_AUTH_PROVIDER=better-auth
+DATABASE_URL=
+AUTH_SESSION_SECRET=
 ```
 
-Important guardrail:
+`NEXT_PUBLIC_AUTH_PROVIDER` supports:
 
-- `backendMode=internal` + `authProvider=custom` supports only `apiMode=rest` in this template.
+- `better-auth` (default)
+- `custom` (optional mode)
 
-## Package Manager Policy
+## Scripts
 
-- Use pnpm for local and CI workflows.
-- When dependencies change, update `pnpm-lock.yaml` in the same PR.
-- Manager migration strategy and guardrails are documented in `docs/migrations/package-manager.md`.
+- `npm run dev`
+- `npm run build`
+- `npm run lint`
+- `npm run typecheck`
+- `npm run test`
+- `npm run e2e`
+- `npm run docs:check`
 
-## API Strategy
+## Architecture
 
-- External backend is default.
-- Frontend does not define business APIs.
-- Internal route handlers are retained only for auth support:
-  - `src/app/api/auth/[...nextauth]/route.ts`
-  - `src/app/api/v1/auth/*`
+- `src/modules`: business logic
+- `src/lib`: core systems
+- `src/services`: external/API layer
+- `src/providers`: app providers
 
-## Documentation
+## API
+
+Internal API routes are versioned under:
+
+- `/api/v1/auth/*`
+
+## Docs
 
 - `docs/architecture.md`
 - `docs/folder-structure.md`
 - `docs/auth-flow.md`
 - `docs/how-to-use.md`
-- `docs/deployment/cloud-providers.md`
 - `docs/migrations/package-manager.md`
 - `docs/guides/README.md`
-
-## Branding
-
-- Author: **[A. Z. M. Arif (Azmarif Dev)](https://azmarif.dev)**
-- Website: `https://azmarif.dev`
-- GitHub: `https://github.com/azmarifdev`
-
-## Commands
-
-```bash
-pnpm dev
-pnpm build
-pnpm start
-pnpm lint
-pnpm typecheck
-pnpm test
-pnpm e2e
-pnpm docs:check
-pnpm docker:up
-```

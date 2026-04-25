@@ -64,8 +64,8 @@ Equivalent install step also works with:
 ### Docker (Canonical)
 
 ```bash
-docker build -t nextjs-starter-template .
-docker run --env-file .env.local -p 3000:3000 nextjs-starter-template
+docker build -t next-js-boilerplate-postgresql-drizzle .
+docker run --env-file .env.local -p 3000:3000 next-js-boilerplate-postgresql-drizzle
 ```
 
 ### Docker Compose

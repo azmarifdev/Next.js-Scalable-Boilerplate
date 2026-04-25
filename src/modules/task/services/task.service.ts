@@ -4,19 +4,6 @@ import { apiClient } from "@/services/apiClient";
 
 export const taskService = {
   async listTasks(): Promise<TaskItem[]> {
-    return apiClient.get<TaskItem[]>(
-      `${API_PREFIX}/tasks`,
-      `
-      query Tasks {
-        tasks {
-          id
-          title
-          assignee
-          priority
-          status
-        }
-      }
-      `
-    );
+    return apiClient.get<TaskItem[]>(`${API_PREFIX}/tasks`);
   }
 };

@@ -1,5 +1,5 @@
 ---
-description: Strict project rules for AI edits in nextjs-starter-template
+description: Strict project rules for AI edits in Next.js-Boilerplate-PostgresQL-Drizzle
 globs:
   - "**/*.{ts,tsx,js,jsx,json,md,yml,yaml}"
 alwaysApply: true

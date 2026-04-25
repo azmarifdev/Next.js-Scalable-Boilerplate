@@ -1,6 +1,6 @@
 # Product Context
 
-`nextjs-starter-template` is a production-ready starter for teams building modern web apps with Next.js.
+`Next.js-Boilerplate-PostgresQL-Drizzle` is a production-ready starter for teams building modern web apps with Next.js.
 
 It emphasizes:
 

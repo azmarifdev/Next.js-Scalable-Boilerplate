@@ -1,5 +1,5 @@
+import { betterAuthProvider } from "@/lib/auth/better-auth.provider";
 import { customAuthProvider } from "@/lib/auth/custom-auth.provider";
-import { nextAuthProvider } from "@/lib/auth/nextauth.provider";
 import { appConfig } from "@/lib/config/app-config";
 import type { AuthPayload, AuthResponse } from "@/modules/auth/auth.types";
 import type { User } from "@/types/user";
@@ -13,8 +13,8 @@ export interface AuthProvider {
 }
 
 const providers: Record<typeof appConfig.authProvider, AuthProvider> = {
-  custom: customAuthProvider,
-  nextauth: nextAuthProvider
+  "better-auth": betterAuthProvider,
+  custom: customAuthProvider
 };
 
 export const authProvider: AuthProvider = providers[appConfig.authProvider];

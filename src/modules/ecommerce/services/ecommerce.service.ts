@@ -4,16 +4,6 @@ import { apiClient } from "@/services/apiClient";
 
 export const ecommerceService = {
   async summary(): Promise<EcommerceSummary> {
-    return apiClient.get<EcommerceSummary>(
-      `${API_PREFIX}/ecommerce/summary`,
-      `
-      query EcommerceSummary {
-        ecommerceSummary {
-          orders
-          revenue
-        }
-      }
-      `
-    );
+    return apiClient.get<EcommerceSummary>(`${API_PREFIX}/ecommerce/summary`);
   }
 };

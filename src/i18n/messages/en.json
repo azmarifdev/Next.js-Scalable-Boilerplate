@@ -6,9 +6,9 @@
     "toggleLanguage": "Toggle language"
   },
   "home": {
-    "title": "Nextjs Starter Template",
-    "titleSuffix": "starter template",
-    "subtitle": "A production-ready Next.js starter template for SaaS, dashboards, and modern web apps. Built for quick launch, maintainable growth, and production-grade development workflow.",
+    "title": "Next.js-Boilerplate-PostgresQL-Drizzle",
+    "titleSuffix": "Next.js-Boilerplate-PostgresQL-Drizzle",
+    "subtitle": "A production-ready Next.js-Boilerplate-PostgresQL-Drizzle for SaaS, dashboards, and modern web apps. Built for quick launch, maintainable growth, and production-grade development workflow.",
     "signIn": "Sign in",
     "getStarted": "Get started",
     "badge": "By A. Z. M. Arif · Full Stack Software Developer",
@@ -34,7 +34,7 @@
   },
   "dashboard": {
     "overviewTitle": "Dashboard Overview",
-    "overviewSubtitle": "This is a domain-neutral starter template for SaaS, internal tools, and admin dashboards.",
+    "overviewSubtitle": "This is a domain-neutral Next.js-Boilerplate-PostgresQL-Drizzle for SaaS, internal tools, and admin dashboards.",
     "projectsTitle": "Projects at a glance",
     "projectsSubtitle": "Track project progress, ownership, and status in one place.",
     "tasksTitle": "Task workflow",

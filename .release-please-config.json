@@ -49,7 +49,7 @@
   ],
   "packages": {
     ".": {
-      "package-name": "nextjs-starter-template",
+      "package-name": "Next.js-Boilerplate-PostgresQL-Drizzle",
       "changelog-path": "CHANGELOG.md",
       "bump-minor-pre-major": true,
       "bump-patch-for-minor-pre-major": true,

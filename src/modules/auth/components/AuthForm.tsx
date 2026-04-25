@@ -6,7 +6,6 @@ import { useEffect, useRef } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { appConfig } from "@/lib/config/app-config";
 import { resolveApiEndpoint } from "@/lib/config/runtime";
 import { useAuthForm } from "@/modules/auth/hooks/use-auth-form.hook";
 
@@ -18,7 +17,6 @@ export function AuthForm({ mode }: AuthFormProps) {
   const t = useTranslations("auth");
   const { form, serverError, onSubmit, isSubmitting } = useAuthForm({ mode });
   const formRef = useRef<HTMLFormElement | null>(null);
-  const isNextAuth = appConfig.authProvider === "nextauth";
 
   useEffect(() => {
     formRef.current?.setAttribute("data-hydrated", "true");
@@ -29,9 +27,8 @@ export function AuthForm({ mode }: AuthFormProps) {
     formState: { errors }
   } = form;
 
-  const actionPath = isNextAuth
-    ? undefined
-    : mode === "login"
+  const actionPath =
+    mode === "login"
       ? `${resolveApiEndpoint("/auth/login")}?redirect=/dashboard`
       : `${resolveApiEndpoint("/auth/register")}?redirect=/dashboard`;
 
@@ -82,14 +79,12 @@ export function AuthForm({ mode }: AuthFormProps) {
             : t("actions.register")}
       </Button>
 
-      {!isNextAuth || mode === "register" ? (
-        <p className="help-text">
-          {mode === "login" ? t("loginSwitchText") : t("registerSwitchText")}{" "}
-          <Link href={mode === "login" ? "/register" : "/login"} className="link-inline">
-            {mode === "login" ? t("actions.register") : t("actions.login")}
-          </Link>
-        </p>
-      ) : null}
+      <p className="help-text">
+        {mode === "login" ? t("loginSwitchText") : t("registerSwitchText")}{" "}
+        <Link href={mode === "login" ? "/register" : "/login"} className="link-inline">
+          {mode === "login" ? t("actions.register") : t("actions.login")}
+        </Link>
+      </p>
     </form>
   );
 }

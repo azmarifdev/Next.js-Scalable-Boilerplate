@@ -1,20 +1,19 @@
 # Auth Flow
 
-## Custom Auth Provider
+## Default Mode
 
-1. User submits `AuthForm`.
-2. `modules/auth/hooks/use-auth-form.hook.ts` runs mutation via `authService`.
-3. `modules/auth/services/auth.service.ts` uses `lib/auth/auth.provider.ts`.
-4. `lib/auth/custom-auth.provider.ts` calls backend auth endpoints through `services/apiClient.ts`.
-5. Session state is synced through `providers/auth.provider.tsx`.
+- `NEXT_PUBLIC_AUTH_PROVIDER=better-auth`
+- Auth endpoints live at `src/app/api/v1/auth/*`
+- Client auth provider is `src/lib/auth/better-auth.provider.ts`
 
-## NextAuth Provider
+## Optional Custom Mode
 
-1. `NEXT_PUBLIC_AUTH_PROVIDER=nextauth` switches active auth provider.
-2. Requests flow through `src/app/api/auth/[...nextauth]/route.ts`.
-3. Core NextAuth config lives in `src/lib/auth/nextauth.ts`.
+- `NEXT_PUBLIC_AUTH_PROVIDER=custom`
+- Internal Better Auth API routes are disabled
+- Custom mode is reserved for external/custom integration
 
-## Route Guards
+## Session
 
-- Route-level protection is enforced in `src/proxy.ts`.
-- Permission checks use RBAC utilities in `src/lib/auth/rbac.ts`.
+- Cookie name: `auth_token`
+- Session token signing uses `AUTH_SESSION_SECRET` or `AUTH_SESSION_SECRETS`
+- Demo auth fallback is disabled unless `ALLOW_DEMO_AUTH=true`

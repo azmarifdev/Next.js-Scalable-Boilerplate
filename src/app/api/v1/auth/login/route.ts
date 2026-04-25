@@ -10,7 +10,6 @@ import { shouldUseSecureCookies } from "@/lib/auth/cookie-security";
 import { tryDevAuthLogin } from "@/lib/auth/dev-auth-fallback";
 import { verifyPassword } from "@/lib/auth/password";
 import { createSessionToken } from "@/lib/auth/session";
-import { appConfig } from "@/lib/config/app-config";
 import { AUTH_COOKIE_NAME, AUTH_SESSION_TTL_SECONDS } from "@/lib/config/constants";
 import { logger } from "@/lib/observability/logger";
 import { setRequestIdHeader } from "@/lib/observability/request-id";
@@ -21,7 +20,7 @@ import { requireSameOrigin } from "@/lib/security/request-origin";
 import { apiError, apiSuccess, resolveRequestId } from "@/lib/utils/api-response";
 import { loginSchema } from "@/modules/auth/auth.validation";
 
-import { requireCustomAuthProvider, requireInternalBackend, withApiHandler } from "../route-utils";
+import { requireBetterAuthProvider, requireInternalBackend, withApiHandler } from "../route-utils";
 
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCK_WINDOW_MS = 15 * 60 * 1000;
@@ -74,14 +73,6 @@ async function parsePayload(request: NextRequest): Promise<unknown> {
   return request.json().catch(() => null);
 }
 
-function getAuthUnavailableMessage(): string {
-  if (appConfig.dbProvider === "mongo") {
-    return "Authentication is unavailable. Configure MONGODB_URI and MONGODB_DB_NAME first.";
-  }
-
-  return "Authentication is unavailable. Configure DATABASE_URL first.";
-}
-
 async function loginHandler(request: NextRequest): Promise<Response> {
   const requestId = resolveRequestId(request.headers);
   const route = "/api/v1/auth/login";
@@ -89,7 +80,7 @@ async function loginHandler(request: NextRequest): Promise<Response> {
   if (backendError) {
     return backendError;
   }
-  const providerError = requireCustomAuthProvider({ requestId, route });
+  const providerError = requireBetterAuthProvider({ requestId, route });
   if (providerError) {
     return providerError;
   }
@@ -115,7 +106,7 @@ async function loginHandler(request: NextRequest): Promise<Response> {
         return apiError(
           {
             code: "AUTH_UNAVAILABLE",
-            message: getAuthUnavailableMessage()
+            message: "Authentication is unavailable. Configure DATABASE_URL first."
           },
           { status: 503, requestId, route }
         );
