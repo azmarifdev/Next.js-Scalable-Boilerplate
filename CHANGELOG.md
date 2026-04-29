@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.15](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/Next.js-Boilerplate-PostgresQL-Drizzle-v0.1.14...Next.js-Boilerplate-PostgresQL-Drizzle-v0.1.15) (2026-04-29)
+
+
+### Features
+
+* add landing i18n, theme/lang switches, and centered docs/featur… ([3986526](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/3986526aaa2d78de5d3d0e8c369601b966d05d2a))
+* add landing i18n, theme/lang switches, and centered docs/features layouts ([d1572fe](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/d1572fe4b8ce32280fa88746d3f6b6560b67e640))
+
+
+### Bug Fixes
+
+* **e2e:** fix e2e test mismatch ([6780adf](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/6780adffa020066fa095761e5fbea2e7acbe966c))
+* **e2e:** fix e2e test mismatch ([80d8cbc](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/80d8cbcf41c15cee5e922d76ce072de1162944d5))
+* regenerate pnpm lockfile after rebase ([f0584ff](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/f0584ff2f404d428c277f9b75601ad3fbe0974df))
+
 ## [0.1.14](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/Next.js-Boilerplate-PostgresQL-Drizzle-v0.1.13...Next.js-Boilerplate-PostgresQL-Drizzle-v0.1.14) (2026-04-25)
 
 
