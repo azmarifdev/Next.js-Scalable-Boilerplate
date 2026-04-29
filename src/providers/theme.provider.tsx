@@ -15,7 +15,7 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 function getInitialTheme(): AppTheme {
   if (typeof window === "undefined") {
-    return "light";
+    return "dark";
   }
 
   const savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
@@ -26,12 +26,19 @@ function getInitialTheme(): AppTheme {
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
+function applyTheme(theme: AppTheme): void {
+  document.documentElement.setAttribute("data-theme", theme);
+  document.documentElement.style.colorScheme = theme;
+  document.body.setAttribute("data-theme", theme);
+  document.body.style.colorScheme = theme;
+  window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+}
+
 export function ThemeProvider({ children }: { children: ReactNode }): ReactNode {
   const [theme, setThemeState] = useState<AppTheme>(getInitialTheme);
 
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+    applyTheme(theme);
   }, [theme]);
 
   const setTheme = (nextTheme: AppTheme): void => {

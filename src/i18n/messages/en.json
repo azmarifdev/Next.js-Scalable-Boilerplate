@@ -3,16 +3,108 @@
     "welcome": "Welcome",
     "logout": "Logout",
     "login": "Login",
-    "toggleLanguage": "Toggle language"
+    "lightMode": "Light",
+    "darkMode": "Dark"
   },
   "home": {
     "title": "Next.js-Boilerplate-PostgresQL-Drizzle",
     "titleSuffix": "Next.js-Boilerplate-PostgresQL-Drizzle",
-    "subtitle": "A production-ready Next.js-Boilerplate-PostgresQL-Drizzle for SaaS, dashboards, and modern web apps. Built for quick launch, maintainable growth, and production-grade development workflow.",
+    "subtitle": "A production-ready Next.js Boilerplate with PostgreSQL & Drizzle ORM. Built for SaaS, dashboards, and modern web apps. Launch faster with clean code, scalable architecture, and developer-friendly tooling.",
     "signIn": "Sign in",
-    "getStarted": "Get started",
-    "badge": "By A. Z. M. Arif · Full Stack Software Developer",
-    "meta": "azmarif.dev · @azmarifdev"
+    "getStarted": "Get Started",
+    "badge": "By A. Z. M. Arif • Full Stack Software Developer",
+    "meta": "azmarif.dev · @azmarifdev",
+    "viewOnGitHub": "View on GitHub",
+    "heroTitleMiddle": "Boilerplate",
+    "nav": {
+      "features": "Features",
+      "stack": "Stack",
+      "examples": "Examples",
+      "docs": "Docs",
+      "pricing": "Pricing"
+    },
+    "features": [
+      {
+        "title": "Production Ready",
+        "description": "Best practices, scalable structure, and clean code."
+      },
+      {
+        "title": "Secure by Default",
+        "description": "Auth, validation, and security built-in from day one."
+      },
+      {
+        "title": "Developer Friendly",
+        "description": "TypeScript, ESLint, Prettier, and modern DX."
+      },
+      {
+        "title": "Easy to Customize",
+        "description": "Modular, flexible, and easy to adapt for any project."
+      }
+    ],
+    "featuresPage": {
+      "eyebrow": "Template Features",
+      "title": "Everything You Need To Ship Faster",
+      "description": "This boilerplate includes a clean architecture, strong defaults, and optional modules so your product can scale without messy rewrites.",
+      "cta": "Explore Docs",
+      "items": [
+        {
+          "title": "App Router + TypeScript",
+          "description": "Modern Next.js App Router structure with strict TypeScript-first developer experience."
+        },
+        {
+          "title": "PostgreSQL + Drizzle ORM",
+          "description": "Production-ready relational data layer with SQL migrations and typed schema modeling."
+        },
+        {
+          "title": "Better Auth-first Flow",
+          "description": "Authentication defaults to Better Auth, with optional custom mode support when needed."
+        },
+        {
+          "title": "React Query-first State",
+          "description": "Server-state and API data fetching handled with React Query as the primary approach."
+        },
+        {
+          "title": "Feature Flags + Dev UI",
+          "description": "Runtime/config flags with local development toggle page at /dev/flags."
+        },
+        {
+          "title": "Built-in Testing Stack",
+          "description": "Vitest for unit/integration coverage and Playwright for end-to-end confidence."
+        }
+      ]
+    },
+    "docsPage": {
+      "eyebrow": "Documentation",
+      "title": "Docs You Can Jump Into Right Away",
+      "description": "These pages explain setup, architecture, and workflows so your team can onboard quickly and stay consistent.",
+      "cta": "View Features",
+      "items": [
+        {
+          "title": "How to Use",
+          "description": "Getting started workflow and day-to-day usage."
+        },
+        {
+          "title": "Architecture",
+          "description": "Core system design and module boundaries."
+        },
+        {
+          "title": "Folder Structure",
+          "description": "Project layout and directory conventions."
+        },
+        {
+          "title": "Auth Flow",
+          "description": "Authentication lifecycle and request path."
+        },
+        {
+          "title": "Workflows",
+          "description": "Development, release, and delivery operations."
+        },
+        {
+          "title": "Guides",
+          "description": "Deployment, maintenance, and project setup guides."
+        }
+      ]
+    }
   },
   "auth": {
     "loginTitle": "Welcome back",

@@ -3,16 +3,108 @@
     "welcome": "স্বাগতম",
     "logout": "লগআউট",
     "login": "লগইন",
-    "toggleLanguage": "ভাষা পরিবর্তন করুন"
+    "lightMode": "লাইট",
+    "darkMode": "ডার্ক"
   },
   "home": {
     "title": "Next.js-Boilerplate-PostgresQL-Drizzle",
     "titleSuffix": "স্টার্টার টেমপ্লেট",
-    "subtitle": "SaaS, dashboard এবং modern web app এর জন্য production-ready Next.js-Boilerplate-PostgresQL-Drizzle। দ্রুত launch, maintainable growth এবং production-grade development workflow-এর জন্য তৈরি।",
+    "subtitle": "PostgreSQL ও Drizzle ORM সহ একটি production-ready Next.js Boilerplate। SaaS, dashboard এবং modern web app দ্রুত launch করার জন্য clean code, scalable architecture ও developer-friendly tooling সহ তৈরি।",
     "signIn": "সাইন ইন",
     "getStarted": "শুরু করুন",
-    "badge": "A. Z. M. Arif · ফুল-স্ট্যাক সফটওয়্যার ডেভেলপার",
-    "meta": "azmarif.dev · @azmarifdev"
+    "badge": "By A. Z. M. Arif • Full Stack Software Developer",
+    "meta": "azmarif.dev · @azmarifdev",
+    "viewOnGitHub": "GitHub দেখুন",
+    "heroTitleMiddle": "বয়লারপ্লেট",
+    "nav": {
+      "features": "ফিচারসমূহ",
+      "stack": "টেক স্ট্যাক",
+      "examples": "উদাহরণ",
+      "docs": "ডকস",
+      "pricing": "প্রাইসিং"
+    },
+    "features": [
+      {
+        "title": "Production Ready",
+        "description": "Best practice, scalable structure এবং clean code সহ প্রস্তুত।"
+      },
+      {
+        "title": "Secure by Default",
+        "description": "দিনের শুরু থেকেই Auth, validation এবং security built-in।"
+      },
+      {
+        "title": "Developer Friendly",
+        "description": "TypeScript, ESLint, Prettier এবং modern DX সহ।"
+      },
+      {
+        "title": "Easy to Customize",
+        "description": "Modular, flexible এবং যেকোনো project-এ সহজে adapt করা যায়।"
+      }
+    ],
+    "featuresPage": {
+      "eyebrow": "ফিচারসমূহ",
+      "title": "দ্রুত Ship করার জন্য যা যা দরকার",
+      "description": "এই boilerplate-এ clean architecture, strong default এবং optional module আছে, তাই অপ্রয়োজনীয় rewrite ছাড়াই product scale করা যায়।",
+      "cta": "ডকস দেখুন",
+      "items": [
+        {
+          "title": "App Router + TypeScript",
+          "description": "Strict TypeScript-first developer experience সহ modern Next.js App Router structure।"
+        },
+        {
+          "title": "PostgreSQL + Drizzle ORM",
+          "description": "SQL migration ও typed schema modeling সহ production-ready relational data layer।"
+        },
+        {
+          "title": "Better Auth-first Flow",
+          "description": "Authentication এ Better Auth default থাকে, প্রয়োজন হলে optional custom mode support করে।"
+        },
+        {
+          "title": "React Query-first State",
+          "description": "Server-state ও API data fetching মূলত React Query দিয়ে handle করা হয়।"
+        },
+        {
+          "title": "Feature Flags + Dev UI",
+          "description": "Runtime/config flag support এবং local development toggle page (`/dev/flags`) আছে।"
+        },
+        {
+          "title": "Built-in Testing Stack",
+          "description": "Unit/integration এর জন্য Vitest এবং end-to-end confidence এর জন্য Playwright।"
+        }
+      ]
+    },
+    "docsPage": {
+      "eyebrow": "ডকুমেন্টেশন",
+      "title": "দ্রুত শুরু করার জন্য দরকারি Docs",
+      "description": "এই doc গুলো setup, architecture এবং workflow ব্যাখ্যা করে, যাতে team দ্রুত onboard হতে পারে এবং consistency থাকে।",
+      "cta": "ফিচারসমূহ দেখুন",
+      "items": [
+        {
+          "title": "How to Use",
+          "description": "Getting started workflow এবং day-to-day usage guide।"
+        },
+        {
+          "title": "Architecture",
+          "description": "Core system design এবং module boundary ব্যাখ্যা।"
+        },
+        {
+          "title": "Folder Structure",
+          "description": "Project layout এবং directory convention।"
+        },
+        {
+          "title": "Auth Flow",
+          "description": "Authentication lifecycle এবং request path।"
+        },
+        {
+          "title": "Workflows",
+          "description": "Development, release, এবং delivery operation flow।"
+        },
+        {
+          "title": "Guides",
+          "description": "Deployment, maintenance, এবং project setup guide collection।"
+        }
+      ]
+    }
   },
   "auth": {
     "loginTitle": "ফিরে আসায় স্বাগতম",
