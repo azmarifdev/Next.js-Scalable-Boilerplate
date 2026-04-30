@@ -1,13 +1,17 @@
 # Deployment Guide
 
-## Pre-Deployment
+## Purpose
 
-- Ensure `DATABASE_URL` points to production PostgreSQL
-- Set auth secrets
-- Set `NEXT_PUBLIC_SITE_URL`
-- Confirm `NEXT_PUBLIC_BACKEND_MODE` and `NEXT_PUBLIC_AUTH_PROVIDER`
+Step-by-step deployment procedure with validation checkpoints.
 
-## Recommended Commands
+## Pre-Deploy
+
+- Confirm selected auth mode (`better-auth` or `custom-auth`)
+- Ensure all required env vars are set
+- Ensure DB connectivity from runtime environment
+- If step-up MFA enabled, configure verifier endpoint
+
+## Build Validation (Local/CI)
 
 ```bash
 pnpm install --frozen-lockfile
@@ -24,16 +28,15 @@ pnpm run db:generate
 pnpm run db:migrate
 ```
 
-## Docker
+## Deploy
 
-```bash
-pnpm run docker:build
-pnpm run docker:run
-```
+- Provider build command: `pnpm run build`
+- Provider start command: `pnpm run start`
 
-## Post-Deployment Validation
+## Post-Deploy Checks
 
-- Open app root and dashboard routes
-- Verify login/logout flow
-- Validate protected route redirects
-- Check logs for auth/config/runtime errors
+- `/login` and `/register` accessible
+- Protected pages redirect unauthenticated users to `/login`
+- Auth routes (`login`, `me`, `refresh`, `logout`) behave correctly
+- If enabled, admin step-up on `/users` works
+- Check logs for auth or runtime validation errors

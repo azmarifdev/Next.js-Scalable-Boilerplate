@@ -1,35 +1,51 @@
 # Cloud Providers
 
-## Supported Targets
+## Purpose
 
-This project is deployable to major providers that support Next.js and Node runtime:
+This file lists deployment targets and environment requirements.
+
+## Supported Targets
 
 - Vercel
 - Netlify
 - Railway
 - Render
 - Fly.io
-- Self-managed Docker hosts
+- Self-managed Docker
 
 ## Required Environment Variables
 
-- `DATABASE_URL`
-- `AUTH_SESSION_SECRET` or `AUTH_SESSION_SECRETS`
+Always set:
+
 - `NEXT_PUBLIC_SITE_URL`
 - `NEXT_PUBLIC_BACKEND_MODE`
 - `NEXT_PUBLIC_AUTH_PROVIDER`
 
-## Provider Checklist
+Internal auth mode:
 
-1. Set production environment variables
-2. Run database migrations before/with deploy
-3. Verify `/api/v1/auth/me` health through authenticated request
-4. Confirm secure cookie behavior over HTTPS
+- `DATABASE_URL`
+- `AUTH_SESSION_SECRET` or `AUTH_SESSION_SECRETS`
 
-## Build/Start
+Custom auth mode:
 
-```bash
-pnpm install --frozen-lockfile
-pnpm run build
-pnpm run start
-```
+- `NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL`
+- `NEXT_PUBLIC_ENABLE_CUSTOM_AUTH=true`
+- `ENABLE_CUSTOM_AUTH=true`
+
+If admin step-up is enabled:
+
+- `REQUIRE_ADMIN_STEP_UP_AUTH=true`
+- `AUTH_MFA_VERIFY_URL` (recommended)
+
+## Deployment Checklist
+
+1. Configure environment variables in provider dashboard
+2. Run migrations (`pnpm run db:migrate`)
+3. Build and start (`pnpm run build`, `pnpm run start`)
+4. Verify `/login`, `/register`, and protected route redirect behavior
+5. Verify auth APIs (`login`, `me`, `refresh`, `logout`)
+6. Verify MFA flow if step-up is enabled
+
+## Docker Notes
+
+Use included `Dockerfile` and `docker-compose.yml` for containerized deployment/testing.

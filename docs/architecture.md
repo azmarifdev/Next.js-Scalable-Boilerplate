@@ -1,58 +1,62 @@
 # Architecture
 
-## Overview
+## Purpose
 
-This boilerplate follows a layered architecture designed for long-term maintainability:
+This file explains system design so new contributors can reason about boundaries before editing code.
 
-- UI layer (App Router pages + components)
-- Module layer (domain-focused features)
-- API layer (versioned REST routes)
-- Core layer (`lib/*` for auth, config, db, security, observability)
+## High-Level Layers
 
-## Core Principles
-
-- REST-first contract under `/api/v1`
-- PostgreSQL + Drizzle only
-- Better Auth as default auth provider
-- React Query as default state/data synchronization layer
-- Optional modules isolated from core domains
+- App/UI layer: `src/app`, `src/components`
+- Domain modules: `src/modules/*`
+- API layer: `src/app/api/v1/*`
+- Core infrastructure: `src/lib/*`
+- Integration providers: `src/providers/*`
 
 ## Runtime Modes
 
-- Backend mode: `internal` (default) or `external`
-- Auth provider: `better-auth` (default), `custom` (optional)
-- State mode: `react-query` (default), `redux` (optional)
+- Backend mode
+  - `internal`: UI + API in same app
+  - `external`: UI talks to external backend via base URL
+- Auth provider mode
+  - `better-auth`: internal auth routes
+  - `custom-auth`: external IdP adapter
 
-## Request Flow
+## Request Path (Internal Mode)
 
-1. Client calls route/service
-2. Runtime resolver computes API endpoint
-3. Request goes to `/api/v1/*`
-4. Route handler validates access/mode/provider
-5. Domain service executes business logic
-6. API envelope returns structured response
+1. Browser loads App Router page
+2. Protected route hits `src/proxy.ts`
+3. Session cookie verified in `src/lib/auth/session.ts`
+4. UI or API route continues
+5. API handlers return standard envelope
 
-## Auth Architecture
+## Auth & Security Design
 
-- Default provider: Better Auth
-- Optional provider: Custom Auth
-- Session via secure cookie token
-- Route protection handled by `src/proxy.ts`
+- Signed cookie session token (`auth_token`)
+- Same-origin check on sensitive auth endpoints
+- In-memory auth/MFA rate limiting
+- Optional admin step-up MFA for `/users`
+- Audit log writes for login/register outcomes
 
-## Data Architecture
+## Config Design
 
-- Primary database: PostgreSQL
-- ORM layer: Drizzle
-- Access pattern: repository/service separation
+- Environment schema: `src/lib/config/env.ts`
+- Runtime validation: `src/lib/config/validate.ts`
+- Runtime flags: `src/lib/config/featureFlags.ts`
 
-## Optional Module Boundary
+## Data Design
 
-Optional modules are physically isolated in `src/modules/optional/*`.
-Core app logic does not depend on optional module internals.
+- PostgreSQL + Drizzle only
+- Schema in `src/lib/db/schema.ts`
+- Providers in `src/lib/db/providers/*`
 
-## Reliability and DX
+## Testing Strategy
 
-- Request tracing and request-id propagation
-- Rate-limit and origin validation for auth routes
-- Typed config parsing (`env` + runtime validation)
-- Automated CI + release workflows
+- Unit: `src/tests/unit`
+- Integration: `src/tests/integration`
+- E2E: `src/tests/e2e`
+
+## Related Docs
+
+- `docs/auth-flow.md`
+- `docs/folder-structure.md`
+- `docs/workflows.md`

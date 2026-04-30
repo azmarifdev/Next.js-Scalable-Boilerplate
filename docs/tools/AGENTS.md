@@ -1,17 +1,44 @@
-# AI Agent Tooling Docs
+# Agent Guidance (Docs + Code Updates)
 
-This directory contains editor/agent guidance used by AI-assisted workflows.
+## Purpose
 
-## Included Tool Profiles
+Instruction baseline for AI/code agents working in this repository.
 
-- `.claude`
-- `.cursor`
-- `.windsurf`
-- `.kiro`
-- `.vscode`
+## Required Behavior
 
-## Usage Policy
+- Keep behavior-doc sync: code and docs must match
+- Prefer small, reviewable changes
+- Avoid destructive git commands
+- Run verification for touched areas
 
-- Treat tool instructions as project constraints
-- Keep consistency with repository architecture and CI rules
-- Prefer deterministic, testable, small-scope changes
+## Minimum Validation by Change Type
+
+Code changes:
+
+- `pnpm run typecheck`
+- `pnpm run lint`
+
+Auth/security changes:
+
+- `pnpm run test:integration`
+- Relevant e2e auth tests
+
+Docs changes:
+
+- `pnpm run docs:check`
+
+## High-Risk Areas
+
+- `src/app/api/v1/auth/*`
+- `src/lib/auth/*`
+- `src/proxy.ts`
+- `src/lib/security/*`
+
+## Sync Requirements
+
+When auth/config behavior changes, update these docs in same PR:
+
+- `README.md`
+- `docs/how-to-use.md`
+- `docs/auth-flow.md`
+- `docs/architecture.md`

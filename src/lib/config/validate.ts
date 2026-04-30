@@ -5,6 +5,9 @@ let validated = false;
 
 function collectErrors(): string[] {
   const errors: string[] = [];
+  const isCustomAuthEnabled =
+    process.env.NEXT_PUBLIC_ENABLE_CUSTOM_AUTH === "true" ||
+    process.env.ENABLE_CUSTOM_AUTH === "true";
 
   if (appConfig.backendMode === "internal") {
     const allowDemoAuth = process.env.ALLOW_DEMO_AUTH === "true";
@@ -20,6 +23,17 @@ function collectErrors(): string[] {
 
     if (!allowDemoAuth && !env.DATABASE_URL?.trim()) {
       errors.push("DATABASE_URL is required when NEXT_PUBLIC_BACKEND_MODE=internal.");
+    }
+  }
+
+  if (appConfig.authProvider === "custom-auth" && isCustomAuthEnabled) {
+    const customBaseUrl = env.NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL?.trim();
+    if (!customBaseUrl) {
+      errors.push(
+        "NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL is required when NEXT_PUBLIC_AUTH_PROVIDER=custom-auth and custom auth is enabled."
+      );
+    } else if (process.env.NODE_ENV === "production" && !customBaseUrl.startsWith("https://")) {
+      errors.push("NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL must use https:// in production.");
     }
   }
 

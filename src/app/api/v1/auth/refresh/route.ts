@@ -29,7 +29,9 @@ async function refreshHandler(request: Request): Promise<Response> {
       sub: session.sub,
       name: session.name,
       email: session.email,
-      role: session.role
+      role: session.role,
+      mfaVerified: session.mfaVerified,
+      mfaVerifiedAt: session.mfaVerifiedAt
     },
     AUTH_SESSION_TTL_SECONDS
   );

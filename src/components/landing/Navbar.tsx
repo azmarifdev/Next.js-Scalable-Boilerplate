@@ -94,7 +94,7 @@ export function Navbar() {
           <button
             type="button"
             onClick={handleLanguageToggle}
-            className="relative inline-flex h-8 w-[58px] items-center rounded-full border border-white/40 bg-[linear-gradient(135deg,#6d5cff_0%,#4f74df_100%)] p-1 shadow-[0_10px_24px_rgba(79,116,223,0.28)] transition duration-200 hover:brightness-105"
+            className="relative inline-flex h-8 w-[58px] items-center rounded-full bg-[linear-gradient(135deg,#6d5cff_0%,#4f74df_100%)] p-1 shadow-[0_10px_24px_rgba(79,116,223,0.28)] transition duration-200 hover:brightness-105"
             aria-label={locale === "en" ? "Switch to Bangla" : "Switch to English"}
             title={locale === "en" ? "Switch to Bangla" : "Switch to English"}
             aria-pressed={locale === "bn"}
@@ -124,7 +124,7 @@ export function Navbar() {
           <button
             type="button"
             onClick={handleThemeToggle}
-            className="relative inline-flex h-8 w-[58px] items-center rounded-full border border-white/40 bg-[linear-gradient(135deg,#6d5cff_0%,#4f74df_100%)] p-1 shadow-[0_10px_24px_rgba(79,116,223,0.28)] transition duration-200 hover:brightness-105"
+            className="relative inline-flex h-8 w-[58px] items-center rounded-full bg-[linear-gradient(135deg,#6d5cff_0%,#4f74df_100%)] p-1 shadow-[0_10px_24px_rgba(79,116,223,0.28)] transition duration-200 hover:brightness-105"
             aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
             title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
             aria-pressed={theme === "dark"}
@@ -156,14 +156,14 @@ export function Navbar() {
           </button>
 
           <Link
-            className="hidden rounded-2xl border border-[var(--landing-border-strong)] bg-[var(--landing-surface-soft)] px-4 py-2.5 text-sm font-medium text-[var(--landing-text-strong)] shadow-[0_8px_20px_rgba(15,23,42,0.10),inset_0_1px_0_rgba(255,255,255,0.20)] transition duration-200 hover:bg-white/[0.06] md:inline-flex"
+            className="hidden rounded-2xl bg-[var(--landing-surface-soft)] px-4 py-2.5 text-sm font-medium text-[var(--landing-text-strong)] shadow-[0_8px_20px_rgba(15,23,42,0.10),inset_0_1px_0_rgba(255,255,255,0.20)] transition duration-200 hover:bg-white/[0.06] md:inline-flex"
             href="/login"
           >
             {t("signIn")}
           </Link>
 
           <Link
-            className="inline-flex items-center justify-center rounded-2xl border border-white/35 bg-[linear-gradient(135deg,#9b3dff_0%,#d946ef_40%,#fb7185_100%)] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(217,70,239,0.36)] transition duration-200 hover:scale-[1.01] hover:shadow-[0_16px_36px_rgba(236,72,153,0.40)] sm:px-6"
+            className="inline-flex items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#9b3dff_0%,#d946ef_40%,#fb7185_100%)] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(217,70,239,0.36)] transition duration-200 hover:scale-[1.01] hover:shadow-[0_16px_36px_rgba(236,72,153,0.40)] sm:px-6"
             href="/register"
           >
             {t("getStarted")}

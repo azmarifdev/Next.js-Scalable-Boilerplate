@@ -14,10 +14,10 @@ interface DevAuthUser {
 const devUser: DevAuthUser = {
   id: "u_demo_admin",
   name: "Demo Admin",
-  email: "admin@example.com",
+  email: "nextjs.boilerplate@azmarif.dev",
   role: "admin",
   passwordHash:
-    "scrypt$DfixAOmN/HyToJDXVsnsMQ==$0KALoYelUP+hzauO8lv/iA91bmhy/uKfTGetxpSlP3XxklctbE1d9ni1A103qH/cBRItXtPU6Yc1ZsO+moVNTw==",
+    "scrypt$tIgcUQChjtBP9tB2cwlxpQ==$O/ATAw1I+XqirPJRgT6akvanm9i3l/3eQCt4ZAUPJ01yJPM+4pvxqY+6qVH6cPChXOz5pREg9YpixZvB7b4zcA==",
   failedAttempts: 0,
   lockedUntil: null
 };

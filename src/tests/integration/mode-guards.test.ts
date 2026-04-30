@@ -8,7 +8,8 @@ describe("mode guards", () => {
     NEXT_PUBLIC_BACKEND_MODE: process.env.NEXT_PUBLIC_BACKEND_MODE,
     NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
     AUTH_SESSION_SECRET: process.env.AUTH_SESSION_SECRET,
-    NODE_ENV: process.env.NODE_ENV
+    NODE_ENV: process.env.NODE_ENV,
+    REQUIRE_ADMIN_STEP_UP_AUTH: process.env.REQUIRE_ADMIN_STEP_UP_AUTH
   };
   const mutableEnv = process.env as Record<string, string | undefined>;
 
@@ -28,6 +29,7 @@ describe("mode guards", () => {
     restoreEnv("NEXT_PUBLIC_API_BASE_URL", originalEnv.NEXT_PUBLIC_API_BASE_URL);
     restoreEnv("AUTH_SESSION_SECRET", originalEnv.AUTH_SESSION_SECRET);
     restoreEnv("NODE_ENV", originalEnv.NODE_ENV);
+    restoreEnv("REQUIRE_ADMIN_STEP_UP_AUTH", originalEnv.REQUIRE_ADMIN_STEP_UP_AUTH);
   });
 
   it("fails fast when external mode is set without API base URL", async () => {
@@ -62,5 +64,35 @@ describe("mode guards", () => {
     await expect(restGet("/users")).rejects.toThrow(
       "NEXT_PUBLIC_API_BASE_URL is required when NEXT_PUBLIC_BACKEND_MODE=external"
     );
+  });
+
+  it("redirects admin to dashboard when step-up is required for /users", async () => {
+    process.env.NEXT_PUBLIC_BACKEND_MODE = "internal";
+    process.env.REQUIRE_ADMIN_STEP_UP_AUTH = "true";
+    process.env.AUTH_SESSION_SECRET = "integration-secret";
+
+    const { createSessionToken } = await import("@/lib/auth/session");
+    const { proxy } = await import("@/proxy");
+    const { NextRequest } = await import("next/server");
+
+    const token = await createSessionToken(
+      {
+        sub: "u_admin",
+        name: "Admin",
+        email: "nextjs.boilerplate@azmarif.dev",
+        role: "admin",
+        mfaVerified: false
+      },
+      3600
+    );
+    const request = new NextRequest("http://localhost/users", {
+      headers: {
+        cookie: `auth_token=${token}`
+      }
+    });
+
+    const response = await proxy(request);
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toBe("http://localhost/dashboard?mfa=required");
   });
 });

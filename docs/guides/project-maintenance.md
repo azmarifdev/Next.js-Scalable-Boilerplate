@@ -1,24 +1,30 @@
 # Project Maintenance
 
+## Purpose
+
+Routine maintenance checklist for stability, security, and upgrade health.
+
 ## Daily
 
-- Keep branches synced with `main`
-- Run lint/typecheck/tests before push
+- Sync feature branches with `main`
+- Run lint/typecheck/tests before pushing
+- Keep docs aligned with behavior changes
 
 ## Weekly
 
-- Review dependency updates
-- Review CI health and flaky checks
-- Inspect stale issues/PRs
+- Review dependency PRs and scan results
+- Review CI flakes and failing tests
+- Check auth/security related open issues
 
 ## Monthly
 
-- Audit environment variables and secrets
-- Review feature flags and optional module usage
-- Validate release automation flow
+- Audit env vars and secret hygiene
+- Review optional module flag usage
+- Verify release automation health
+- Verify docs still match runtime behavior
 
-## Refactor Hygiene
+## Quarterly
 
-- Remove dead code during feature updates
-- Keep naming consistent across modules
-- Keep optional modules isolated under `src/modules/optional`
+- Validate deployment guides against current providers
+- Re-run full e2e + integration suite
+- Review deprecated dependencies and major upgrades

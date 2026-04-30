@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { writeAuthAuditLog } from "@/lib/auth/auth-audit.repository";
 import {
   AuthEmailExistsError,
   createAuthUser,
@@ -9,6 +10,7 @@ import {
 import { shouldUseSecureCookies } from "@/lib/auth/cookie-security";
 import { hashPassword } from "@/lib/auth/password";
 import { createSessionToken } from "@/lib/auth/session";
+import { isAdminStepUpEnabled } from "@/lib/auth/step-up";
 import { AUTH_COOKIE_NAME, AUTH_SESSION_TTL_SECONDS } from "@/lib/config/constants";
 import { setRequestIdHeader } from "@/lib/observability/request-id";
 import { withTrace } from "@/lib/observability/tracing";
@@ -37,6 +39,18 @@ function redirectWithRequestId(
   const response = NextResponse.redirect(buildRedirectUrl(request, path), 303);
   setRequestIdHeader(response, requestId);
   return response;
+}
+
+function getRequestIpAddress(request: NextRequest): string | null {
+  return (
+    request.headers.get("x-forwarded-for") ??
+    request.headers.get("x-real-ip") ??
+    request.headers.get("cf-connecting-ip")
+  );
+}
+
+function getRequestUserAgent(request: NextRequest): string | null {
+  return request.headers.get("user-agent");
 }
 
 async function parsePayload(request: NextRequest): Promise<unknown> {
@@ -78,6 +92,8 @@ async function registerHandler(request: NextRequest): Promise<Response> {
   if (originError) {
     return originError;
   }
+  const ipAddress = getRequestIpAddress(request);
+  const userAgent = getRequestUserAgent(request);
 
   return withTrace(
     "auth.register",
@@ -100,6 +116,13 @@ async function registerHandler(request: NextRequest): Promise<Response> {
       const parsed = registerSchema.safeParse(payload);
 
       if (!parsed.success) {
+        await writeAuthAuditLog({
+          event: "register_failed",
+          status: "failure",
+          ipAddress,
+          userAgent,
+          reason: "validation_error"
+        });
         if (wantsHtml) {
           return redirectWithRequestId(request, "/register?error=invalid_format", requestId);
         }
@@ -112,6 +135,14 @@ async function registerHandler(request: NextRequest): Promise<Response> {
 
       const existingUser = await findAuthUserByEmail(parsed.data.email.toLowerCase());
       if (existingUser) {
+        await writeAuthAuditLog({
+          event: "register_failed",
+          status: "failure",
+          email: parsed.data.email,
+          ipAddress,
+          userAgent,
+          reason: "email_exists"
+        });
         if (wantsHtml) {
           return redirectWithRequestId(request, "/register?error=email_exists", requestId);
         }
@@ -133,6 +164,14 @@ async function registerHandler(request: NextRequest): Promise<Response> {
         });
       } catch (error) {
         if (error instanceof AuthEmailExistsError) {
+          await writeAuthAuditLog({
+            event: "register_failed",
+            status: "failure",
+            email: parsed.data.email,
+            ipAddress,
+            userAgent,
+            reason: "email_exists"
+          });
           if (wantsHtml) {
             return redirectWithRequestId(request, "/register?error=email_exists", requestId);
           }
@@ -154,7 +193,13 @@ async function registerHandler(request: NextRequest): Promise<Response> {
       };
 
       const token = await createSessionToken(
-        { sub: user.id, name: user.name, email: user.email, role: user.role },
+        {
+          sub: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          mfaVerified: user.role !== "admin" || !isAdminStepUpEnabled()
+        },
         AUTH_SESSION_TTL_SECONDS
       );
       const response = wantsHtml
@@ -167,6 +212,14 @@ async function registerHandler(request: NextRequest): Promise<Response> {
         sameSite: "strict",
         path: "/",
         maxAge: AUTH_SESSION_TTL_SECONDS
+      });
+      await writeAuthAuditLog({
+        event: "register",
+        status: "success",
+        email: user.email,
+        userId: user.id,
+        ipAddress,
+        userAgent
       });
 
       return response;

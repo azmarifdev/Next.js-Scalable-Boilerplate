@@ -1,18 +1,29 @@
 # Folder Structure
 
-## Top-Level
+## Purpose
 
-- `src/app` — Next.js app router pages/routes
-- `src/modules` — feature modules
-- `src/lib` — shared core infrastructure
-- `src/components` — reusable UI/layout components
-- `src/providers` — app-level providers
-- `src/services` — HTTP/API clients
-- `src/tests` — unit/integration/e2e tests
-- `docs` — project documentation
-- `scripts` — automation and setup scripts
+This file maps each major folder to ownership/responsibility.
 
-## Module Layout
+## Root Map
+
+- `src/app` -> pages, layouts, route handlers
+- `src/components` -> reusable UI blocks
+- `src/modules` -> domain-level logic and hooks
+- `src/lib` -> core infrastructure (auth/db/config/security)
+- `src/providers` -> app-level provider composition
+- `src/services` -> HTTP/API client helpers
+- `src/tests` -> unit/integration/e2e tests
+- `docs` -> project documentation
+- `scripts` -> setup and maintenance scripts
+
+## App Router Areas
+
+- `src/app/(auth)` -> login/register pages
+- `src/app/(dashboard)` -> protected app pages
+- `src/app/api/v1` -> versioned REST endpoints
+- `src/app/dev/flags` -> local flag override UI
+
+## Domain Modules
 
 Core modules:
 
@@ -23,24 +34,25 @@ Core modules:
 
 Optional modules:
 
+- `src/modules/optional/auth`
 - `src/modules/optional/billing`
 - `src/modules/optional/ecommerce`
 
-## API Layout
+## Infra Folders
 
-- `src/app/api/v1/*`
+- `src/lib/auth` -> session, adapter, guard, audit
+- `src/lib/config` -> env parsing and feature flags
+- `src/lib/db` -> schema and providers
+- `src/lib/security` -> origin/redirect/rate-limit
+- `src/lib/observability` -> logger/tracing/request-id
 
-Keeps API versioning explicit and future-safe.
+## Testing Layout
 
-## Config Layout
+- `src/tests/unit`
+- `src/tests/integration`
+- `src/tests/e2e`
 
-- `src/lib/config/env.ts`
-- `src/lib/config/app-config.ts`
-- `src/lib/config/runtime.ts`
-- `src/lib/config/featureFlags.ts`
+## Related Docs
 
-## Naming Convention
-
-- camelCase files for hooks/utils
-- no `.hook.ts` suffix clutter
-- route files follow Next.js conventions
+- `docs/architecture.md`
+- `docs/auth-flow.md`

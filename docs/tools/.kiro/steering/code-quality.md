@@ -1,7 +1,5 @@
 # Code Quality Steering
 
-- Enforce strict TypeScript and predictable interfaces
-- Keep imports clean and deterministic
-- Prefer small, composable modules
-- Remove dead code with each refactor
-- Ensure formatting and lint pass before merge
+- Prefer typed APIs and explicit runtime validation
+- Keep auth changes covered by integration tests
+- Enforce lint + typecheck + test + build before release

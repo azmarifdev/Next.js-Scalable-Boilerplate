@@ -29,7 +29,18 @@ export async function Hero() {
       <div className="relative mx-auto flex w-full max-w-[1040px] flex-col items-center text-center">
         <div className="inline-flex items-center gap-3 rounded-full bg-[var(--landing-surface)] px-4 py-2 text-xs font-medium text-[var(--landing-text)] shadow-[0_12px_45px_rgba(2,6,23,0.18)] backdrop-blur-xl sm:text-sm">
           <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.85)]" />
-          {t("badge")}
+          <span>
+            By{" "}
+            <a
+              href="https://azmarif.dev"
+              target="_blank"
+              rel="noreferrer"
+              className="bg-[linear-gradient(135deg,#8b3dff_0%,#d946ef_48%,#fb7185_100%)] bg-clip-text font-extrabold text-transparent"
+            >
+              A. Z. M. Arif
+            </a>{" "}
+            • Full Stack Software Developer
+          </span>
         </div>
 
         <h1 className="mt-7 max-w-[920px] text-[3rem] leading-[0.96] font-semibold tracking-[-0.055em] text-[var(--landing-text-strong)] sm:text-[4.4rem] lg:text-[5.55rem]">

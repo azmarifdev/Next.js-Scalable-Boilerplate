@@ -20,6 +20,18 @@ interface UseAuthFormOptions {
   mode: "login" | "register";
 }
 
+function getCustomAuthConfigError(): string | null {
+  const authProvider = process.env.NEXT_PUBLIC_AUTH_PROVIDER;
+  const customAuthEnabled = process.env.NEXT_PUBLIC_ENABLE_CUSTOM_AUTH === "true";
+  const customAuthBaseUrl = process.env.NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL?.trim();
+
+  if (authProvider === "custom-auth" && customAuthEnabled && !customAuthBaseUrl) {
+    return "Custom auth is enabled but NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL is missing.";
+  }
+
+  return null;
+}
+
 export function useAuthForm({ mode }: UseAuthFormOptions) {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -46,7 +58,7 @@ export function useAuthForm({ mode }: UseAuthFormOptions) {
         "success",
         mode === "login" ? "Signed in successfully" : "Account created successfully"
       );
-      router.push("/dashboard");
+      router.push(response.user.mfaRequired ? "/dashboard?mfa=required" : "/dashboard");
       router.refresh();
     },
     onError: (error) => {
@@ -58,8 +70,18 @@ export function useAuthForm({ mode }: UseAuthFormOptions) {
 
   const onSubmit = form.handleSubmit(async (values) => {
     setServerError("");
+    const configError = getCustomAuthConfigError();
+    if (configError) {
+      setServerError(configError);
+      notify("error", configError);
+      return;
+    }
     const payload = values as AuthPayload;
-    await authMutation.mutateAsync(payload);
+    try {
+      await authMutation.mutateAsync(payload);
+    } catch {
+      // Error is handled in mutation onError; prevent unhandled runtime overlay.
+    }
   });
 
   return {
