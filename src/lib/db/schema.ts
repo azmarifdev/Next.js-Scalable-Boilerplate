@@ -1,4 +1,4 @@
-import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
@@ -18,4 +18,19 @@ export const authUsers = pgTable("auth_users", {
   lockedUntil: timestamp("locked_until"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull()
+});
+
+export const authAuditLogs = pgTable("auth_audit_logs", {
+  id: text("id").primaryKey(),
+  event: text("event").notNull(),
+  status: text("status").notNull(),
+  email: text("email"),
+  userId: text("user_id"),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  isSuspicious: boolean("is_suspicious").notNull().default(false),
+  riskScore: integer("risk_score").notNull().default(0),
+  reason: text("reason"),
+  metadata: text("metadata"),
+  createdAt: timestamp("created_at").defaultNow().notNull()
 });

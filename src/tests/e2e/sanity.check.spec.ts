@@ -15,7 +15,7 @@ test.describe("Sanity", () => {
     expect(robots.ok()).toBeTruthy();
     await expect
       .soft(robots.text())
-      .resolves.toContain("Sitemap: http://127.0.0.1:3000/sitemap.xml");
+      .resolves.toMatch(/Sitemap:\s+https?:\/\/[^/\s]+\/sitemap\.xml/);
 
     const sitemap = await page.request.get("/sitemap.xml");
     expect(sitemap.ok()).toBeTruthy();

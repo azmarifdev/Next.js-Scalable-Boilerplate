@@ -13,6 +13,38 @@ interface AuthFormProps {
   mode: "login" | "register";
 }
 
+function resolveAuthActionPath(mode: "login" | "register"): string {
+  const authProvider = process.env.NEXT_PUBLIC_AUTH_PROVIDER;
+  const customAuthEnabled = process.env.NEXT_PUBLIC_ENABLE_CUSTOM_AUTH === "true";
+  const customAuthBaseUrl = process.env.NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL?.replace(/\/$/, "");
+
+  if (authProvider === "custom-auth" && customAuthEnabled) {
+    if (!customAuthBaseUrl) {
+      return "#";
+    }
+
+    return mode === "login"
+      ? `${customAuthBaseUrl}/auth/login`
+      : `${customAuthBaseUrl}/auth/register`;
+  }
+
+  return mode === "login"
+    ? `${resolveApiEndpoint("/auth/login")}?redirect=/dashboard`
+    : `${resolveApiEndpoint("/auth/register")}?redirect=/dashboard`;
+}
+
+function resolveNoJsConfigError(): string | null {
+  const authProvider = process.env.NEXT_PUBLIC_AUTH_PROVIDER;
+  const customAuthEnabled = process.env.NEXT_PUBLIC_ENABLE_CUSTOM_AUTH === "true";
+  const customAuthBaseUrl = process.env.NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL?.trim();
+
+  if (authProvider === "custom-auth" && customAuthEnabled && !customAuthBaseUrl) {
+    return "Custom auth configuration missing. Set NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL.";
+  }
+
+  return null;
+}
+
 export function AuthForm({ mode }: AuthFormProps) {
   const t = useTranslations("auth");
   const { form, serverError, onSubmit, isSubmitting } = useAuthForm({ mode });
@@ -27,10 +59,8 @@ export function AuthForm({ mode }: AuthFormProps) {
     formState: { errors }
   } = form;
 
-  const actionPath =
-    mode === "login"
-      ? `${resolveApiEndpoint("/auth/login")}?redirect=/dashboard`
-      : `${resolveApiEndpoint("/auth/register")}?redirect=/dashboard`;
+  const actionPath = resolveAuthActionPath(mode);
+  const noJsConfigError = resolveNoJsConfigError();
 
   return (
     <form
@@ -41,6 +71,10 @@ export function AuthForm({ mode }: AuthFormProps) {
       className="card form-grid auth-card"
       data-hydrated="false"
     >
+      <Link href="/" className="auth-back-home" aria-label="Back to home page">
+        Back to Home
+      </Link>
+
       <div>
         <h1 className="card-title">{mode === "login" ? t("loginTitle") : t("registerTitle")}</h1>
         <p className="card-subtitle">
@@ -70,6 +104,7 @@ export function AuthForm({ mode }: AuthFormProps) {
       />
 
       {serverError ? <p className="error-text">{serverError}</p> : null}
+      {noJsConfigError ? <p className="error-text">{noJsConfigError}</p> : null}
 
       <Button type="submit" className="full-width" disabled={isSubmitting}>
         {isSubmitting

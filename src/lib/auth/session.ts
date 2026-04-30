@@ -3,6 +3,8 @@ interface SessionPayload {
   name: string;
   email: string;
   role: "admin" | "user";
+  mfaVerified?: boolean;
+  mfaVerifiedAt?: number;
   iat: number;
   exp: number;
 }
@@ -93,7 +95,7 @@ async function sign(input: string, secret: string): Promise<string> {
 }
 
 export async function createSessionToken(
-  user: Pick<SessionPayload, "sub" | "name" | "email" | "role">,
+  user: Pick<SessionPayload, "sub" | "name" | "email" | "role" | "mfaVerified" | "mfaVerifiedAt">,
   ttlSeconds: number
 ): Promise<string> {
   const keys = getSessionKeys();
@@ -170,6 +172,8 @@ export async function verifySessionToken(token: string): Promise<SessionPayload 
       typeof payload.name !== "string" ||
       typeof payload.email !== "string" ||
       (payload.role !== "admin" && payload.role !== "user") ||
+      (payload.mfaVerified !== undefined && typeof payload.mfaVerified !== "boolean") ||
+      (payload.mfaVerifiedAt !== undefined && typeof payload.mfaVerifiedAt !== "number") ||
       typeof payload.iat !== "number" ||
       typeof payload.exp !== "number"
     ) {

@@ -1,36 +1,35 @@
 # Release Automation
 
-## Release Tooling
+## Purpose
 
-Release management is automated with Release Please workflow.
+How versioning and changelog automation works with Release Please.
 
-## Standard Flow
+## Workflow
 
-1. Merge feature/fix PRs into `main`
-2. Release Please updates/creates release PR
+1. Merge Conventional Commit PRs into `main`
+2. `release-please.yml` opens/updates release PR
 3. Merge `chore(main): release ...` PR
-4. GitHub release and tags are published automatically
+4. Tag + GitHub release + `CHANGELOG.md` update happen automatically
 
 ## Rules
 
-- Do not manually create release tags
-- Do not manually create duplicate GitHub releases
-- Do not manually edit released changelog blocks
+- Do not create release tags manually
+- Do not hand-edit generated release PR body
+- Keep commit messages conventional (`feat`, `fix`, `docs`, `refactor`, etc.)
 
 ## Troubleshooting
 
-### Duplicate tag error (`already_exists`)
+### Missing expected changelog items
 
-- Remove duplicate release entry for that tag in GitHub Releases
-- Re-run Release Please workflow
+- Check commit message format
+- Check target branch and merged commit scope
 
-### Missing changelog entries
+### Duplicate tag or release entry
 
-- Verify conventional commit messages (`feat`, `fix`, `docs`, etc.)
-- Ensure release PR includes expected commits before merging
+- Remove duplicate release entry
+- Re-run workflow from Actions tab
 
-## Useful Commands
+### Release PR not opening
 
-```bash
-git log --no-merges --pretty=format:'- %s (%h)' Next.js-Boilerplate-PostgresQL-Drizzle-v0.1.6..HEAD
-```
+- Verify workflow permissions
+- Check `.release-please-config.json` and `release-please-manifest.json`

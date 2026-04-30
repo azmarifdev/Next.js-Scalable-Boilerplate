@@ -1,34 +1,34 @@
-# Package Manager Migration Notes
+# Package Manager Migration
 
-## Current Standard
+## Purpose
 
-This project standardizes on `pnpm`.
+Use this guide when your team wants to change package manager policy safely.
 
-## Required Files
+## Current Template Default
 
-- `package.json`
-- `pnpm-lock.yaml`
+- Primary manager: `pnpm`
+- Lockfile in repo: `pnpm-lock.yaml`
 
-## CI Behavior
+## Migration Steps
 
-CI uses frozen lockfile installs. Any dependency change must include updated `pnpm-lock.yaml`.
+1. Decide new canonical manager for CI
+2. Update install/build/test commands in workflows
+3. Regenerate and commit correct lockfile(s)
+4. Update docs (`README.md`, `CONTRIBUTING.md`, workflows docs)
+5. Run full verification
 
-## Local Commands
+## Verification Checklist
 
 ```bash
-pnpm install
 pnpm run lint
 pnpm run typecheck
 pnpm run test
+pnpm run build
+pnpm run docs:check
 ```
 
-## Common Failure
+## Risk Controls
 
-`ERR_PNPM_OUTDATED_LOCKFILE`
-
-Fix:
-
-```bash
-pnpm install --lockfile-only
-git add pnpm-lock.yaml
-```
+- Avoid mixed lockfile drift in one PR
+- Keep migration PR isolated from feature work
+- Confirm dependency-review workflow still passes

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { assessLoginRisk, writeAuthAuditLog } from "@/lib/auth/auth-audit.repository";
 import {
   findAuthUserByEmail,
   isAuthDatabaseConfigured,
@@ -10,6 +11,7 @@ import { shouldUseSecureCookies } from "@/lib/auth/cookie-security";
 import { tryDevAuthLogin } from "@/lib/auth/dev-auth-fallback";
 import { verifyPassword } from "@/lib/auth/password";
 import { createSessionToken } from "@/lib/auth/session";
+import { isAdminStepUpEnabled } from "@/lib/auth/step-up";
 import { AUTH_COOKIE_NAME, AUTH_SESSION_TTL_SECONDS } from "@/lib/config/constants";
 import { logger } from "@/lib/observability/logger";
 import { setRequestIdHeader } from "@/lib/observability/request-id";
@@ -28,6 +30,18 @@ const AUTH_RATE_LIMIT = {
   limit: 15,
   windowMs: 60_000
 };
+
+function getRequestIpAddress(request: NextRequest): string | null {
+  return (
+    request.headers.get("x-forwarded-for") ??
+    request.headers.get("x-real-ip") ??
+    request.headers.get("cf-connecting-ip")
+  );
+}
+
+function getRequestUserAgent(request: NextRequest): string | null {
+  return request.headers.get("user-agent");
+}
 
 function prefersHtmlResponse(request: NextRequest): boolean {
   const accept = request.headers.get("accept") ?? "";
@@ -87,6 +101,8 @@ async function loginHandler(request: NextRequest): Promise<Response> {
   if (originError) {
     return originError;
   }
+  const ipAddress = getRequestIpAddress(request);
+  const userAgent = getRequestUserAgent(request);
 
   return withTrace(
     "auth.login",
@@ -128,6 +144,13 @@ async function loginHandler(request: NextRequest): Promise<Response> {
       }
 
       if (!parsed.success) {
+        await writeAuthAuditLog({
+          event: "login_failed",
+          status: "failure",
+          ipAddress,
+          userAgent,
+          reason: "validation_error"
+        });
         if (wantsHtml) {
           return redirectWithRequestId(request, "/login?error=invalid_format", requestId);
         }
@@ -138,11 +161,26 @@ async function loginHandler(request: NextRequest): Promise<Response> {
         );
       }
 
-      let user: { id: string; name: string; email: string; role: "admin" | "user" } | null = null;
+      let user: {
+        id: string;
+        name: string;
+        email: string;
+        role: "admin" | "user";
+        mfaVerified?: boolean;
+        mfaRequired?: boolean;
+      } | null = null;
 
       if (isDbConfigured) {
         const authUser = await findAuthUserByEmail(parsed.data.email.toLowerCase());
         if (!authUser) {
+          await writeAuthAuditLog({
+            event: "login_failed",
+            status: "failure",
+            email: parsed.data.email,
+            ipAddress,
+            userAgent,
+            reason: "user_not_found"
+          });
           if (wantsHtml) {
             return redirectWithRequestId(request, "/login?error=invalid_credentials", requestId);
           }
@@ -153,6 +191,15 @@ async function loginHandler(request: NextRequest): Promise<Response> {
         }
 
         if (authUser.lockedUntil && authUser.lockedUntil.getTime() > Date.now()) {
+          await writeAuthAuditLog({
+            event: "login_failed",
+            status: "failure",
+            email: authUser.email,
+            userId: authUser.id,
+            ipAddress,
+            userAgent,
+            reason: "account_locked"
+          });
           if (wantsHtml) {
             return redirectWithRequestId(request, "/login?error=rate_limited", requestId);
           }
@@ -169,6 +216,15 @@ async function loginHandler(request: NextRequest): Promise<Response> {
             nextAttempts >= MAX_FAILED_ATTEMPTS ? new Date(Date.now() + LOCK_WINDOW_MS) : null;
 
           await recordFailedLoginAttempt(authUser, lockUntil);
+          await writeAuthAuditLog({
+            event: "login_failed",
+            status: "failure",
+            email: authUser.email,
+            userId: authUser.id,
+            ipAddress,
+            userAgent,
+            reason: "password_mismatch"
+          });
           if (wantsHtml) {
             return redirectWithRequestId(request, "/login?error=invalid_credentials", requestId);
           }
@@ -191,12 +247,27 @@ async function loginHandler(request: NextRequest): Promise<Response> {
           password: parsed.data.password
         });
         if (!devAuth.user) {
+          const errorCode = devAuth.status === 429 ? "LOGIN_LOCKED" : "INVALID_CREDENTIALS";
+          await writeAuthAuditLog({
+            event: "login_failed",
+            status: "failure",
+            email: parsed.data.email,
+            ipAddress,
+            userAgent,
+            reason: devAuth.status === 429 ? "account_locked" : "invalid_credentials"
+          });
           if (wantsHtml) {
-            return redirectWithRequestId(request, "/login?error=invalid_credentials", requestId);
+            return redirectWithRequestId(
+              request,
+              devAuth.status === 429
+                ? "/login?error=rate_limited"
+                : "/login?error=invalid_credentials",
+              requestId
+            );
           }
           return apiError(
             {
-              code: "INVALID_CREDENTIALS",
+              code: errorCode,
               message: devAuth.message ?? "Invalid email or password"
             },
             { status: devAuth.status, requestId, route }
@@ -217,10 +288,28 @@ async function loginHandler(request: NextRequest): Promise<Response> {
         );
       }
 
+      const mfaVerified = user.role !== "admin" || !isAdminStepUpEnabled();
       const token = await createSessionToken(
-        { sub: user.id, name: user.name, email: user.email, role: user.role },
+        {
+          sub: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          mfaVerified
+        },
         AUTH_SESSION_TTL_SECONDS
       );
+      user = {
+        ...user,
+        mfaVerified,
+        mfaRequired: !mfaVerified
+      };
+      const riskAssessment = await assessLoginRisk({
+        email: user.email,
+        ipAddress,
+        userAgent
+      });
+      const suspiciousReason = riskAssessment.reasons.join(",");
       const response = wantsHtml
         ? redirectWithRequestId(request, successRedirectPath, requestId)
         : apiSuccess({ user }, { requestId });
@@ -234,6 +323,27 @@ async function loginHandler(request: NextRequest): Promise<Response> {
       });
 
       attachRateLimitHeaders(response, loginRateLimit, AUTH_RATE_LIMIT.limit);
+      await writeAuthAuditLog({
+        event: "login",
+        status: "success",
+        email: user.email,
+        userId: user.id,
+        ipAddress,
+        userAgent,
+        isSuspicious: riskAssessment.isSuspicious,
+        riskScore: riskAssessment.riskScore,
+        reason: suspiciousReason || null
+      });
+      if (riskAssessment.isSuspicious) {
+        logger.warn("auth:login:suspicious", {
+          requestId,
+          route,
+          userId: user.id,
+          email: user.email,
+          riskScore: riskAssessment.riskScore,
+          reasons: riskAssessment.reasons
+        });
+      }
       logger.info("auth:login:success", { requestId, route, userId: user.id, role: user.role });
 
       return response;

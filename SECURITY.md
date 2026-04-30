@@ -1,21 +1,47 @@
 # Security Policy
 
+## Purpose
+
+This file defines supported versions and how to report vulnerabilities responsibly.
+
 ## Supported Versions
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+Security fixes are applied to the latest published line.
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+| Version line        | Supported        |
+| ------------------- | ---------------- |
+| Latest release      | Yes              |
+| Older release lines | Best effort only |
 
-## Reporting a Vulnerability
+## Report a Vulnerability
 
-Use this section to tell people how to report a vulnerability.
+Please do not open public GitHub issues for sensitive vulnerabilities.
 
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+Use one of these channels:
+
+- Security advisory workflow in GitHub (preferred)
+- Private contact with maintainers (if available)
+
+Include:
+
+- Reproduction steps
+- Affected files/routes
+- Impact assessment
+- Suggested fix (optional)
+
+## Expected Response
+
+- Initial acknowledgement: as soon as maintainers are available
+- Triage: severity and exploitability review
+- Remediation: patch + release guidance
+
+## Scope Highlights
+
+Sensitive areas in this template:
+
+- `src/app/api/v1/auth/*`
+- `src/lib/auth/*`
+- `src/lib/security/*`
+- `src/proxy.ts`
+
+For secure runtime setup, also read: `docs/auth-flow.md` and `docs/deployment/cloud-providers.md`.

@@ -1,6 +1,5 @@
 # Product Steering
 
-- Boilerplate must prioritize fast onboarding and clear defaults
-- Default path should work with minimal configuration
-- Advanced capabilities should be optional and isolated
-- Documentation should map directly to real implementation
+- Template must be safe by default
+- Advanced auth features should remain optional
+- Documentation must be enough for first-time adopters

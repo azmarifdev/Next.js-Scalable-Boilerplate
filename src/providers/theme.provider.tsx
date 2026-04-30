@@ -9,13 +9,18 @@ interface ThemeContextValue {
   setTheme: (theme: AppTheme) => void;
 }
 
-const THEME_STORAGE_KEY = "app-theme";
+export const THEME_STORAGE_KEY = "app-theme";
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 function getInitialTheme(): AppTheme {
   if (typeof window === "undefined") {
     return "dark";
+  }
+
+  const htmlTheme = document.documentElement.getAttribute("data-theme");
+  if (htmlTheme === "light" || htmlTheme === "dark") {
+    return htmlTheme;
   }
 
   const savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
@@ -32,6 +37,7 @@ function applyTheme(theme: AppTheme): void {
   document.body.setAttribute("data-theme", theme);
   document.body.style.colorScheme = theme;
   window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+  document.cookie = `${THEME_STORAGE_KEY}=${theme}; Path=/; Max-Age=31536000; SameSite=Lax`;
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }): ReactNode {

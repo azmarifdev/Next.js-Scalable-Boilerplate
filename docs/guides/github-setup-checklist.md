@@ -1,40 +1,52 @@
 # GitHub Setup Checklist
 
-## Repository Settings
+## Purpose
+
+Repository hardening checklist for teams adopting this template.
+
+## Branch Protection
 
 - Protect `main`
-- Require PR reviews
-- Require status checks
-- Enable squash merge
+- Require pull request review(s)
+- Require status checks before merge
+- Restrict direct pushes to `main`
+- Prefer squash merge strategy
+
+## Required Checks (Recommended)
+
+- `ci`
+- `commitlint`
+- `pr-title`
+- `dependency-review`
+- `codeql` (if enforced by your org policy)
 
 ## Secrets
 
-Configure required secrets for CI/deploy workflows:
+Internal mode minimum:
 
 - `DATABASE_URL`
 - `AUTH_SESSION_SECRET`
-- deployment provider credentials (as needed)
+
+Optional MFA verifier:
+
+- `AUTH_MFA_VERIFY_URL`
+- `AUTH_MFA_VERIFY_BEARER_TOKEN`
+
+Custom auth mode:
+
+- `NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL`
 
 ## Labels
 
-Recommended labels:
+Recommended baseline labels:
 
-- `automerge`
 - `bug`
 - `enhancement`
 - `documentation`
 - `dependencies`
+- `security`
 
-## Branch Strategy
+## Release Permissions
 
-- Feature branches from `main`
-- PR merge to `main`
-- Release PR handled by Release Please
-
-## Quality Gates
-
-- lint
-- typecheck
-- tests
-- lockfile consistency
-- dependency review
+- Allow workflows to create pull requests
+- Allow workflows to write release/tags metadata

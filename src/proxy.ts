@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { hasPermission } from "@/lib/auth/rbac";
 import { verifySessionToken } from "@/lib/auth/session";
+import { isAdminStepUpEnabled, isAdminStepUpRoute } from "@/lib/auth/step-up";
 import { AUTH_COOKIE_NAME } from "@/lib/config/constants";
 
 // Handles authentication and route protection
@@ -50,6 +51,15 @@ export async function proxy(request: NextRequest) {
 
     if (requiredPermission && !hasPermission(session.role, requiredPermission)) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+
+    if (
+      isAdminStepUpEnabled() &&
+      session.role === "admin" &&
+      isAdminStepUpRoute(pathname) &&
+      !session.mfaVerified
+    ) {
+      return NextResponse.redirect(new URL("/dashboard?mfa=required", request.url));
     }
   }
 

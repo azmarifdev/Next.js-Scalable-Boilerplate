@@ -1,79 +1,46 @@
 # Workflows
 
-## Pnpm Compatibility (`bun-compatibility.yml`)
+## Purpose
 
-- What: Runs lint, typecheck, tests, build using pnpm.
-- When: Manual trigger.
-- Why: Confirms full project health in a clean CI runner.
+This file explains what each GitHub workflow does and when it runs.
 
-## CI (`ci.yml`)
+## CI & Quality
 
-- What: Quality matrix, build, and Playwright E2E.
-- When: PRs and pushes to tracked branches.
-- Why: Prevents regressions and enforces baseline quality.
+- `ci.yml`: install, lint, typecheck, test, build
+- `package-manager-consistency.yml`: lockfile/install consistency checks
+- `bun-compatibility.yml`: bun install compatibility checks
 
-## CodeHawk Scan (`codehawk.yml`)
+## PR Governance
 
-- What: Static code scan.
-- When: Weekly schedule and manual trigger.
-- Why: Adds security and quality visibility.
+- `commitlint.yml`: Conventional Commit validation
+- `pr-title.yml`: semantic PR title validation
+- `labeler.yml`: auto labels from changed paths
+- `pr-auto-merge.yml`: optional auto-merge policy
 
-## CodeQL (`codeql.yml`)
+## Security & Dependency
 
-- What: GitHub CodeQL analysis for JS/TS.
-- When: PRs, pushes to protected branches, scheduled run.
-- Why: Finds security vulnerabilities early.
+- `codeql.yml`: static security analysis
+- `codehawk.yml`: additional security scan
+- `dependency-review.yml`: dependency risk checks on PR
+- `dependabot-auto-merge.yml`: controlled safe dependency auto-merge
 
-## Commit Lint (`commitlint.yml`)
+## Release & Maintenance
 
-- What: Conventional commit validation.
-- When: PR lifecycle events.
-- Why: Keeps release/changelog automation predictable.
+- `release-please.yml`: automated version/changelog/tag/release
+- `stale.yml`: stale issue/PR cleanup
 
-## Dependabot Auto Merge (`dependabot-auto-merge.yml`)
+## Suggested Local Preflight
 
-- What: Auto-enables merge for safe patch/minor updates.
-- When: Dependabot PR events.
-- Why: Reduces manual maintenance overhead.
+Before pushing major changes:
 
-## Dependency Review (`dependency-review.yml`)
+```bash
+pnpm run lint
+pnpm run typecheck
+pnpm run test
+pnpm run build
+```
 
-- What: Dependency risk checks for changed manifests/lockfiles.
-- When: PRs.
-- Why: Improves supply-chain safety.
+## Related Docs
 
-## PR Labeler (`labeler.yml`)
-
-- What: Applies labels based on changed paths.
-- When: PR opened/synced/reopened.
-- Why: Improves review routing and triage.
-
-## Package Manager Consistency (`package-manager-consistency.yml`)
-
-- What: Frozen lockfile install + lockfile drift check.
-- When: PR/push touching package manager files.
-- Why: Prevents CI install mismatches.
-
-## PR Auto Merge (`pr-auto-merge.yml`)
-
-- What: Enables auto-merge for labeled PRs.
-- When: PR events and label updates.
-- Why: Speeds merge flow for approved changes.
-
-## PR Title Check (`pr-title.yml`)
-
-- What: Semantic PR title validation.
-- When: PR lifecycle events.
-- Why: Maintains release note and automation quality.
-
-## Release Please (`release-please.yml`)
-
-- What: Creates release PRs and publishes GitHub releases.
-- When: Push to `main`, manual trigger.
-- Why: Automates versioning and release lifecycle.
-
-## Stale Issues and PRs (`stale.yml`)
-
-- What: Marks and closes inactive issues/PRs.
-- When: Scheduled run and manual trigger.
-- Why: Keeps repository backlog healthy.
+- `docs/guides/release-automation.md`
+- `docs/guides/github-setup-checklist.md`

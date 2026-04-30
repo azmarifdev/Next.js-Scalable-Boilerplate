@@ -2,14 +2,17 @@ import { cookies } from "next/headers";
 
 import { hasPermission } from "@/lib/auth/rbac";
 import { verifySessionToken } from "@/lib/auth/session";
+import { isAdminStepUpEnabled } from "@/lib/auth/step-up";
+import { requireAdminStepUp } from "@/lib/auth/step-up-guard";
 import { AUTH_COOKIE_NAME } from "@/lib/config/constants";
 import { apiError } from "@/lib/utils/api-response";
 import type { Permission } from "@/types/auth";
 
 type SessionPayload = Awaited<ReturnType<typeof verifySessionToken>>;
+export type AuthenticatedSession = NonNullable<SessionPayload>;
 
 type RequireSessionResult =
-  | { session: NonNullable<SessionPayload>; response: null }
+  | { session: AuthenticatedSession; response: null }
   | { session: null; response: ReturnType<typeof apiError> };
 
 function getCookieFromHeader(header: string | null, key: string): string | null {
@@ -68,7 +71,7 @@ export async function requireSession(options: {
 export function requirePermission(
   role: string,
   permission: Permission,
-  options: { requestId?: string; route?: string }
+  options: { requestId?: string; route?: string; mfaVerified: boolean }
 ) {
   if (role !== "admin" && role !== "user") {
     return apiError(
@@ -84,5 +87,26 @@ export function requirePermission(
     );
   }
 
+  if (isAdminStepUpEnabled() && permission === "users:read") {
+    return requireAdminStepUp({
+      role,
+      mfaVerified: options.mfaVerified,
+      requestId: options.requestId,
+      route: options.route
+    });
+  }
+
   return null;
+}
+
+export function requireSessionPermission(
+  session: AuthenticatedSession,
+  permission: Permission,
+  options: { requestId?: string; route?: string }
+) {
+  return requirePermission(session.role, permission, {
+    requestId: options.requestId,
+    route: options.route,
+    mfaVerified: session.mfaVerified === true
+  });
 }
