@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.17](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.16...v0.1.17) (2026-05-02)
+
+
+### Features
+
+* **landing:** add tech stack icons, update docs hub with bn locale s… ([07eb9c4](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/07eb9c49fc1ed7d4cc511eb5831d4bd86baadaa5))
+* **landing:** add tech stack icons, update docs hub with bn locale support ([9653d01](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/9653d01efa3ed9276cc28d696de8e32a03f36076))
+
 ## [0.1.16](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.15...v0.1.16) (2026-04-30)
 
 
