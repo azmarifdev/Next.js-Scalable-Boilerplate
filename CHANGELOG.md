@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.19](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.18...v0.1.19) (2026-05-03)
+
+
+### Features
+
+* **boilerplate:** simplify to auth-centric landing, add docs hub, re… ([47a88de](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/47a88de1b1b32f7b04d7b11912d74dfe7a9022df))
+* **boilerplate:** simplify to auth-centric landing, add docs hub, remove dashboard ([19794be](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/19794bef18e7d6df2a80beb271cd3e648cad4a04))
+
 ## [0.1.18](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.17...v0.1.18) (2026-05-03)
 
 
