@@ -9,7 +9,7 @@
   "home": {
     "title": "Next.js-Boilerplate-PostgresQL-Drizzle",
     "titleSuffix": "স্টার্টার টেমপ্লেট",
-    "subtitle": "PostgreSQL ও Drizzle ORM সহ একটি production-ready Next.js Boilerplate। SaaS, dashboard এবং modern web app দ্রুত launch করার জন্য clean code, scalable architecture ও developer-friendly tooling সহ তৈরি।",
+    "subtitle": "PostgreSQL ও Drizzle ORM সহ একটি production-ready Next.js Boilerplate। আধুনিক ওয়েব অ্যাপ্লিকেশন, ই-কমার্স এবং internal tool দ্রুত launch করার জন্য clean code, scalable architecture ও developer-friendly tooling সহ তৈরি।",
     "signIn": "সাইন ইন",
     "signOut": "সাইন আউট",
     "getStarted": "শুরু করুন",
@@ -26,51 +26,63 @@
     },
     "features": [
       {
-        "title": "Production Ready",
-        "description": "Best practice, scalable structure এবং clean code সহ প্রস্তুত।"
+        "title": "Next.js + TypeScript",
+        "description": "App Router, typed routes এবং strict TypeScript foundation।"
       },
       {
-        "title": "Secure by Default",
-        "description": "দিনের শুরু থেকেই Auth, validation এবং security built-in।"
+        "title": "PostgreSQL + Drizzle",
+        "description": "SQL migration, typed schema এবং Neon serverless support।"
       },
       {
-        "title": "Developer Friendly",
-        "description": "TypeScript, ESLint, Prettier এবং modern DX সহ।"
+        "title": "Auth Built-in",
+        "description": "Better Auth দিয়ে cookie-based session। ইচ্ছামতো custom IdP-তে switch করুন।"
       },
       {
-        "title": "Easy to Customize",
-        "description": "Modular, flexible এবং যেকোনো project-এ সহজে adapt করা যায়।"
+        "title": "i18n Ready",
+        "description": "ইংরেজি ও বাংলা locale included। next-intl দিয়ে আরও locale যোগ করুন।"
       }
     ],
     "featuresPage": {
-      "eyebrow": "ফিচারসমূহ",
+      "eyebrow": "টেমপ্লেট ফিচারসমূহ",
       "title": "দ্রুত Ship করার জন্য যা যা দরকার",
-      "description": "এই boilerplate-এ clean architecture, strong default এবং optional module আছে, তাই অপ্রয়োজনীয় rewrite ছাড়াই product scale করা যায়।",
+      "description": "Next.js, PostgreSQL, Drizzle ORM এবং clean modular architecture সহ একটি production-ready foundation। অপ্রয়োজনীয় কিছু নেই — শুধু শুরু করার জন্য যা দরকার।",
       "cta": "ডকস দেখুন",
       "items": [
         {
           "title": "App Router + TypeScript",
-          "description": "Strict TypeScript-first developer experience সহ modern Next.js App Router structure।"
+          "description": "Strict TypeScript, typed routes এবং scalable folder structure সহ modern Next.js App Router।"
         },
         {
           "title": "PostgreSQL + Drizzle ORM",
-          "description": "SQL migration ও typed schema modeling সহ production-ready relational data layer।"
+          "description": "SQL migration, typed schema এবং Neon serverless support সহ production-ready relational data layer।"
         },
         {
-          "title": "Better Auth-first Flow",
-          "description": "Authentication এ Better Auth default থাকে, প্রয়োজন হলে optional custom mode support করে।"
+          "title": "Auth Built-in",
+          "description": "Cookie-based session auth ডিফল্টভাবে Better Auth ব্যবহার করে। প্রয়োজন হলে custom external IdP-তে switch করা যায়।"
         },
         {
-          "title": "React Query-first State",
-          "description": "Server-state ও API data fetching মূলত React Query দিয়ে handle করা হয়।"
+          "title": "React Query + Axios",
+          "description": "TanStack React Query এবং typed Axios client layer দিয়ে server-state ও API data caching।"
         },
         {
-          "title": "Feature Flags + Dev UI",
-          "description": "Runtime/config flag support এবং local development toggle page (`/dev/flags`) আছে।"
+          "title": "i18n Ready (EN/BN)",
+          "description": "next-intl দিয়ে সম্পূর্ণ আন্তর্জাতিকীকরণ। ইংরেজি ও বাংলা locale সহ — যেকোনো সময় আরও যোগ করা যায়।"
         },
         {
-          "title": "Built-in Testing Stack",
-          "description": "Unit/integration এর জন্য Vitest এবং end-to-end confidence এর জন্য Playwright।"
+          "title": "Docs Hub",
+          "description": "Categorized article, read-time estimate এবং GitHub source link সহ ব্লগ-স্টাইল ডকুমেন্টেশন হাব।"
+        },
+        {
+          "title": "Testing Suite",
+          "description": "Unit/integration টেস্টের জন্য Vitest, end-to-end confidence-এর জন্য Playwright, কম্পোনেন্ট টেস্টের জন্য React Testing Library।"
+        },
+        {
+          "title": "Docker + CI/CD",
+          "description": "Docker এবং docker-compose দিয়ে কন্টেইনারাইজড। Lint, typecheck, test, e2e ওয়ার্কফ্লো সহ GitHub Actions।"
+        },
+        {
+          "title": "সিকিউরিটি প্রথম",
+          "description": "CSP হেডার, সাইনড সেশন টোকেন, রেট লিমিটিং, same-origin চেক এবং অডিট লগিং আউট অফ দ্য বক্স।"
         }
       ]
     },
@@ -127,7 +139,7 @@
   },
   "dashboard": {
     "overviewTitle": "ড্যাশবোর্ড ওভারভিউ",
-    "overviewSubtitle": "এটি SaaS, internal tools এবং admin dashboard-এর জন্য domain-neutral Next.js-Boilerplate-PostgresQL-Drizzle।",
+    "overviewSubtitle": "PostgreSQL ও Drizzle ORM সহ domain-neutral Next.js Boilerplate — আধুনিক ওয়েব অ্যাপ্লিকেশনের জন্য তৈরি।",
     "projectsTitle": "প্রজেক্ট এক নজরে",
     "projectsSubtitle": "এক জায়গায় project progress, ownership এবং status ট্র্যাক করুন।",
     "tasksTitle": "টাস্ক ওয়ার্কফ্লো",

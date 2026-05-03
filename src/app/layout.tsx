@@ -44,6 +44,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         className={`${inter.variable} ${hindSiliguri.variable}`}
         data-theme={initialTheme}
         style={{ colorScheme: initialTheme }}
+        suppressHydrationWarning
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AppProviders>{children}</AppProviders>

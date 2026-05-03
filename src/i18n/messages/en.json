@@ -9,7 +9,7 @@
   "home": {
     "title": "Next.js-Boilerplate-PostgresQL-Drizzle",
     "titleSuffix": "Next.js-Boilerplate-PostgresQL-Drizzle",
-    "subtitle": "A production-ready Next.js Boilerplate with PostgreSQL & Drizzle ORM. Built for SaaS, dashboards, and modern web apps. Launch faster with clean code, scalable architecture, and developer-friendly tooling.",
+    "subtitle": "A production-ready Next.js Boilerplate with PostgreSQL & Drizzle ORM. Built for modern web apps, e-commerce, and internal tools. Launch faster with clean code, scalable architecture, and developer-friendly tooling.",
     "signIn": "Sign in",
     "signOut": "Sign out",
     "getStarted": "Get Started",
@@ -26,51 +26,63 @@
     },
     "features": [
       {
-        "title": "Production Ready",
-        "description": "Best practices, scalable structure, and clean code."
+        "title": "Next.js + TypeScript",
+        "description": "App Router, typed routes, and a strict TypeScript foundation."
       },
       {
-        "title": "Secure by Default",
-        "description": "Auth, validation, and security built-in from day one."
+        "title": "PostgreSQL + Drizzle",
+        "description": "SQL migrations, typed schema, and Neon serverless support."
       },
       {
-        "title": "Developer Friendly",
-        "description": "TypeScript, ESLint, Prettier, and modern DX."
+        "title": "Auth Built-in",
+        "description": "Cookie-based sessions with Better Auth. Switch to custom IdP anytime."
       },
       {
-        "title": "Easy to Customize",
-        "description": "Modular, flexible, and easy to adapt for any project."
+        "title": "i18n Ready",
+        "description": "English and Bangla included. Add more locales with next-intl."
       }
     ],
     "featuresPage": {
       "eyebrow": "Template Features",
       "title": "Everything You Need To Ship Faster",
-      "description": "This boilerplate includes a clean architecture, strong defaults, and optional modules so your product can scale without messy rewrites.",
+      "description": "A production-ready foundation with Next.js, PostgreSQL, Drizzle ORM, and a clean modular architecture. No clutter, no fluff — just what you need to start building.",
       "cta": "Explore Docs",
       "items": [
         {
           "title": "App Router + TypeScript",
-          "description": "Modern Next.js App Router structure with strict TypeScript-first developer experience."
+          "description": "Modern Next.js App Router with strict TypeScript, typed routes, and a scalable folder structure."
         },
         {
           "title": "PostgreSQL + Drizzle ORM",
-          "description": "Production-ready relational data layer with SQL migrations and typed schema modeling."
+          "description": "Production-ready relational data layer with SQL migrations, typed schema, and Neon serverless support."
         },
         {
-          "title": "Better Auth-first Flow",
-          "description": "Authentication defaults to Better Auth, with optional custom mode support when needed."
+          "title": "Auth Built-in",
+          "description": "Cookie-based session auth with Better Auth by default. Optionally switch to custom external IdP when needed."
         },
         {
-          "title": "React Query-first State",
-          "description": "Server-state and API data fetching handled with React Query as the primary approach."
+          "title": "React Query + Axios",
+          "description": "Server-state and API data caching powered by TanStack React Query with a typed Axios client layer."
         },
         {
-          "title": "Feature Flags + Dev UI",
-          "description": "Runtime/config flags with local development toggle page at /dev/flags."
+          "title": "i18n Ready (EN/BN)",
+          "description": "Full internationalization with next-intl. English and Bangla locales included — add more anytime."
         },
         {
-          "title": "Built-in Testing Stack",
-          "description": "Vitest for unit/integration coverage and Playwright for end-to-end confidence."
+          "title": "Docs Hub",
+          "description": "Blog-style documentation hub with categorized articles, read-time estimates, and GitHub source links."
+        },
+        {
+          "title": "Testing Suite",
+          "description": "Vitest for unit/integration tests, Playwright for end-to-end confidence, React Testing Library for components."
+        },
+        {
+          "title": "Docker + CI/CD",
+          "description": "Containerized via Docker and docker-compose. GitHub Actions with lint, typecheck, test, and e2e workflows."
+        },
+        {
+          "title": "Security First",
+          "description": "CSP headers, signed session tokens, rate limiting, same-origin checks, and audit logging out of the box."
         }
       ]
     },
@@ -127,7 +139,7 @@
   },
   "dashboard": {
     "overviewTitle": "Dashboard Overview",
-    "overviewSubtitle": "This is a domain-neutral Next.js-Boilerplate-PostgresQL-Drizzle for SaaS, internal tools, and admin dashboards.",
+    "overviewSubtitle": "A domain-neutral Next.js Boilerplate with PostgreSQL & Drizzle ORM for modern web applications.",
     "projectsTitle": "Projects at a glance",
     "projectsSubtitle": "Track project progress, ownership, and status in one place.",
     "tasksTitle": "Task workflow",

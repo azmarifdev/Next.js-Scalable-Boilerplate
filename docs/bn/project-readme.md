@@ -1,6 +1,6 @@
 # Next.js Boilerplate (PostgreSQL + Drizzle)
 
-SaaS-স্টাইল প্রোডাক্ট, internal dashboard, এবং modular web app-এর জন্য production-ready Next.js টেমপ্লেট।
+আধুনিক ওয়েব অ্যাপ্লিকেশন, ই-কমার্স প্ল্যাটফর্ম এবং মডুলার ওয়েব অ্যাপ-এর জন্য production-ready Next.js টেমপ্লেট।
 
 ## উদ্দেশ্য
 
