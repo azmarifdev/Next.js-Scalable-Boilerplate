@@ -236,11 +236,13 @@ All documentation is in the `docs/` directory and covers everything from setup t
 
 | Guide                                                              | Description                                                                |
 | ------------------------------------------------------------------ | -------------------------------------------------------------------------- |
+| [📕 Contributing Guide](docs/guides/contributing.md)               | PR rules, commit conventions, dev setup, testing guidelines                |
 | [📕 Deployment Guide](docs/guides/deployment.md)                   | End-to-end deployment runbook with verification steps                      |
 | [📕 Cloud Providers](docs/deployment/cloud-providers.md)           | Provider-specific setup (Vercel, Netlify, Railway, Render, Fly.io, Docker) |
 | [📕 GitHub Setup Checklist](docs/guides/github-setup-checklist.md) | Branch protection, secrets, labels, permissions                            |
 | [📕 Release Automation](docs/guides/release-automation.md)         | How Release Please works, troubleshooting                                  |
 | [📕 Project Maintenance](docs/guides/project-maintenance.md)       | Daily/weekly/monthly/quarterly maintenance routines                        |
+| [📕 Security Policy](docs/security.md)                             | Supported versions and vulnerability reporting                             |
 
 ### Workflows & Migration
 
@@ -279,7 +281,8 @@ All documentation is in the `docs/` directory and covers everything from setup t
 
 We welcome contributions! Please see:
 
-- [Contributing Guide](CONTRIBUTING.md) — PR rules, commit conventions, setup
+- [Contributing Guide](docs/guides/contributing.md) — PR rules, commit conventions, setup
+- [Security Policy](docs/security.md) — How to report vulnerabilities
 - [GitHub Setup Checklist](docs/guides/github-setup-checklist.md) — Repository hardening for maintainers
 - [Project Maintenance](docs/guides/project-maintenance.md) — Maintenance routines for active projects
 

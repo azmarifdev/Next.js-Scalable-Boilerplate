@@ -111,7 +111,7 @@ Update these files to reference the new package manager:
 | File                                 | What to Update                            |
 | ------------------------------------ | ----------------------------------------- |
 | `README.md`                          | Installation commands, build instructions |
-| `CONTRIBUTING.md`                    | Setup steps, PR requirements              |
+| `docs/guides/contributing.md`        | Setup steps, PR requirements              |
 | `docs/how-to-use.md`                 | All CLI examples                          |
 | `docs/guides/deployment.md`          | Build and start commands                  |
 | `docs/deployment/cloud-providers.md` | Provider build settings                   |
