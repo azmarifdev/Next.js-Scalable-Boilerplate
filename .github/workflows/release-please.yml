@@ -106,8 +106,8 @@ jobs:
 
             const contributorAvatars = contributors.slice(0, 20).map(
               (c) =>
-                `<a href="https://github.com/${c.login}"><img src="${c.avatarUrl}&s=80" width="50" height="50" alt="@${c.login}" style="border-radius:50%;margin:0 3px 3px 0;" /></a>`
-            ).join("");
+                `[![@${c.login}](${c.avatarUrl}&s=60 "@${c.login}")](https://github.com/${c.login})`
+            ).join(" ");
 
             const contributorsSection = [
               "",
@@ -117,8 +117,9 @@ jobs:
               "",
               ...(contributors.length
                 ? [
-                    `<p>${contributorAvatars}</p>`,
-                    `<p align="center"><sub>${contributors.map((c) => `<a href="https://github.com/${c.login}">@${c.login}</a>`).join(" · ")}</sub></p>`
+                    contributorAvatars,
+                    "",
+                    contributors.map((c) => `[@${c.login}](https://github.com/${c.login})`).join(" · ")
                   ].join("\n")
                 : ["> No external contributors detected for this release window."])
             ].join("\n");
