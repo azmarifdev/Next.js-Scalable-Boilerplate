@@ -1,12 +1,18 @@
 # Changelog
 
-## [0.1.18](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.17...v0.1.18) (2026-05-02)
+## [0.1.18](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.17...v0.1.18) (2026-05-03)
 
 
 ### Features
 
 * **boilerplate:** simplify to auth-centric landing with docs hub ([1c4a120](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/1c4a120ef06c998e49a6160429bc0e4a987ecd75))
 * **boilerplate:** simplify to auth-centric landing with docs hub ([c03313d](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/c03313dd9c56bf5bffa0047e52fb8eba9324cd05))
+
+
+### Bug Fixes
+
+* **sitemap:** actual routes include ([c9c2519](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/c9c2519f1c053ba00dff351e1e62cfcca29eecc9))
+* **sitemap:** actual routes include ([4e7eadf](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/4e7eadf571725c18d2ef887ca19397e19d915933))
 
 ## [0.1.17](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.16...v0.1.17) (2026-05-02)
 
