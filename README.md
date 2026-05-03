@@ -1,6 +1,6 @@
 # Next.js Boilerplate (PostgreSQL + Drizzle)
 
-Production-ready Next.js template for SaaS-style products, internal dashboards, and modular web apps.
+Production-ready Next.js template for modern web applications, e-commerce platforms, and modular web apps.
 
 ## Purpose
 
