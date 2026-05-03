@@ -46,16 +46,7 @@ Expected provider endpoint:
 ## Route Protection
 
 - Browser-level gate: `src/proxy.ts`
-- Server API permission check: `src/lib/auth/session-guard.ts`
-
-Protected dashboard route:
-
-- `/dashboard`
-- `/users`
-- `/projects`
-- `/tasks`
-- `/ecommerce`
-- `/billing`
+- Signed-in users login/register থেকে `/docs`-এ redirect হয়
 
 ## Admin Step-up MFA
 

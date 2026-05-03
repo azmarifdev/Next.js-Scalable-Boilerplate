@@ -1,11 +1,40 @@
-### Issue 😱:
+## 📋 Summary
 
-Closes https://github.com/Skolaczk/next-starter/issues
+<!-- Describe the change and why it's needed -->
 
-### What has been done ✅:
+## ✅ Changes
 
-- [ ]
+- [ ] Feature / Enhancement
+- [ ] Bug fix
+- [ ] Documentation
+- [ ] Refactoring
+- [ ] Tests
+- [ ] CI / Build
 
-### Screenshots/Videos 🎥:
+## 🔍 Related Issues
+
+<!-- Closes #issue-number or N/A -->
+
+Closes N/A
+
+## 🧪 How to Test
+
+<!-- Steps to verify the change -->
+
+1.
+2.
+3.
+
+## 📸 Screenshots / Screen Recordings
+
+<!-- If applicable, add screenshots or recordings -->
 
 N/A
+
+## 🚨 Checklist
+
+- [ ] Code follows project conventions
+- [ ] Lint & typecheck pass (`pnpm run lint && pnpm run typecheck`)
+- [ ] Tests pass (`pnpm run test`)
+- [ ] Format check passes (`pnpm run format:check`)
+- [ ] Docs updated if needed

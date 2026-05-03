@@ -97,30 +97,29 @@ jobs:
               "",
               "---",
               "",
-              `## 🌟 Credits`,
+              "## 🙏 Credits",
               "",
-              "A huge thank you to everyone who made this release possible.",
+              "We sincerely appreciate every contribution that makes this project better — whether it's code, documentation, feedback, or helping someone get started.",
               "",
-              `> 🔗 [Full Changelog](${fullChangelogUrl})`
+              "> 📖 [Full Changelog](${fullChangelogUrl})"
             ].join("\n");
+
+            const contributorAvatars = contributors.slice(0, 20).map(
+              (c) =>
+                `<a href="https://github.com/${c.login}"><img src="${c.avatarUrl}&s=80" width="50" height="50" alt="@${c.login}" style="border-radius:50%;margin:0 3px 3px 0;" /></a>`
+            ).join("");
 
             const contributorsSection = [
               "",
               "---",
               "",
-              "## 👥 Contributors",
+              "## 🤝 Contributors",
               "",
               ...(contributors.length
                 ? [
-                    '<table>',
-                    '  <tr>',
-                    ...contributors.map(
-                      (c) =>
-                        `    <td align="center"><a href="https://github.com/${c.login}"><img src="${c.avatarUrl}&s=80" width="64" height="64" alt="@${c.login}" style="border-radius:50%;" /><br /><sub><b>@${c.login}</b></sub></a></td>`
-                    ),
-                    '  </tr>',
-                    '</table>'
-                  ]
+                    `<p>${contributorAvatars}</p>`,
+                    `<p align="center"><sub>${contributors.map((c) => `<a href="https://github.com/${c.login}">@${c.login}</a>`).join(" · ")}</sub></p>`
+                  ].join("\n")
                 : ["> No external contributors detected for this release window."])
             ].join("\n");
 
@@ -138,8 +137,8 @@ jobs:
             ].join("\n");
 
             const sectionsToAppend = [creditsSection, contributorsSection, metadataSection].join("\n");
-            const hasCredits = existingBody.includes("## 🌟 Credits") || existingBody.includes("## Credits");
-            const hasContributors = existingBody.includes("## 👥 Contributors") || existingBody.includes("## Contributors");
+            const hasCredits = existingBody.includes("## 🙏 Credits") || existingBody.includes("## 🌟 Credits") || existingBody.includes("## Credits");
+            const hasContributors = existingBody.includes("## 🤝 Contributors") || existingBody.includes("## 👥 Contributors") || existingBody.includes("## Contributors");
             const hasMetadata = existingBody.includes("## 📦 Release Metadata") || existingBody.includes("## Release Metadata");
 
             let nextBody = existingBody;
