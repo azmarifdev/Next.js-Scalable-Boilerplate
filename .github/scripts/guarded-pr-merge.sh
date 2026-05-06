@@ -15,8 +15,22 @@ poll_interval_seconds=5
 # Prefer native auto-merge when repository policy allows it.
 auto_merge_allowed="$(gh repo view "$repo" --json autoMergeAllowed --jq '.autoMergeAllowed')"
 if [[ "$auto_merge_allowed" == "true" ]]; then
-  gh pr merge --auto --squash "$pr_url"
-  exit 0
+  set +e
+  auto_merge_output="$(gh pr merge --auto --squash "$pr_url" 2>&1)"
+  auto_merge_status=$?
+  set -e
+
+  if [[ $auto_merge_status -eq 0 ]]; then
+    echo "$auto_merge_output"
+    exit 0
+  fi
+
+  echo "$auto_merge_output"
+  if ! grep -Eq "enablePullRequestAutoMerge|Protected branch rules not configured" <<<"$auto_merge_output"; then
+    exit $auto_merge_status
+  fi
+
+  echo "Auto-merge request was rejected by repository/branch policy. Falling back to guarded direct merge checks."
 fi
 
 echo "Auto-merge is disabled for ${repo}. Applying guarded direct merge strategy."
