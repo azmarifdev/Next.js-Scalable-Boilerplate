@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.22](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.21...v0.1.22) (2026-05-06)
+
+
+### CI
+
+* **workflows:** harden PR auto-merge and release pipeline ([da42e40](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/da42e401dcfe0506c0b14aac280ca2891e721388))
+* **workflows:** harden PR auto-merge and release pipeline ([6657a58](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/6657a58dc9d1cc7bc4801eb8f9e299ac8eec8331))
+
 ## [0.1.21](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.20...v0.1.21) (2026-05-03)
 
 
