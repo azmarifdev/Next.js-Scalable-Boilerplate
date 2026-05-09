@@ -1,6 +1,9 @@
 name: Release Please
 
 on:
+  pull_request:
+    branches:
+      - "**"
   push:
     branches:
       - main
@@ -16,7 +19,15 @@ permissions:
   issues: write
 
 jobs:
+  required-check:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Release Please check for PR
+        run: echo "Release Please automation runs on push to main. PR check passed."
+
   release-please:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     outputs:

@@ -5,11 +5,13 @@ import path from "node:path";
 
 const rootDir = process.cwd();
 const envExamplePath = path.join(rootDir, ".env.example");
-const envPath = path.join(rootDir, ".env");
+const envLocalPath = path.join(rootDir, ".env.local");
 
 function log(step, message) {
   console.log(`[setup] ${step} ${message}`);
 }
+
+
 
 async function fileExists(filePath) {
   try {
@@ -20,10 +22,10 @@ async function fileExists(filePath) {
   }
 }
 
-async function ensureEnvFile() {
-  const hasEnv = await fileExists(envPath);
-  if (hasEnv) {
-    log("env", ".env already exists");
+async function ensureEnvLocalFile() {
+  const hasEnvLocal = await fileExists(envLocalPath);
+  if (hasEnvLocal) {
+    log("env", ".env.local already exists");
     return;
   }
 
@@ -33,8 +35,8 @@ async function ensureEnvFile() {
     return;
   }
 
-  await copyFile(envExamplePath, envPath);
-  log("env", "created .env from .env.example");
+  await copyFile(envExamplePath, envLocalPath);
+  log("env", "created .env.local from .env.example");
 }
 
 function runCommand(command, args) {
@@ -66,7 +68,7 @@ async function installDependencies() {
 
 async function main() {
   log("start", "project setup started");
-  await ensureEnvFile();
+  await ensureEnvLocalFile();
   await installDependencies();
   log("done", "project setup completed");
 }

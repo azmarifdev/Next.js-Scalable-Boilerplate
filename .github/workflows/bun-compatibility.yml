@@ -1,6 +1,9 @@
 name: Pnpm Compatibility
 
 on:
+  pull_request:
+    branches:
+      - "**"
   workflow_dispatch:
 
 permissions:

@@ -1,6 +1,9 @@
 name: Stale Issues and PRs
 
 on:
+  pull_request:
+    branches:
+      - "**"
   schedule:
     - cron: "30 1 * * *"
   workflow_dispatch:
@@ -10,7 +13,15 @@ permissions:
   pull-requests: write
 
 jobs:
+  required-check:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Stale workflow check for PR
+        run: echo "Stale cleanup runs on schedule/manual. PR check passed."
+
   stale:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Mark and close stale items

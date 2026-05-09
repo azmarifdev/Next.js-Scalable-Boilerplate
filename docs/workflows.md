@@ -218,6 +218,31 @@ This catches most CI failures before they reach GitHub.
 
 ---
 
+## Recommended Required Checks
+
+For this boilerplate, configure these as required in branch rules:
+
+- `CI`
+- `Commit Lint`
+- `PR Title Check`
+- `Package Manager Consistency`
+- `Dependency Review`
+- `CodeQL`
+- `CodeHawk Scan`
+
+Keep these non-required (automation only):
+
+- `PR Labeler`
+- `PR Auto Merge`
+- `Dependabot Auto Merge`
+- `Release Please`
+- `Stale Issues and PRs`
+- `Pnpm Compatibility`
+
+This setup keeps merge quality strict while avoiding PR deadlocks from maintenance workflows.
+
+---
+
 ## Related Docs
 
 - [Release Automation](docs/guides/release-automation.md) — Deep dive into the release workflow
