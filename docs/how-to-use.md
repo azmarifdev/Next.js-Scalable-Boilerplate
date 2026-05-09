@@ -2,280 +2,232 @@
 
 ## Purpose
 
-This guide covers **first-time setup** and **day-to-day development workflow**. Whether you're a new developer joining a team or setting up this project locally for the first time, follow these steps in order.
+This guide is the complete A-to-Z onboarding flow for this boilerplate:
+
+- first local setup
+- environment configuration
+- database and auth setup
+- daily developer workflow
+- quality checks before pushing
+
+If you are using this template for the first time, follow this guide in order.
 
 ---
 
-## What This Guide Covers
+## Quick Flow Diagram
 
-- Installing the project for the first time
-- Configuring environment variables
-- Running the development server
-- Switching between auth modes
-- Working with the database
-- Running quality checks (lint, test, build)
-- Useful development routes
+```mermaid
+graph TD
+    A[Clone Repo] --> B[Install Dependencies]
+    B --> C[Run Setup Script]
+    C --> D[Configure .env.local]
+    D --> E[Start Dev Server]
+    E --> F[Run Lint / Typecheck / Tests]
+    F --> G[Open PR]
+```
 
 ---
 
-## 1. First-Time Setup
+## 1. Prerequisites
 
-### Prerequisites
+| Tool    | Required Version | Check            |
+| ------- | ---------------- | ---------------- |
+| Node.js | `>=20 <23`       | `node --version` |
+| pnpm    | `>=8`            | `pnpm --version` |
 
-Make sure you have these installed on your machine:
+---
 
-| Tool        | Minimum Version | Check Command    |
-| ----------- | --------------- | ---------------- |
-| **Node.js** | `>=20 <23`      | `node --version` |
-| **pnpm**    | `>=8`           | `pnpm --version` |
-
-> 💡 **Using a different package manager?** See the [Package Manager Migration](docs/migrations/package-manager.md) guide.
-
-### Clone & Install
+## 2. Clone and Install
 
 ```bash
-# Clone the repository
 git clone https://github.com/your-org/your-repo.git
 cd your-repo
-
-# Install all dependencies
 pnpm install
-
-# Run the automated setup script (creates .env.local, etc.)
 pnpm run setup
 ```
 
-The `setup` script will:
+What `pnpm run setup` does:
 
-1. Copy `.env.example` to `.env.local` (if not already present)
-2. Generate any necessary keys
-3. Verify your Node.js version matches requirements
+1. Creates `.env.local` from `.env.example` if missing
+2. Installs dependencies
 
 ---
 
-## 2. Configure Environment Variables
+## 3. Configure Environment Variables
 
-The project uses `.env.local` for local development. Copy the example file if it wasn't created by the setup script:
+The runtime reads local configuration from `.env.local`.
 
-```bash
-cp .env.example .env.local
-```
-
-### Minimum Configuration (Internal Auth Mode)
-
-For the most common setup — internal auth with Better Auth — set these variables:
+### 3.1 Minimum required for internal mode
 
 ```env
-# Backend runs inside the same app
 NEXT_PUBLIC_BACKEND_MODE=internal
-
-# Use Better Auth (default, no external provider needed)
 NEXT_PUBLIC_AUTH_PROVIDER=better-auth
-
-# PostgreSQL connection string
-DATABASE_URL=postgresql://user:password@localhost:5432/your-db
-
-# Session encryption secret (generate with: openssl rand -hex 32)
-AUTH_SESSION_SECRET=your-32-byte-hex-string-here
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/app_db
+AUTH_SESSION_SECRET=<generate-with-openssl-rand-hex-32>
 ```
 
-### Optional Dev Flags
-
-These are **optional** — only set them if you know what you're doing:
-
-```env
-# Enable demo account for testing
-ALLOW_DEMO_AUTH=false
-
-# Allow insecure development auth (not recommended)
-ALLOW_INSECURE_DEV_AUTH=false
-
-# Enable MFA step-up for admin routes
-REQUIRE_ADMIN_STEP_UP_AUTH=false
-```
-
----
-
-## 3. Start the Development Server
+Generate session secret:
 
 ```bash
-pnpm run dev
+openssl rand -hex 32
 ```
 
-The app starts at **http://localhost:3000**.
+### 3.2 Safe local fallback mode (no database yet)
 
-### What You Should See
-
-When you open the browser:
-
-1. ✅ **Landing page** — Hero section with project title, tech stack icons, and navigation
-2. ✅ **Working navigation** — Links to Features, Docs, Sign In
-3. ✅ **Language toggle** — Switch between English (🇬🇧) and Bangla (🇧🇩)
-4. ✅ **Theme toggle** — Switch between dark and light mode
-
----
-
-## 4. Switch Auth Modes
-
-### Default: Internal Auth (Better Auth)
-
-This is the simplest setup — everything runs in your app:
+If you are exploring UI/routes before connecting PostgreSQL:
 
 ```env
-NEXT_PUBLIC_AUTH_PROVIDER=better-auth
+ALLOW_DEMO_AUTH=true
+ALLOW_INSECURE_DEV_AUTH=true
+DATABASE_URL=
+AUTH_SESSION_SECRET=local-dev-only-secret
 ```
 
-Auth endpoints are at `/api/v1/auth/*`:
+Important:
 
-- Login: `POST /api/v1/auth/login`
-- Register: `POST /api/v1/auth/register`
-- Session: `GET /api/v1/auth/me`
-- Logout: `POST /api/v1/auth/logout`
+- This fallback is for local development only.
+- Do not use insecure fallback flags in production.
 
-### External: Custom Auth Provider
-
-If you have an existing auth system:
+### 3.3 Custom auth mode
 
 ```env
 NEXT_PUBLIC_AUTH_PROVIDER=custom-auth
 NEXT_PUBLIC_ENABLE_CUSTOM_AUTH=true
 ENABLE_CUSTOM_AUTH=true
-NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL=https://your-auth-server.com
+NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL=https://your-auth-service.example.com
 ```
-
-The app will delegate login, register, and session management to your external provider.
 
 ---
 
-## 5. Database Operations
+## 4. Start the App
 
-### Generate Migrations
+```bash
+pnpm run dev
+```
 
-When you change the database schema in `src/lib/db/schema.ts`, generate migration files:
+Open:
+
+- `http://localhost:3000`
+
+---
+
+## 5. Database Workflow (PostgreSQL + Drizzle)
+
+### Generate migration files
 
 ```bash
 pnpm run db:generate
 ```
 
-This creates SQL migration files in the `drizzle/` directory.
-
-### Apply Migrations
-
-Apply pending migrations to your database:
+### Apply migrations
 
 ```bash
 pnpm run db:migrate
 ```
 
-### Open Drizzle Studio (GUI)
-
-Visually browse and edit your database:
-
-```bash
-pnpm run db:studio
-```
-
-This opens a web interface at **http://localhost:4983**.
-
-### Reset Database
-
-⚠️ **This drops all data** — use with caution:
-
-```bash
-pnpm run db:reset
-```
-
-### Seed Database
-
-Add sample data for development:
+### Seed database
 
 ```bash
 pnpm run db:seed
 ```
 
----
-
-## 6. Running Quality Checks
-
-Run these before pushing any changes:
+### Open DB studio
 
 ```bash
-# Lint your code
+pnpm run db:studio
+```
+
+### Reset database (destructive)
+
+```bash
+pnpm run db:reset
+```
+
+---
+
+## 6. Daily Development Workflow
+
+Recommended flow before each push:
+
+```bash
 pnpm run lint
-
-# TypeScript type checking
 pnpm run typecheck
-
-# Run all unit & integration tests
 pnpm run test
-
-# Run integration tests only (faster)
-pnpm run test:integration
-
-# Run end-to-end tests (requires dev server running)
-pnpm run e2e
-
-# Check formatting
 pnpm run format:check
-
-# Build the production bundle
 pnpm run build
 ```
 
-### Recommended Pre-Push Workflow
+For E2E:
 
 ```bash
-pnpm run lint
-pnpm run typecheck
-pnpm run test
-pnpm run build
+pnpm run e2e
 ```
 
 ---
 
-## 7. Useful Development Routes
+## 7. Common Routes
 
-| Route          | What It Shows                                  |
-| -------------- | ---------------------------------------------- |
-| `/`            | Landing page with hero and features            |
-| `/login`       | Sign in page (with demo credentials auto-fill) |
-| `/register`    | Create account page                            |
-| `/docs`        | Documentation hub with categorized articles    |
-| `/docs/[slug]` | Individual documentation article               |
-| `/features`    | Full features overview page                    |
-| `/dev/flags`   | Feature flag toggle UI (for development)       |
-
----
-
-## 8. Common Development Tasks
-
-### Adding a New Page
-
-1. Create a file in `src/app/` following Next.js App Router conventions
-2. Add the route to `src/app/sitemap.ts` if it should appear in the sitemap
-3. Add translations to `src/i18n/messages/en.json` and `bn.json`
-4. Add any navigation links to the relevant component
-
-### Adding a New API Route
-
-1. Create a route file in `src/app/api/v1/`
-2. Use the standard API response helpers from `src/lib/utils/api-response.ts`
-3. Add auth protection using `session-guard.ts` if needed
-
-### Adding i18n Translations
-
-1. Open `src/i18n/messages/en.json` (English)
-2. Open `src/i18n/messages/bn.json` (Bangla)
-3. Add the same key to both files with translated values
-4. Use `useTranslations("namespace")` in components
+| Route        | Purpose                   |
+| ------------ | ------------------------- |
+| `/`          | Landing page              |
+| `/login`     | Sign in                   |
+| `/register`  | Registration              |
+| `/docs`      | Docs hub                  |
+| `/features`  | Feature overview          |
+| `/dev/flags` | Development feature flags |
 
 ---
 
-## Related Files
+## 8. Troubleshooting
 
-| File                             | Purpose                                |
-| -------------------------------- | -------------------------------------- |
-| `src/lib/config/env.ts`          | Environment variable schema definition |
-| `src/lib/config/validate.ts`     | Runtime configuration validation       |
-| `src/lib/config/featureFlags.ts` | Feature flag definitions and helpers   |
-| `src/app/api/v1/auth/*`          | Internal auth API route handlers       |
+### Error: `DATABASE_URL is required`
+
+Cause:
+
+- `NEXT_PUBLIC_BACKEND_MODE=internal`
+- `ALLOW_DEMO_AUTH=false`
+- no DB URL provided
+
+Fix:
+
+- add `DATABASE_URL` to `.env.local`
+- or temporarily set `ALLOW_DEMO_AUTH=true` for local exploration
+
+### Error: `AUTH_SESSION_SECRET ... is required`
+
+Fix:
+
+- set `AUTH_SESSION_SECRET`
+- or local-only fallback `ALLOW_INSECURE_DEV_AUTH=true`
+
+### E2E passes locally but fails in GitHub
+
+Cause:
+
+- local Playwright injects fallback envs
+- GitHub Actions `push` workflow expects repository secrets
+
+Fix:
+
+- add `DATABASE_URL` and `AUTH_SESSION_SECRET` in repo Secrets (Actions)
+
+---
+
+## 9. Production Safety Checklist
+
+Before production deploy:
+
+1. `ALLOW_INSECURE_DEV_AUTH=false`
+2. `ALLOW_DEMO_AUTH=false`
+3. real `DATABASE_URL` configured
+4. strong `AUTH_SESSION_SECRET` configured
+5. HTTPS URLs for external auth
+
+---
+
+## Related Guides
+
+- [GitHub Setup Checklist](docs/guides/github-setup-checklist.md)
+- [Workflows](docs/workflows.md)
+- [Release Automation](docs/guides/release-automation.md)
+- [Contributing Guide](docs/guides/contributing.md)

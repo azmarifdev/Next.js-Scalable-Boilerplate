@@ -1,6 +1,9 @@
 name: CodeHawk Scan
 
 on:
+  pull_request:
+    branches:
+      - "**"
   workflow_dispatch:
   schedule:
     - cron: "0 4 * * 1"
