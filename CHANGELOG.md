@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.1.26](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.25...v0.1.26) (2026-05-10)
+
+
+### Bug Fixes
+
+* **ci:** always run required PR checks by removing path filter ([6a0a0dc](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/6a0a0dc8dff364e70fb764b03b546a8e7cc562df))
+* **release:** auto-convert non-releasable merges and keep release PR … ([256fa7a](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/256fa7ae847fbfb53c1c5313997ae22c880215a8))
+* **release:** auto-convert non-releasable merges and keep release PR checks mergeable ([b270959](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/b2709593724c4e95affe4f9e9fd73d76ee49ea04))
+* **release:** fix selected release outputs ([1800380](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/180038078b6698a8bc0117bc72c190f37d90cdcb))
+* **release:** fix selected release outputs ([f3167a1](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/f3167a1c7f3c37896ed61d73fff59fd2bb219d53))
+* **release:** mark required auto-convert non-releasable merges and ke… ([ce1b1bd](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/ce1b1bd66c068cf2ce9b54739aef51895ce6025a))
+* **release:** mark required auto-convert non-releasable merges and keep release PR checks mergeable ([53a76e2](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/53a76e29f25a984f4901b81283466852e98354fd))
+
+
+### Documentation
+
+* fix broken markdown links, add guides index reference, and repa… ([6349cff](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/6349cff4f950dfb1df7766332f03fd6fcb3d0972))
+* fix broken markdown links, add guides index reference, and repair drizzle badge ([1801a4b](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/1801a4bc9b333544673e21cf0d1cf72522d7ce05))
+
+
+### CI
+
+* **release:** auto-mark required checks on release PRs without PAT ([6ead226](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/6ead226a70b9ae4b4e6dfb29202bac5fbc5c20f3))
+* **release:** auto-mark required checks on release PRs without PAT ([72a68bf](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/72a68bff2c3636e0b39a9ced9c2b464ca28bec41))
+
 ## [0.1.25](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.24...v0.1.25) (2026-05-10)
 
 
