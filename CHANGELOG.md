@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.25](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.24...v0.1.25) (2026-05-10)
+
+
+### CI
+
+* harden release workflow token usage and clean maintenance triggers ([1c67462](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/1c6746243ac1e19f63286beb467db88db00df67f))
+* harden release workflow token usage and clean maintenance triggers ([95ea488](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/95ea4886ef7ac5c6d8b97537542153fc72f1c6b0))
+* run workflow-change checks and add pull_request e2e pipeline ([8293f01](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/8293f01a39c4b237015cd0b24409b65e29211509))
+
 ## [0.1.24](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.23...v0.1.24) (2026-05-10)
 
 
