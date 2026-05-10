@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.24](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.23...v0.1.24) (2026-05-10)
+
+
+### CI
+
+* **docs:** align github checks policy, issue templates, and env setup workflow ([3ff61a8](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/3ff61a8f415b9a50dbe7a1026464692dfc22f93e))
+* **docs:** align github checks policy, issue templates, and env setup workflow ([603a53b](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/603a53beda6c5ada3bdd6126f2577a15a15364c4))
+* run required checks for release-please PR changes ([7ecc3c1](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/7ecc3c1f0b59d68b6b6665ae90ce792f881376c7))
+* run required checks for release-please PR changes ([580f52c](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/580f52cbc06a2bb45c6e1e7ba90eafde748aa1d3))
+
 ## [0.1.23](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.22...v0.1.23) (2026-05-06)
 
 
