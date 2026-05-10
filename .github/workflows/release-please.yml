@@ -23,6 +23,7 @@ jobs:
     outputs:
       release_created: ${{ steps.pick.outputs.release_created }}
       prs_created: ${{ steps.pick.outputs.prs_created }}
+      prs: ${{ steps.pick.outputs.prs }}
       tag_name: ${{ steps.pick.outputs.tag_name }}
     steps:
       - name: Ensure releasable commit override for latest merge
@@ -115,6 +116,7 @@ jobs:
           if [ "${{ steps.release_primary.outcome }}" = "success" ]; then
             echo "release_created=${{ steps.release_primary.outputs.release_created }}" >> "$GITHUB_OUTPUT"
             echo "prs_created=${{ steps.release_primary.outputs.prs_created }}" >> "$GITHUB_OUTPUT"
+            echo "prs=${{ steps.release_primary.outputs.prs }}" >> "$GITHUB_OUTPUT"
             echo "tag_name=${{ steps.release_primary.outputs.tag_name }}" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -122,6 +124,7 @@ jobs:
           if [ "${{ steps.release_retry.outcome }}" = "success" ]; then
             echo "release_created=${{ steps.release_retry.outputs.release_created }}" >> "$GITHUB_OUTPUT"
             echo "prs_created=${{ steps.release_retry.outputs.prs_created }}" >> "$GITHUB_OUTPUT"
+            echo "prs=${{ steps.release_retry.outputs.prs }}" >> "$GITHUB_OUTPUT"
             echo "tag_name=${{ steps.release_retry.outputs.tag_name }}" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -130,7 +133,7 @@ jobs:
           exit 1
 
       - name: Mark required checks for release PR
-        if: steps.pick.outputs.prs_created == 'true'
+        if: always()
         uses: actions/github-script@v9
         with:
           script: |
