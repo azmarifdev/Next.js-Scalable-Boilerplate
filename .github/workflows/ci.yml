@@ -112,7 +112,7 @@ jobs:
         run: pnpm run build
 
   e2e:
-    name: Playwright E2E
+    name: Playwright E2E Push
     needs: build
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'master' || github.ref_name == 'develop')
@@ -153,7 +153,7 @@ jobs:
           retention-days: 30
 
   e2e-pr:
-    name: Playwright E2E (pull_request)
+    name: Playwright E2E PR
     needs: build
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
