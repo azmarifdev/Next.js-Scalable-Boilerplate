@@ -65,5 +65,5 @@ These parts of the codebase require extra attention during changes:
 
 ## Related Documentation
 
-- [Auth Flow](docs/auth-flow.md) — Authentication lifecycle and security controls
-- [Cloud Providers](docs/deployment/cloud-providers.md) — Production deployment security notes
+- [Auth Flow](auth-flow.md) — Authentication lifecycle and security controls
+- [Cloud Providers](deployment/cloud-providers.md) — Production deployment security notes

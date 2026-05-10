@@ -133,7 +133,7 @@ Since PRs are typically **squash-merged**, your PR title becomes the final commi
 - **Lockfile:** `pnpm-lock.yaml` — must be committed and kept in sync
 - **CI uses:** `pnpm install --frozen-lockfile`
 
-If your team needs to switch to a different package manager, see the [Package Manager Migration](docs/migrations/package-manager.md) guide.
+If your team needs to switch to a different package manager, see the [Package Manager Migration](../migrations/package-manager.md) guide.
 
 ---
 
@@ -145,13 +145,13 @@ This project uses **Release Please** for automated versioning:
 2. Release Please opens a release PR
 3. Merge the release PR → tag + changelog + GitHub release auto-generated
 
-See [Release Automation](docs/guides/release-automation.md) for details.
+See [Release Automation](release-automation.md) for details.
 
 ---
 
 ## Related Guides
 
-- [Deployment Guide](docs/guides/deployment.md) — How to ship to production
-- [Project Maintenance](docs/guides/project-maintenance.md) — Keeping the project healthy
-- [GitHub Setup Checklist](docs/guides/github-setup-checklist.md) — Repository hardening for maintainers
-- [Release Automation](docs/guides/release-automation.md) — How releases work
+- [Deployment Guide](deployment.md) — How to ship to production
+- [Project Maintenance](project-maintenance.md) — Keeping the project healthy
+- [GitHub Setup Checklist](github-setup-checklist.md) — Repository hardening for maintainers
+- [Release Automation](release-automation.md) — How releases work

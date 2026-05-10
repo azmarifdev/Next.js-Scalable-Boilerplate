@@ -227,7 +227,7 @@ Before production deploy:
 
 ## Related Guides
 
-- [GitHub Setup Checklist](docs/guides/github-setup-checklist.md)
-- [Workflows](docs/workflows.md)
-- [Release Automation](docs/guides/release-automation.md)
-- [Contributing Guide](docs/guides/contributing.md)
+- [GitHub Setup Checklist](guides/github-setup-checklist.md)
+- [Workflows](workflows.md)
+- [Release Automation](guides/release-automation.md)
+- [Contributing Guide](guides/contributing.md)

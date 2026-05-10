@@ -295,10 +295,10 @@ The auth state is checked via the `useAuth()` hook which calls `GET /api/v1/auth
 
 ## Related Documentation
 
-| File                                 | What It Covers                                |
-| ------------------------------------ | --------------------------------------------- |
-| [Architecture](docs/architecture.md) | System layers, request path, design decisions |
-| [How to Use](docs/how-to-use.md)     | Setup, env config, switching auth modes       |
+| File                            | What It Covers                                |
+| ------------------------------- | --------------------------------------------- |
+| [Architecture](architecture.md) | System layers, request path, design decisions |
+| [How to Use](how-to-use.md)     | Setup, env config, switching auth modes       |
 
 ### Key Source Files
 

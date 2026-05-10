@@ -153,23 +153,33 @@ jobs:
               "> 📖 [Full Changelog](${fullChangelogUrl})"
             ].join("\n");
 
-            const contributorAvatars = contributors.slice(0, 20).map(
-              (c) =>
-                `[![@${c.login}](${c.avatarUrl}&s=60 "@${c.login}")](https://github.com/${c.login})`
-            ).join(" ");
+            const contributorRows = [];
+            const topContributors = contributors.slice(0, 20);
+            for (let i = 0; i < topContributors.length; i += 2) {
+              const pair = topContributors.slice(i, i + 2);
+              const cells = pair
+                .map(
+                  (c) =>
+                    `<td align="center"><a href="https://github.com/${c.login}"><img src="${c.avatarUrl}&s=80" width="64" height="64" alt="@${c.login}" style="border-radius:50%;" /><br /><sub><b>@${c.login}</b></sub></a></td>`
+                )
+                .join("");
+              contributorRows.push(`  <tr>${cells}</tr>`);
+            }
+
+            const contributorsTable = [
+              "<table>",
+              ...contributorRows,
+              "</table>"
+            ].join("\n");
 
             const contributorsSection = [
               "",
               "---",
               "",
-              "## 🤝 Contributors",
+              "## 👥 Contributors",
               "",
               ...(contributors.length
-                ? [
-                    contributorAvatars,
-                    "",
-                    contributors.map((c) => `[@${c.login}](https://github.com/${c.login})`).join(" · ")
-                  ].join("\n")
+                ? [contributorsTable]
                 : ["> No external contributors detected for this release window."])
             ].join("\n");
 

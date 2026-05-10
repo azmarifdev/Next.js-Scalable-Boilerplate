@@ -210,8 +210,8 @@ src/lib/db/providers/
 
 ## Related Docs
 
-| Document                                     | What It Covers                                    |
-| -------------------------------------------- | ------------------------------------------------- |
-| [Auth Flow](docs/auth-flow.md)               | Authentication lifecycle, MFA, session management |
-| [Folder Structure](docs/folder-structure.md) | Directory-level responsibilities and conventions  |
-| [Workflows](docs/workflows.md)               | GitHub Actions, CI/CD, automation                 |
+| Document                                | What It Covers                                    |
+| --------------------------------------- | ------------------------------------------------- |
+| [Auth Flow](auth-flow.md)               | Authentication lifecycle, MFA, session management |
+| [Folder Structure](folder-structure.md) | Directory-level responsibilities and conventions  |
+| [Workflows](workflows.md)               | GitHub Actions, CI/CD, automation                 |
