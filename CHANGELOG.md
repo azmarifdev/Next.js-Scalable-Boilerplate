@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.26](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.25...v0.1.26) (2026-05-10)
+
+
+### Documentation
+
+* fix broken markdown links, add guides index reference, and repa… ([6349cff](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/6349cff4f950dfb1df7766332f03fd6fcb3d0972))
+* fix broken markdown links, add guides index reference, and repair drizzle badge ([1801a4b](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/1801a4bc9b333544673e21cf0d1cf72522d7ce05))
+
 ## [0.1.25](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.24...v0.1.25) (2026-05-10)
 
 
