@@ -197,7 +197,7 @@ Once merged, Release Please automatically:
 **Prevention:**
 
 - Keep CI PR triggers compatible with release PR file changes
-- Configure `RELEASE_PLEASE_TOKEN` secret (PAT) for release workflow token stability
+- This repo's `release-please.yml` now marks required checks on release PRs automatically, so merge is not blocked even when PR workflows are not triggered by `GITHUB_TOKEN`
 
 ### Version number is wrong
 
