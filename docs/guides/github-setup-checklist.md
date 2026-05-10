@@ -54,23 +54,30 @@ Under PR rule:
 
 Inside `Require status checks to pass`, add:
 
-- `CI`
-- `Commit Lint`
-- `PR Title Check`
-- `Package Manager Consistency`
-- `Dependency Review`
-- `CodeQL`
-- `CodeHawk Scan`
+- `Build`
+- `Quality (lint)`
+- `Quality (test)`
+- `Quality (typecheck)`
+- `commitlint`
+- `dependency-review`
+- `semantic-pr-title`
+- `scan`
+- `Analyze (JavaScript/TypeScript)`
 
 Why these checks:
 
-- `CI`: lint, typecheck, tests, build
+- `Build` + `Quality (*)`: lint, typecheck, tests, build gates from CI
 - `Commit Lint`: conventional commits
 - `PR Title Check`: clean squash commit title
-- `Package Manager Consistency`: lockfile integrity
 - `Dependency Review`: dependency risk review on PRs
 - `CodeQL`: static security analysis
 - `CodeHawk Scan`: additional security/code scan
+
+Important:
+
+- Add required checks from the **Add checks** dropdown (GitHub Actions source).
+- Do not type workflow names manually.
+- Required checks must match the actual check-run names shown in PRs.
 
 Do not mark these as required checks:
 
@@ -103,11 +110,12 @@ Add these minimum secrets for stable CI on pushes:
 
 Optional:
 
-| Secret                             | When needed           |
-| ---------------------------------- | --------------------- |
-| `AUTH_MFA_VERIFY_URL`              | MFA external verifier |
-| `AUTH_MFA_VERIFY_BEARER_TOKEN`     | verifier auth token   |
-| `NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL` | custom auth mode      |
+| Secret                             | When needed                                |
+| ---------------------------------- | ------------------------------------------ |
+| `AUTH_MFA_VERIFY_URL`              | MFA external verifier                      |
+| `AUTH_MFA_VERIFY_BEARER_TOKEN`     | verifier auth token                        |
+| `NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL` | custom auth mode                           |
+| `RELEASE_PLEASE_TOKEN`             | release PR trigger stability (recommended) |
 
 Important:
 
@@ -193,13 +201,15 @@ Why:
 2. small docs change
 3. open PR with title: `chore(docs): validate github setup`
 4. verify checks run:
-   - CI
-   - Commit Lint
-   - PR Title Check
-   - Package Manager Consistency
-   - Dependency Review
-   - CodeQL
-   - CodeHawk Scan
+   - Build
+   - Quality (lint)
+   - Quality (test)
+   - Quality (typecheck)
+   - commitlint
+   - dependency-review
+   - semantic-pr-title
+   - scan
+   - Analyze (JavaScript/TypeScript)
 5. merge with squash
 
 If all pass, your GitHub setup is complete.
@@ -219,7 +229,53 @@ These workflows still run by their triggers and continue doing their jobs:
 
 ---
 
-## 9. Security Notes
+## 9. Common Failure Modes and Fixes
+
+### Problem: `Expected — Waiting for status to be reported`
+
+Cause:
+
+- Required check names in ruleset do not match actual check-run names.
+- Example: required set to `CI`, but PR reports `Build` and `Quality (lint/test/typecheck)`.
+
+Fix:
+
+1. Open ruleset required checks.
+2. Remove mismatched entries.
+3. Re-add checks from **Add checks** dropdown only.
+4. Re-run checks by pushing a tiny commit or re-running jobs from Actions.
+
+### Problem: Release PR shows all required checks as `Expected`
+
+Cause:
+
+- Release PR was created by bot token and downstream checks were not triggered on that branch yet.
+
+Fix:
+
+1. Push an empty commit to the release branch:
+   - `git commit --allow-empty -m "chore(ci): trigger required checks"`
+   - `git push origin HEAD`
+2. If needed, re-run workflows from Actions tab.
+
+Prevention:
+
+- Configure `RELEASE_PLEASE_TOKEN` secret (PAT) so release PRs are created with a token that reliably triggers downstream checks.
+
+### Problem: Same check appears twice (or confusing duplicates)
+
+Cause:
+
+- Generic job names reused across multiple workflows (for example, two jobs named `automerge`).
+
+Fix:
+
+- Use unique job names per workflow.
+- Keep non-gating automation checks out of required list.
+
+---
+
+## 10. Security Notes
 
 1. do not add admins to bypass list unless truly necessary
 2. do not enable force-push to protected branches
@@ -230,6 +286,6 @@ These workflows still run by their triggers and continue doing their jobs:
 
 ## Related Docs
 
-- [How to Use](docs/how-to-use.md)
-- [Workflows](docs/workflows.md)
-- [Release Automation](docs/guides/release-automation.md)
+- [How to Use](../how-to-use.md)
+- [Workflows](../workflows.md)
+- [Release Automation](release-automation.md)

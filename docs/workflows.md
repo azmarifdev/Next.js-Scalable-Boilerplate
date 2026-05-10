@@ -165,7 +165,7 @@ This is the most important automation. It:
 
 The release title is the git tag (e.g., `v0.1.15`).
 
-> For full details, see the [Release Automation](docs/guides/release-automation.md) guide.
+> For full details, see the [Release Automation](guides/release-automation.md) guide.
 
 ### `stale.yml` — Stale Issue/PR Cleanup
 
@@ -222,13 +222,15 @@ This catches most CI failures before they reach GitHub.
 
 For this boilerplate, configure these as required in branch rules:
 
-- `CI`
-- `Commit Lint`
-- `PR Title Check`
-- `Package Manager Consistency`
-- `Dependency Review`
-- `CodeQL`
-- `CodeHawk Scan`
+- `Build`
+- `Quality (lint)`
+- `Quality (test)`
+- `Quality (typecheck)`
+- `commitlint`
+- `dependency-review`
+- `semantic-pr-title`
+- `scan`
+- `Analyze (JavaScript/TypeScript)`
 
 Keep these non-required (automation only):
 
@@ -243,7 +245,36 @@ This setup keeps merge quality strict while avoiding PR deadlocks from maintenan
 
 ---
 
+## Troubleshooting Required Checks
+
+### `Expected — Waiting for status to be reported`
+
+Most common causes:
+
+- Ruleset requires workflow names (`CI`, `Commit Lint`) instead of actual job check names.
+- Workflow trigger filters skipped execution for this PR.
+
+Fix:
+
+1. Remove stale required checks from ruleset.
+2. Re-add exact check names from a successful PR run.
+3. Ensure CI `pull_request.paths` includes the files touched by release/config PRs.
+
+### Release PR stuck with all checks expected
+
+Most common causes:
+
+- Release branch PR was created/updated by bot token and checks were not re-triggered yet.
+
+Fix:
+
+1. Push an empty commit to the release branch to trigger checks.
+2. Re-run the required workflows from Actions if needed.
+3. Prefer `RELEASE_PLEASE_TOKEN` for release automation to reduce trigger edge cases.
+
+---
+
 ## Related Docs
 
-- [Release Automation](docs/guides/release-automation.md) — Deep dive into the release workflow
-- [GitHub Setup Checklist](docs/guides/github-setup-checklist.md) — Required checks, permissions, secrets
+- [Release Automation](guides/release-automation.md) — Deep dive into the release workflow
+- [GitHub Setup Checklist](guides/github-setup-checklist.md) — Required checks, permissions, secrets

@@ -284,5 +284,5 @@ scripts/
 
 ## Related Docs
 
-- [Architecture](docs/architecture.md) — System layers and design decisions
-- [How to Use](docs/how-to-use.md) — Setup and daily workflow
+- [Architecture](architecture.md) — System layers and design decisions
+- [How to Use](how-to-use.md) — Setup and daily workflow

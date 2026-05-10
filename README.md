@@ -16,7 +16,7 @@
     <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white" alt="TypeScript" />
     <img src="https://img.shields.io/badge/Next.js-000000?style=flat&logo=nextdotjs&logoColor=white" alt="Next.js" />
     <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=postgresql&logoColor=white" alt="PostgreSQL" />
-    <img src="https://img.shields.io/badge/Drizzle_C5F74F?style=flat&logo=drizzle&logoColor=black" alt="Drizzle" />
+    <img src="https://img.shields.io/badge/Drizzle-C5F74F?style=flat&logo=drizzle&logoColor=black" alt="Drizzle" />
     <img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=flat&logo=tailwindcss&logoColor=white" alt="Tailwind" />
     <img src="https://img.shields.io/badge/shadcn/ui-000000?style=flat&logo=shadcnui&logoColor=white" alt="shadcn/ui" />
   </p>
@@ -237,6 +237,7 @@ All documentation is in the `docs/` directory and covers everything from setup t
 | Guide                                                              | Description                                                                |
 | ------------------------------------------------------------------ | -------------------------------------------------------------------------- |
 | [📕 Contributing Guide](docs/guides/contributing.md)               | PR rules, commit conventions, dev setup, testing guidelines                |
+| [📕 Guides Index](docs/guides/README.md)                           | Entry point for all operational guides                                     |
 | [📕 Deployment Guide](docs/guides/deployment.md)                   | End-to-end deployment runbook with verification steps                      |
 | [📕 Cloud Providers](docs/deployment/cloud-providers.md)           | Provider-specific setup (Vercel, Netlify, Railway, Render, Fly.io, Docker) |
 | [📕 GitHub Setup Checklist](docs/guides/github-setup-checklist.md) | Branch protection, secrets, labels, permissions                            |

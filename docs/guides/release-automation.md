@@ -178,6 +178,27 @@ Once merged, Release Please automatically:
 - Verify the config files are valid JSON
 - Check if there are actually new commits since the last tag
 
+### Release PR is open, but all required checks stay `Expected`
+
+**Possible causes:**
+
+- Branch rules require check names that do not match real job check names
+- Required workflows did not trigger yet on the release branch
+- Release PR was created by token flow that did not trigger downstream checks yet
+
+**Fix:**
+
+1. Verify ruleset required checks use exact job names (not workflow titles)
+2. Push an empty commit to the release branch:
+   - `git commit --allow-empty -m "chore(ci): trigger required checks"`
+   - `git push origin HEAD`
+3. Re-run CI/security workflows from Actions if needed
+
+**Prevention:**
+
+- Keep CI PR triggers compatible with release PR file changes
+- Configure `RELEASE_PLEASE_TOKEN` secret (PAT) for release workflow token stability
+
 ### Version number is wrong
 
 **Possible causes:**
