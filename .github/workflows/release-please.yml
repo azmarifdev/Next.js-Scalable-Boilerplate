@@ -132,32 +132,75 @@ jobs:
       - name: Mark required checks for release PR
         if: always()
         uses: actions/github-script@v9
+        env:
+          PRIMARY_PR: ${{ steps.release_primary.outputs.pr }}
+          PRIMARY_PRS: ${{ steps.release_primary.outputs.prs }}
+          RETRY_PR: ${{ steps.release_retry.outputs.pr }}
+          RETRY_PRS: ${{ steps.release_retry.outputs.prs }}
         with:
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
 
-            // Find the latest open release-please PR for main.
-            const { data: pulls } = await github.rest.pulls.list({
-              owner,
-              repo,
-              state: 'open',
-              sort: 'updated',
-              direction: 'desc',
-              per_page: 20
-            });
+            const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+            const parseJson = (raw) => {
+              if (!raw) return null;
+              try {
+                return JSON.parse(raw);
+              } catch {
+                return null;
+              }
+            };
 
-            const releasePr = pulls.find((pr) =>
-              pr.head?.ref?.startsWith('release-please--branches--main') &&
-              pr.title?.startsWith('chore(main): release')
+            // 1) Prefer explicit action outputs (most reliable).
+            // release-please-action exposes `pr` (single) and `prs` (array) as JSON strings.
+            const candidates = [
+              parseJson(process.env.PRIMARY_PR),
+              ...(Array.isArray(parseJson(process.env.PRIMARY_PRS)) ? parseJson(process.env.PRIMARY_PRS) : []),
+              parseJson(process.env.RETRY_PR),
+              ...(Array.isArray(parseJson(process.env.RETRY_PRS)) ? parseJson(process.env.RETRY_PRS) : [])
+            ].filter(Boolean);
+
+            let releasePr = candidates.find((pr) =>
+              (pr.base?.ref || pr.base?.branch) === 'main' &&
+              (pr.state === 'open' || !pr.state)
             );
+
+            // 2) Fallback: poll open PRs to avoid eventual-consistency race.
+            for (let attempt = 1; !releasePr && attempt <= 8; attempt += 1) {
+              const { data: pulls } = await github.rest.pulls.list({
+                owner,
+                repo,
+                state: 'open',
+                sort: 'updated',
+                direction: 'desc',
+                per_page: 50
+              });
+
+              releasePr = pulls.find((pr) =>
+                pr.base?.ref === 'main' &&
+                pr.head?.ref?.startsWith('release-please--branches--main')
+              );
+
+              if (!releasePr) {
+                core.info(`Release PR not found yet (attempt ${attempt}/8). Retrying...`);
+                await sleep(3000);
+              }
+            }
 
             if (!releasePr) {
               core.warning('No open release PR found to mark checks.');
               return;
             }
 
-            const sha = releasePr.head.sha;
+            const prNumber = releasePr.number;
+            const { data: fullPr } = await github.rest.pulls.get({
+              owner,
+              repo,
+              pull_number: prNumber
+            });
+
+            const sha = fullPr.head.sha;
             const checks = [
               'Analyze (JavaScript/TypeScript)',
               'Build',
@@ -185,7 +228,7 @@ jobs:
               });
             }
 
-            core.notice(`Marked ${checks.length} required checks as success on ${sha}.`);
+            core.notice(`Marked ${checks.length} required checks as success on ${sha} (PR #${prNumber}).`);
 
       - name: Enhance release notes
         if: steps.pick.outputs.release_created == 'true'
