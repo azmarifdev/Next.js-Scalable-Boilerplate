@@ -145,6 +145,9 @@ This project uses **Release Please** for automated versioning:
 2. Release Please opens a release PR
 3. Merge the release PR → tag + changelog + GitHub release auto-generated
 
+If a release PR ever shows required checks as `Expected`, do not guess check names manually.
+Use the ruleset **Add checks** dropdown and re-add exact live check-run names.
+
 See [Release Automation](release-automation.md) for details.
 
 ---

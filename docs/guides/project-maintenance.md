@@ -66,6 +66,9 @@ Go to the **Actions** tab and look at recent workflow runs:
 
 Address failures promptly — a red CI badge is a sign that something is broken.
 
+Also check for `Expected — Waiting for status to be reported` on recent PRs.
+If seen repeatedly, audit branch ruleset required checks and re-add them from live check sources.
+
 ### 3. Review Open Issues
 
 Quick scan through new issues:
@@ -95,6 +98,7 @@ Environment variables tend to accumulate over time. Check:
 - ✅ Is the CHANGELOG being updated properly?
 - ✅ Are Conventional Commits being followed?
 - ✅ Check `.release-please-config.json` and manifest are in sync
+- ✅ Confirm release PRs are mergeable (no stuck required checks)
 
 ### 3. Verify Documentation Accuracy
 

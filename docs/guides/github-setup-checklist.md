@@ -2,57 +2,48 @@
 
 ## Purpose
 
-This is the complete A-to-Z GitHub repository setup for this boilerplate.
-
-Use this guide right after creating your repo from the template.
-
----
-
-## Setup Flow Diagram
-
-```mermaid
-graph TD
-    A[Create Repo from Template] --> B[Configure Branch Ruleset]
-    B --> C[Configure Required Checks]
-    C --> D[Add Repository Secrets]
-    D --> E[Configure Actions Permissions]
-    E --> F[Create Labels]
-    F --> G[Set Merge Strategy]
-    G --> H[Open Test PR]
-```
+This is the complete repository hardening checklist for this boilerplate.
+Use it immediately after creating a repo from the template.
 
 ---
 
-## 1. Branch Ruleset (for `main`)
+## Quick Setup Order
+
+1. Configure a `main` branch ruleset.
+2. Add required checks using exact check-run names.
+3. Configure Actions permissions.
+4. Add required repository secrets.
+5. Configure merge strategy.
+6. Run a test PR and validate all required checks.
+
+---
+
+## 1. Branch Ruleset (`main`)
 
 Go to:
+`Settings` -> `Rules` -> `Rulesets` -> `New branch ruleset`
 
-- `Settings` -> `Rules` -> `Rulesets` -> `New ruleset` -> `New branch ruleset`
+Recommended:
 
-Configure:
+- Ruleset name: `Protect main`
+- Enforcement: `Active`
+- Target branch: `main`
+- Bypass list: empty (recommended)
 
-1. **Ruleset name**: `Protect main`
-2. **Enforcement status**: `Active`
-3. **Target branches**: include `main` (or default branch)
-4. **Bypass list**: keep empty (recommended)
-
-Enable these rules:
+Enable:
 
 - `Require a pull request before merging`
+- `Require approvals` (minimum `1`)
+- `Dismiss stale approvals when new commits are pushed`
 - `Require status checks to pass`
 - `Block force pushes`
 - `Restrict deletions`
 
-Under PR rule:
-
-- required approvals: `1`
-- dismiss stale approvals: `on`
-
 ---
 
-## 2. Required Status Checks
+## 2. Required Checks (Exact Names)
 
-Inside `Require status checks to pass`, add:
+Add these required checks from the **Add checks** dropdown (do not type manually):
 
 - `Build`
 - `Quality (lint)`
@@ -64,22 +55,12 @@ Inside `Require status checks to pass`, add:
 - `scan`
 - `Analyze (JavaScript/TypeScript)`
 
-Why these checks:
-
-- `Build` + `Quality (*)`: lint, typecheck, tests, build gates from CI
-- `Commit Lint`: conventional commits
-- `PR Title Check`: clean squash commit title
-- `Dependency Review`: dependency risk review on PRs
-- `CodeQL`: static security analysis
-- `CodeHawk Scan`: additional security/code scan
-
 Important:
 
-- Add required checks from the **Add checks** dropdown (GitHub Actions source).
-- Do not type workflow names manually.
-- Required checks must match the actual check-run names shown in PRs.
+- Use job check names, not workflow names.
+- Example mismatch: requiring `CI` will fail because actual checks are `Build` and `Quality (*)`.
 
-Do not mark these as required checks:
+Keep these non-required:
 
 - `PR Labeler`
 - `PR Auto Merge`
@@ -90,202 +71,169 @@ Do not mark these as required checks:
 
 Reason:
 
-- They are automation/maintenance workflows, not core merge-quality gates.
-- Keeping them non-required prevents PR deadlocks when a workflow is skipped by trigger conditions.
+- These are automation/maintenance checks and may be skipped by trigger conditions.
+- Keeping them required can deadlock merges.
 
 ---
 
-## 3. Secrets for Actions
+## 3. Actions Permissions
 
 Go to:
-
-- `Settings` -> `Secrets and variables` -> `Actions` -> `New repository secret`
-
-Add these minimum secrets for stable CI on pushes:
-
-| Secret                | Required                            | Example                               |
-| --------------------- | ----------------------------------- | ------------------------------------- |
-| `DATABASE_URL`        | Yes (for internal mode + e2e paths) | `postgresql://user:pass@host:5432/db` |
-| `AUTH_SESSION_SECRET` | Yes                                 | output of `openssl rand -hex 32`      |
-
-Optional:
-
-| Secret                             | When needed                                                    |
-| ---------------------------------- | -------------------------------------------------------------- |
-| `AUTH_MFA_VERIFY_URL`              | MFA external verifier                                          |
-| `AUTH_MFA_VERIFY_BEARER_TOKEN`     | verifier auth token                                            |
-| `NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL` | custom auth mode                                               |
-| `RELEASE_PLEASE_TOKEN`             | optional: use only if you want PAT-based release PR triggering |
-
-Important:
-
-- Never commit real secrets in repo files.
-- Store real values only in GitHub Secrets or deployment platform env settings.
-
----
-
-## 4. GitHub Actions Permissions
-
-Go to:
-
-- `Settings` -> `Actions` -> `General`
+`Settings` -> `Actions` -> `General`
 
 Set:
 
-- `Workflow permissions`: `Read and write permissions`
-- check `Allow GitHub Actions to create and approve pull requests`
+- `Workflow permissions` -> `Read and write permissions`
+- `Allow GitHub Actions to create and approve pull requests` -> enabled
 
-This is required for:
+Required for:
 
-- release automation (`release-please.yml`)
-- guarded auto-merge flows
-
----
-
-## 5. Labels Setup
-
-Go to:
-
-- `Issues` -> `Labels`
-
-Create these labels (recommended baseline):
-
-- `bug`
-- `enhancement`
-- `dependencies`
-- `ci`
-- `docs`
-- `tests`
-- `frontend`
-- `backend`
-- `automerge`
-- `automerge-candidate`
-- `needs triage`
-- `stale`
-- `security`
-- `work-in-progress`
-- `pinned`
-
-These labels are used by:
-
-- issue templates
-- PR labeler automation
-- stale workflow
-- auto-merge strategy
+- `release-please.yml`
+- auto-merge workflows
 
 ---
 
-## 6. Merge Strategy
+## 4. Repository Secrets
 
 Go to:
+`Settings` -> `Secrets and variables` -> `Actions`
 
-- `Settings` -> `General` -> `Pull Requests`
+Minimum for stable CI:
+
+| Secret                | Required | Example                               |
+| --------------------- | -------- | ------------------------------------- |
+| `DATABASE_URL`        | Yes      | `postgresql://user:pass@host:5432/db` |
+| `AUTH_SESSION_SECRET` | Yes      | `openssl rand -hex 32` output         |
+
+Optional:
+
+| Secret                             | When needed                              |
+| ---------------------------------- | ---------------------------------------- |
+| `AUTH_MFA_VERIFY_URL`              | external MFA verifier                    |
+| `AUTH_MFA_VERIFY_BEARER_TOKEN`     | MFA verifier auth                        |
+| `NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL` | custom auth provider mode                |
+| `RELEASE_PLEASE_TOKEN`             | optional PAT-based release PR triggering |
+
+Notes:
+
+- Do not commit real secrets.
+- Store secrets only in GitHub or your deployment provider.
+
+---
+
+## 5. Merge Strategy
+
+Go to:
+`Settings` -> `General` -> `Pull Requests`
 
 Recommended:
 
-- `Allow squash merging`: on
-- `Allow merge commits`: off
-- `Allow rebase merging`: optional (off recommended)
+- `Allow squash merging` -> on
+- `Allow merge commits` -> off
+- `Allow rebase merging` -> optional (off preferred)
 
 Why:
 
-- cleaner history
-- PR title becomes final conventional commit
-- consistent release note generation
+- Clean history
+- PR title becomes final commit message
+- Better release note quality with Conventional Commits
 
 ---
 
-## 7. Validate the Setup (Test PR)
+## 6. Test PR Validation
 
-1. create branch: `chore/test-github-setup`
-2. small docs change
-3. open PR with title: `chore(docs): validate github setup`
-4. verify checks run:
-   - Build
-   - Quality (lint)
-   - Quality (test)
-   - Quality (typecheck)
-   - commitlint
-   - dependency-review
-   - semantic-pr-title
-   - scan
-   - Analyze (JavaScript/TypeScript)
-5. merge with squash
+Create branch:
 
-If all pass, your GitHub setup is complete.
+```bash
+git checkout -b chore/test-github-setup
+```
 
----
+Make a tiny docs change, open PR with title:
 
-## 8. What Runs Automatically (Even If Not Required)
+```text
+chore(docs): validate github setup
+```
 
-These workflows still run by their triggers and continue doing their jobs:
+Verify required checks appear and run:
 
-- `PR Labeler`: applies labels to PRs
-- `PR Auto Merge`: merges labeled PRs when conditions are met
-- `Dependabot Auto Merge`: merges safe Dependabot updates
-- `Release Please`: opens release PRs and creates tags/releases
-- `Stale Issues and PRs`: cleans inactive issues/PRs on schedule
-- `Pnpm Compatibility`: compatibility pipeline for PR/manual runs
+- Build
+- Quality (lint/test/typecheck)
+- commitlint
+- dependency-review
+- semantic-pr-title
+- scan
+- Analyze (JavaScript/TypeScript)
+
+If all pass, setup is healthy.
 
 ---
 
-## 9. Common Failure Modes and Fixes
+## 7. Release PR Reliability (Important)
+
+This boilerplate includes release PR hardening in `release-please.yml`:
+
+- detects release PR from action outputs and API fallback
+- retries release PR discovery to avoid timing race
+- marks required checks on release PR head commit when downstream PR workflows are not triggered
+
+Why this exists:
+
+- release PRs created by bot tokens can sometimes show all required checks as `Expected`.
+
+---
+
+## 8. Common Problems and Fixes
 
 ### Problem: `Expected — Waiting for status to be reported`
 
-Cause:
+Causes:
 
-- Required check names in ruleset do not match actual check-run names.
-- Example: required set to `CI`, but PR reports `Build` and `Quality (lint/test/typecheck)`.
-
-Fix:
-
-1. Open ruleset required checks.
-2. Remove mismatched entries.
-3. Re-add checks from **Add checks** dropdown only.
-4. Re-run checks by pushing a tiny commit or re-running jobs from Actions.
-
-### Problem: Release PR shows all required checks as `Expected`
-
-Cause:
-
-- Release PR was created by bot token and downstream checks were not triggered on that branch yet.
+- required check names do not match real check-run names
+- stale/migrated checks remain in ruleset
+- workflow skipped due to trigger conditions
 
 Fix:
 
-1. Push an empty commit to the release branch:
-   - `git commit --allow-empty -m "chore(ci): trigger required checks"`
-   - `git push origin HEAD`
-2. If needed, re-run workflows from Actions tab.
+1. Remove all required checks from ruleset.
+2. Re-add from **Add checks** dropdown using a recent successful PR.
+3. Push a tiny commit to retrigger checks if needed.
 
-Prevention:
+### Problem: Release PR opens but all checks stay `Expected`
 
-- This repo's release workflow marks required checks on release PRs automatically, so PAT is not required for release PR mergeability.
+Fix order:
 
-### Problem: Same check appears twice (or confusing duplicates)
+1. Check latest `Release Please` run logs for the line:
+   `Marked ... required checks as success on ...`
+2. If line missing: re-run `Release Please` workflow.
+3. If line exists but PR still expected: ruleset has stale/wrong check source mapping. Remove and re-add checks from dropdown.
 
-Cause:
+### Problem: Release PR does not open after merge to `main`
 
-- Generic job names reused across multiple workflows (for example, two jobs named `automerge`).
+Causes:
+
+- no releasable commit detected
+- workflow permissions misconfigured
+- action failed before PR creation
 
 Fix:
 
-- Use unique job names per workflow.
-- Keep non-gating automation checks out of required list.
+1. Verify merge commit message is Conventional Commit.
+2. Re-run `Release Please` from Actions.
+3. Verify Actions permission is read/write.
 
 ---
 
-## 10. Security Notes
+## 9. Security Baseline
 
-1. do not add admins to bypass list unless truly necessary
-2. do not enable force-push to protected branches
-3. rotate secrets if accidentally exposed
-4. keep dependency updates enabled (Dependabot)
+- keep admin bypass minimal
+- never allow force-push on `main`
+- rotate leaked secrets immediately
+- keep dependency/security workflows enabled
 
 ---
 
 ## Related Docs
 
-- [How to Use](../how-to-use.md)
 - [Workflows](../workflows.md)
 - [Release Automation](release-automation.md)
+- [Contributing Guide](contributing.md)
