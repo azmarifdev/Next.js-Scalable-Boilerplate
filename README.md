@@ -6,11 +6,11 @@
     <strong>A production-ready foundation for modern web applications</strong>
   </p>
   <p>
-    <a href="#-quick-start">Quick Start</a> ·
-    <a href="#-tech-stack">Tech Stack</a> ·
-    <a href="#-key-features">Features</a> ·
-    <a href="#-project-structure">Structure</a> ·
-    <a href="#-documentation">Docs</a>
+    <a href="#quick-start">Quick Start</a> ·
+    <a href="#tech-stack">Tech Stack</a> ·
+    <a href="#key-features">Features</a> ·
+    <a href="#project-structure">Structure</a> ·
+    <a href="#documentation">Docs</a>
   </p>
   <p>
     <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white" alt="TypeScript" />
@@ -31,6 +31,8 @@ A **production-ready Next.js boilerplate** that gives you a clean, scalable star
 This isn't just a "hello world" starter. It's a **battle-tested foundation** with authentication, database integration, internationalization, documentation hub, testing infrastructure, CI/CD pipelines, and a clear, modular architecture — so you can skip the setup and start building what matters.
 
 ---
+
+<a id="quick-start"></a>
 
 ## 🚀 Quick Start
 
@@ -53,6 +55,8 @@ Your app is now running at **http://localhost:3000**. 🎉
 
 ---
 
+<a id="tech-stack"></a>
+
 ## 🛠️ Tech Stack
 
 | Category             | Technology                                                                        | Purpose                                                        |
@@ -71,6 +75,8 @@ Your app is now running at **http://localhost:3000**. 🎉
 | **Package Manager**  | [pnpm](https://pnpm.io/)                                                          | Fast, disk-efficient package management                        |
 
 ---
+
+<a id="key-features"></a>
 
 ## ✨ Key Features
 
@@ -133,6 +139,8 @@ Your app is now running at **http://localhost:3000**. 🎉
 
 ---
 
+<a id="project-structure"></a>
+
 ## 📁 Project Structure
 
 ```
@@ -163,6 +171,7 @@ Your app is now running at **http://localhost:3000**. 🎉
 │   │   ├── 📂 config/             #   Environment vars, feature flags, constants
 │   │   ├── 📂 db/                 #   Drizzle schema, providers
 │   │   ├── 📂 docs/               #   Documentation content helpers
+│   │   ├── 📂 errors/             #   Typed app/server error helpers
 │   │   ├── 📂 security/           #   Rate limiting, origin checks, redirect safety
 │   │   ├── 📂 observability/      #   Structured logging
 │   │   └── 📂 utils/              #   API response helpers, utilities
@@ -171,6 +180,7 @@ Your app is now running at **http://localhost:3000**. 🎉
 │   ├── 📂 hooks/                  # Shared React hooks (useAuth)
 │   ├── 📂 services/               # HTTP/API client layer
 │   ├── 📂 i18n/messages/          # Translation files (en.json, bn.json)
+│   ├── 📂 store/                  # Redux Toolkit slices/store setup
 │   ├── 📂 tests/                  # Test suites
 │   │   ├── 📂 unit/               #   Unit tests (Vitest)
 │   │   ├── 📂 integration/        #   Integration tests (Vitest)
@@ -188,6 +198,7 @@ Your app is now running at **http://localhost:3000**. 🎉
 │   ├── 📂 guides/                 #   Deployment, release, maintenance guides
 │   ├── 📂 deployment/             #   Cloud provider-specific instructions
 │   ├── 📂 migrations/             #   Package manager migration guide
+│   ├── 📂 tools/                  #   Docs consistency + maintenance helpers
 │   └── 📂 bn/                     #   Bangla translations of all docs
 │
 ├── 📂 drizzle/                    # Auto-generated SQL migration files
@@ -212,6 +223,8 @@ Your app is now running at **http://localhost:3000**. 🎉
 | **pnpm over npm/yarn**               | Faster installs, disk efficiency, strict dependency resolution            |
 
 ---
+
+<a id="documentation"></a>
 
 ## 📖 Documentation
 
