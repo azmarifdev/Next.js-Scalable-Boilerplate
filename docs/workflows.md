@@ -2,225 +2,124 @@
 
 ## Purpose
 
-This boilerplate includes **17 GitHub Actions workflows** that automate CI, PR governance, security scanning, and release management. This document explains what each workflow does and when it runs.
+This boilerplate includes **13 GitHub Actions workflows** for CI quality gates, PR governance, security scanning, and release automation.
 
 ---
 
 ## CI & Quality
 
-These workflows run on every push and pull request to ensure code quality.
-
 ### `ci.yml` — Main CI Pipeline
 
-**Triggers:** Push to any branch, PR to `main`
+Triggers:
 
-This is the primary quality gate. It runs:
+- `pull_request` (all PRs)
+- `push` to `main`/`master`/`develop` (path-filtered)
 
-```mermaid
-graph LR
-    A[Install] --> B[Lint]
-    B --> C[Typecheck]
-    C --> D[Test]
-    D --> E[Build]
-```
+Checks produced:
 
-| Step      | Command                          | What It Checks                     |
-| --------- | -------------------------------- | ---------------------------------- |
-| Install   | `pnpm install --frozen-lockfile` | Lockfile is up to date             |
-| Lint      | `pnpm run lint`                  | Code follows ESLint rules          |
-| Typecheck | `pnpm run typecheck`             | TypeScript compiles without errors |
-| Test      | `pnpm run test`                  | All unit & integration tests pass  |
-| Build     | `pnpm run build`                 | Production build succeeds          |
+- `Quality (lint)`
+- `Quality (typecheck)`
+- `Quality (test)`
+- `Build`
+- `Playwright E2E Push` (push only)
+- `Playwright E2E PR` (PR only)
 
-**Required to pass before merge** ✅
+Notes:
 
-### `package-manager-consistency.yml` — Lockfile Check
+- PR path filter is intentionally removed so required checks always run and do not remain `Expected`.
 
-**Triggers:** PR to `main`
+### `package-manager-consistency.yml`
 
-Verifies that the lockfile (`pnpm-lock.yaml`) matches `package.json`. Prevents dependency drift.
+- Trigger: PR and push for package-manager files.
+- Purpose: lockfile / package-manager consistency validation.
 
-### `bun-compatibility.yml` — Bun Compatibility
+### `bun-compatibility.yml`
 
-**Triggers:** PR to `main`
-
-Verifies the project can also install with `bun`. A non-blocking check — if it fails, it doesn't block merge.
+- Trigger: PR and manual run.
+- Purpose: verify install/build compatibility with Bun.
+- Merge gate: non-required by default.
 
 ---
 
 ## PR Governance
 
-These workflows enforce conventions on pull requests.
+### `commitlint.yml`
 
-### `commitlint.yml` — Commit Message Validation
+- Trigger: PR opened/synchronize/reopened/edited
+- Check name: `commitlint`
+- Purpose: enforce Conventional Commits in PR commit history.
 
-**Triggers:** PR to `main`
+### `pr-title.yml`
 
-Validates that **every commit** in the PR follows [Conventional Commits](https://www.conventionalcommits.org/):
+- Trigger: `pull_request_target` opened/edited/synchronize/reopened
+- Check name: `semantic-pr-title`
+- Purpose: ensure PR title format is valid for squash-merge commit quality.
 
-```
-type(scope): description
-```
+### `labeler.yml`
 
-Allowed types: `feat`, `fix`, `docs`, `refactor`, `perf`, `test`, `ci`, `build`, `chore`, `style`
+- Trigger: `pull_request_target`
+- Purpose: apply labels based on changed paths.
 
-> **Why it matters:** Conventional commits are used by Release Please to generate changelogs and determine version bumps. Invalid commits won't appear in the changelog.
+### `pr-auto-merge.yml`
 
-### `pr-title.yml` — PR Title Validation
-
-**Triggers:** PR opened or edited
-
-Validates the PR title follows the same Conventional Commit format. Since PRs are typically **squash-merged**, the PR title becomes the final commit message.
-
-✅ Good: `feat(landing): add hero section with icons`
-❌ Bad: `Update landing page`
-
-### `labeler.yml` — Auto Labeling
-
-**Triggers:** PR to `main`
-
-Automatically adds labels based on which files were changed:
-
-| Changed Path | Label Applied       |
-| ------------ | ------------------- |
-| `src/**`     | Source code related |
-| `docs/**`    | Documentation       |
-| `.github/**` | CI / DevOps         |
-| `drizzle/**` | Database            |
-
-### `pr-auto-merge.yml` — Auto Merge (Optional)
-
-**Triggers:** PR opened
-
-Automatically merges PRs that meet all criteria. Used for trusted automations (dependabot) or minor changes.
+- Trigger: `pull_request_target`
+- Purpose: optional guarded auto-merge for labeled PRs.
 
 ---
 
 ## Security & Dependency
 
-These workflows scan for vulnerabilities and enforce security policies.
+### `codeql.yml`
 
-### `codeql.yml` — CodeQL Static Analysis
+- Trigger: push to main/master, PR, weekly schedule
+- Check name: `Analyze (JavaScript/TypeScript)`
+- Purpose: static security analysis.
 
-**Triggers:** Push to `main`, scheduled weekly
+### `codehawk.yml`
 
-GitHub's built-in security analysis. Scans the entire codebase for:
+- Trigger: PR, manual, weekly schedule
+- Check name: `scan`
+- Purpose: additional security/code scan.
 
-- SQL injection
-- Cross-site scripting (XSS)
-- Path traversal
-- Hardcoded credentials
-- And many other vulnerability patterns
+### `dependency-review.yml`
 
-### `codehawk.yml` — CodeHawk Security Scan
+- Trigger: PR
+- Check name: `dependency-review`
+- Purpose: dependency risk analysis for manifest/lockfile changes.
 
-**Triggers:** PR to `main`
+### `dependabot-auto-merge.yml`
 
-An additional security scan that checks for:
-
-- Secrets in code
-- Vulnerable dependency usage
-- Code quality issues
-
-### `dependency-review.yml` — Dependency Review
-
-**Triggers:** PR to `main`
-
-When a PR adds or updates dependencies, this workflow:
-
-1. Reviews the diff of `package.json` and lockfile
-2. Checks new dependencies against known vulnerability databases
-3. Flags any packages with CVEs or security warnings
-
-**Blocks merge if vulnerabilities are found** ⛔
-
-### `dependabot-auto-merge.yml` — Safe Auto-Merge for Dependabot
-
-**Triggers:** Dependabot PR opened
-
-Automatically merges dependency update PRs from Dependabot if:
-
-- ✅ The update is a **patch** version (safe bug fix)
-- ✅ All CI checks pass
-- ✅ The `dependency-review` workflow passes
+- Trigger: `pull_request_target` for Dependabot actor
+- Purpose: merge safe dependency updates under policy.
 
 ---
 
 ## Release & Maintenance
 
-### `release-please.yml` — Automated Releases
+### `release-please.yml`
 
-**Triggers:** Push to `main`
+- Trigger: push to `main`, manual run
+- Purpose:
+  1. create/update release PR from Conventional Commits
+  2. create tag/release after release PR merge
+  3. append enriched release notes metadata
 
-This is the most important automation. It:
+Hardening included:
 
-1. **Scans commits** since the last release
-2. **Determines version bump** based on commit types
-3. **Opens/updates a Release PR** with changelog
-4. When merged → **creates tag + GitHub release** with:
-   - Full changelog organized by type
-   - Credits section
-   - Contributors section (with avatars)
-   - Release metadata
+- auto commit override for non-releasable squash titles
+- release PR discovery via outputs + API fallback + retry
+- required-check synthetic pass publish on release PR head to prevent `Expected` deadlock
 
-The release title is the git tag (e.g., `v0.1.15`).
+### `stale.yml`
 
-> For full details, see the [Release Automation](guides/release-automation.md) guide.
-
-### `stale.yml` — Stale Issue/PR Cleanup
-
-**Triggers:** Scheduled (daily)
-
-Manages stale issues and pull requests:
-
-| Condition                           | Action               |
-| ----------------------------------- | -------------------- |
-| No activity for 60 days             | Labeled `stale`      |
-| Stale for 7 more days (no response) | Closed automatically |
-| Any activity removes stale label    | Kept open            |
-
-Helps keep the issue tracker clean and focused.
+- Trigger: daily schedule
+- Purpose: mark and close stale issues/PRs.
 
 ---
 
-## Suggested Local Preflight
+## Required Checks (Recommended)
 
-Before pushing major changes, run these same checks locally:
-
-```bash
-pnpm run lint
-pnpm run typecheck
-pnpm run test
-pnpm run build
-```
-
-This catches most CI failures before they reach GitHub.
-
----
-
-## Workflow Reference Table
-
-| Workflow                          | Category      | Triggers       | Blocks Merge?      |
-| --------------------------------- | ------------- | -------------- | ------------------ |
-| `ci.yml`                          | CI & Quality  | Push, PR       | ✅                 |
-| `package-manager-consistency.yml` | CI & Quality  | PR             | ✅                 |
-| `bun-compatibility.yml`           | CI & Quality  | PR             | ❌ (informational) |
-| `commitlint.yml`                  | PR Governance | PR             | ✅                 |
-| `pr-title.yml`                    | PR Governance | PR opened      | ✅                 |
-| `labeler.yml`                     | PR Governance | PR             | ❌ (auto-label)    |
-| `pr-auto-merge.yml`               | PR Governance | PR optional    | ❌ (auto action)   |
-| `codeql.yml`                      | Security      | Push, weekly   | ❌ (advisory)      |
-| `codehawk.yml`                    | Security      | PR             | ❌ (advisory)      |
-| `dependency-review.yml`           | Security      | PR             | ✅                 |
-| `dependabot-auto-merge.yml`       | Security      | Dependabot PR  | ❌ (auto action)   |
-| `release-please.yml`              | Release       | Push to main   | ❌ (auto action)   |
-| `stale.yml`                       | Maintenance   | Daily schedule | ❌ (auto action)   |
-
----
-
-## Recommended Required Checks
-
-For this boilerplate, configure these as required in branch rules:
+Use these exact check-run names in ruleset:
 
 - `Build`
 - `Quality (lint)`
@@ -232,49 +131,56 @@ For this boilerplate, configure these as required in branch rules:
 - `scan`
 - `Analyze (JavaScript/TypeScript)`
 
-Keep these non-required (automation only):
+Keep non-required:
 
+- `Release Please`
 - `PR Labeler`
 - `PR Auto Merge`
 - `Dependabot Auto Merge`
-- `Release Please`
 - `Stale Issues and PRs`
 - `Pnpm Compatibility`
 
-This setup keeps merge quality strict while avoiding PR deadlocks from maintenance workflows.
-
 ---
 
-## Troubleshooting Required Checks
+## Troubleshooting
 
 ### `Expected — Waiting for status to be reported`
 
-Most common causes:
+Most likely causes:
 
-- Ruleset requires workflow names (`CI`, `Commit Lint`) instead of actual job check names.
-- Workflow trigger filters skipped execution for this PR.
-
-Fix:
-
-1. Remove stale required checks from ruleset.
-2. Re-add exact check names from a successful PR run.
-3. Ensure CI `pull_request.paths` includes the files touched by release/config PRs.
-
-### Release PR stuck with all checks expected
-
-Most common causes:
-
-- Release branch PR was created/updated by bot token and checks were not re-triggered yet.
+- ruleset requires wrong check names
+- stale old checks remain in ruleset
+- check source mapping drift after workflow refactor
 
 Fix:
 
-1. Push an empty commit to the release branch to trigger checks.
-2. Re-run the required workflows from Actions if needed.
-3. Prefer `RELEASE_PLEASE_TOKEN` for release automation to reduce trigger edge cases.
+1. remove all required checks from ruleset
+2. re-add from a fresh successful PR using **Add checks** dropdown
+3. re-run workflow or push tiny commit
+
+### Release PR checks still `Expected`
+
+1. open latest `Release Please` run logs
+2. confirm `Marked ... required checks as success ...` message exists
+3. if yes but still expected: ruleset mapping is stale, remove and re-add checks
+4. if no: re-run `Release Please`
+
+---
+
+## Local Preflight
+
+```bash
+pnpm run lint
+pnpm run typecheck
+pnpm run test
+pnpm run format:check
+pnpm run build
+```
 
 ---
 
 ## Related Docs
 
-- [Release Automation](guides/release-automation.md) — Deep dive into the release workflow
-- [GitHub Setup Checklist](guides/github-setup-checklist.md) — Required checks, permissions, secrets
+- [GitHub Setup Checklist](guides/github-setup-checklist.md)
+- [Release Automation](guides/release-automation.md)
+- [Contributing Guide](guides/contributing.md)

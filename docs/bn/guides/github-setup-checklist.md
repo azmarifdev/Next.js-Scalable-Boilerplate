@@ -2,51 +2,156 @@
 
 ## উদ্দেশ্য
 
-এই template adopt করা টিমের জন্য repository hardening checklist।
+এই boilerplate repo production-ready করার জন্য GitHub setup hardening checklist।
 
-## Branch Protection
+---
 
-- `main` protect করুন
-- Pull request review required করুন
-- Merge-এর আগে status check required করুন
-- `main` এ direct push restrict করুন
-- Squash merge strategy prefer করুন
+## দ্রুত সেটআপ ক্রম
 
-## Required Check (Recommended)
+1. `main` branch ruleset configure করুন
+2. exact required checks যোগ করুন
+3. Actions permissions সেট করুন
+4. repository secrets যোগ করুন
+5. merge strategy ঠিক করুন
+6. test PR দিয়ে validation করুন
 
-- `ci`
+---
+
+## 1) Branch Ruleset (`main`)
+
+পথ:
+`Settings` -> `Rules` -> `Rulesets` -> `New branch ruleset`
+
+সাজেশন:
+
+- নাম: `Protect main`
+- Enforcement: `Active`
+- Target branch: `main`
+- Bypass list: empty (recommended)
+
+Enable করুন:
+
+- `Require a pull request before merging`
+- `Require approvals` (minimum `1`)
+- `Dismiss stale approvals`
+- `Require status checks to pass`
+- `Block force pushes`
+- `Restrict deletions`
+
+---
+
+## 2) Required Checks (Exact নাম)
+
+**Add checks** dropdown থেকে এই check-run names যোগ করুন:
+
+- `Build`
+- `Quality (lint)`
+- `Quality (test)`
+- `Quality (typecheck)`
 - `commitlint`
-- `pr-title`
 - `dependency-review`
-- `codeql` (যদি আপনার org policy enforce করে)
+- `semantic-pr-title`
+- `scan`
+- `Analyze (JavaScript/TypeScript)`
 
-## Secret
+গুরুত্বপূর্ণ:
 
-Internal mode minimum:
+- workflow name না, job check নাম required দিন
+- যেমন `CI` required দিলে mismatch হতে পারে
+
+Non-required রাখুন:
+
+- `Release Please`
+- `PR Labeler`
+- `PR Auto Merge`
+- `Dependabot Auto Merge`
+- `Stale Issues and PRs`
+- `Pnpm Compatibility`
+
+---
+
+## 3) GitHub Actions Permissions
+
+পথ:
+`Settings` -> `Actions` -> `General`
+
+Set করুন:
+
+- `Workflow permissions`: `Read and write permissions`
+- `Allow GitHub Actions to create and approve pull requests`: enabled
+
+---
+
+## 4) Repository Secrets
+
+পথ:
+`Settings` -> `Secrets and variables` -> `Actions`
+
+ন্যূনতম:
 
 - `DATABASE_URL`
 - `AUTH_SESSION_SECRET`
 
-Optional MFA verifier:
+Optional:
 
 - `AUTH_MFA_VERIFY_URL`
 - `AUTH_MFA_VERIFY_BEARER_TOKEN`
-
-Custom auth mode:
-
 - `NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL`
+- `RELEASE_PLEASE_TOKEN` (optional)
 
-## Label
+---
 
-Recommended baseline label:
+## 5) Merge Strategy
 
-- `bug`
-- `enhancement`
-- `documentation`
-- `dependencies`
-- `security`
+পথ:
+`Settings` -> `General` -> `Pull Requests`
 
-## Release Permission
+Recommended:
 
-- Workflow যেন pull request create করতে পারে
-- Workflow যেন release/tag metadata write করতে পারে
+- squash merge: on
+- merge commit: off
+- rebase merge: optional
+
+---
+
+## 6) Test PR Validation
+
+একটা ছোট docs PR খুলে title দিন:
+
+`chore(docs): validate github setup`
+
+তারপর verify করুন required checks run হচ্ছে কিনা।
+
+---
+
+## 7) সাধারণ সমস্যা ও সমাধান
+
+### Problem: `Expected — Waiting for status to be reported`
+
+কারণ:
+
+- ruleset check name mismatch
+- stale required checks
+- trigger skip
+
+সমাধান:
+
+1. ruleset থেকে required checks remove করুন
+2. successful PR থেকে **Add checks** দিয়ে আবার add করুন
+3. tiny commit push বা workflow rerun দিন
+
+### Problem: Release PR-এ সব checks `Expected`
+
+সমাধান:
+
+1. `Release Please` run logs দেখুন
+2. `Marked ... required checks as success ...` message আছে কিনা দেখুন
+3. message থাকলে ruleset mapping reset করুন (remove + re-add)
+4. message না থাকলে workflow rerun দিন
+
+---
+
+## Related
+
+- [Workflows](../workflows.md)
+- [Release Automation](release-automation.md)

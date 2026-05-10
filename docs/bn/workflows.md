@@ -2,45 +2,105 @@
 
 ## উদ্দেশ্য
 
-প্রতিটি GitHub workflow কী করে এবং কখন run হয়, তা এই ফাইল ব্যাখ্যা করে।
+এই boilerplate-এ থাকা 13টি GitHub Actions workflow কী করে এবং কখন run হয় তা এখানে দেওয়া আছে।
+
+---
 
 ## CI & Quality
 
-- `ci.yml`: install, lint, typecheck, test, build
-- `package-manager-consistency.yml`: lockfile/install consistency check
-- `bun-compatibility.yml`: bun install compatibility check
+### `ci.yml`
+
+Trigger:
+
+- PR (`pull_request`)
+- `main/master/develop` push (path-filtered)
+
+Checks:
+
+- `Quality (lint)`
+- `Quality (typecheck)`
+- `Quality (test)`
+- `Build`
+
+নোট:
+
+- PR trigger থেকে path filter সরানো হয়েছে যাতে required checks `Expected` এ আটকে না থাকে।
+
+### `package-manager-consistency.yml`
+
+- lockfile/package manager consistency validate করে।
+
+### `bun-compatibility.yml`
+
+- Bun compatibility check।
+
+---
 
 ## PR Governance
 
-- `commitlint.yml`: Conventional Commit validation
-- `pr-title.yml`: semantic PR title validation
-- `labeler.yml`: changed path থেকে auto label
-- `pr-auto-merge.yml`: optional auto-merge policy
+- `commitlint.yml` -> `commitlint`
+- `pr-title.yml` -> `semantic-pr-title`
+- `labeler.yml` -> auto labels
+- `pr-auto-merge.yml` -> optional auto-merge
+
+---
 
 ## Security & Dependency
 
-- `codeql.yml`: static security analysis
-- `codehawk.yml`: additional security scan
-- `dependency-review.yml`: PR-এ dependency risk check
-- `dependabot-auto-merge.yml`: controlled safe dependency auto-merge
+- `codeql.yml` -> `Analyze (JavaScript/TypeScript)`
+- `codehawk.yml` -> `scan`
+- `dependency-review.yml` -> `dependency-review`
+- `dependabot-auto-merge.yml` -> safe dependabot merge
+
+---
 
 ## Release & Maintenance
 
-- `release-please.yml`: automated version/changelog/tag/release
-- `stale.yml`: stale issue/PR cleanup
+### `release-please.yml`
 
-## Suggested Local Preflight
+কাজ:
 
-বড় change push করার আগে:
+1. release PR create/update
+2. release PR merge হলে tag/release create
+3. release PR expected-deadlock avoid করার hardening steps
 
-```bash
-pnpm run lint
-pnpm run typecheck
-pnpm run test
-pnpm run build
-```
+### `stale.yml`
 
-## Related Docs
+- stale issue/PR manage করে
 
-- `docs/guides/release-automation.md`
+---
+
+## Recommended Required Checks
+
+- `Build`
+- `Quality (lint)`
+- `Quality (test)`
+- `Quality (typecheck)`
+- `commitlint`
+- `dependency-review`
+- `semantic-pr-title`
+- `scan`
+- `Analyze (JavaScript/TypeScript)`
+
+---
+
+## Troubleshooting
+
+### `Expected` stuck
+
+1. ruleset required checks remove করুন
+2. successful PR থেকে dropdown দিয়ে re-add করুন
+3. workflow rerun/push tiny commit
+
+### Release PR checks expected
+
+1. Release Please logs দেখুন
+2. synthetic check mark message না থাকলে rerun
+3. message থাকলে ruleset mapping reset
+
+---
+
+## Related
+
 - `docs/guides/github-setup-checklist.md`
+- `docs/guides/release-automation.md`
