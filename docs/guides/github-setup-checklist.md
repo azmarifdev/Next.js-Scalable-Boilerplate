@@ -110,12 +110,12 @@ Add these minimum secrets for stable CI on pushes:
 
 Optional:
 
-| Secret                             | When needed                                |
-| ---------------------------------- | ------------------------------------------ |
-| `AUTH_MFA_VERIFY_URL`              | MFA external verifier                      |
-| `AUTH_MFA_VERIFY_BEARER_TOKEN`     | verifier auth token                        |
-| `NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL` | custom auth mode                           |
-| `RELEASE_PLEASE_TOKEN`             | release PR trigger stability (recommended) |
+| Secret                             | When needed                                                    |
+| ---------------------------------- | -------------------------------------------------------------- |
+| `AUTH_MFA_VERIFY_URL`              | MFA external verifier                                          |
+| `AUTH_MFA_VERIFY_BEARER_TOKEN`     | verifier auth token                                            |
+| `NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL` | custom auth mode                                               |
+| `RELEASE_PLEASE_TOKEN`             | optional: use only if you want PAT-based release PR triggering |
 
 Important:
 
@@ -260,7 +260,7 @@ Fix:
 
 Prevention:
 
-- Configure `RELEASE_PLEASE_TOKEN` secret (PAT) so release PRs are created with a token that reliably triggers downstream checks.
+- This repo's release workflow marks required checks on release PRs automatically, so PAT is not required for release PR mergeability.
 
 ### Problem: Same check appears twice (or confusing duplicates)
 
