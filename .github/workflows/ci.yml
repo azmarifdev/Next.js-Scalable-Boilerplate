@@ -8,6 +8,7 @@ on:
       - "src/**"
       - "scripts/**"
       - "drizzle/**"
+      - ".github/workflows/**"
       - "package.json"
       - "pnpm-lock.yaml"
       - "CHANGELOG.md"
@@ -15,7 +16,6 @@ on:
       - ".release-please-manifest.json"
       - "tsconfig.json"
       - "next.config.ts"
-      - ".github/workflows/ci.yml"
   push:
     branches:
       - main
@@ -149,5 +149,51 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+  e2e-pr:
+    name: Playwright E2E (pull_request)
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    env:
+      NEXT_PUBLIC_APP_NAME: Nextjs Starter Template
+      NEXT_PUBLIC_BACKEND_MODE: internal
+      NEXT_PUBLIC_AUTH_PROVIDER: better-auth
+      NEXT_PUBLIC_API_BASE_URL: http://127.0.0.1:3000
+      NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
+      AUTH_SESSION_SECRET: e2e-ci-pr-secret
+      ALLOW_DEMO_AUTH: "true"
+      ALLOW_INSECURE_DEV_AUTH: "true"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 10.33.0
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps
+
+      - name: Run E2E tests
+        run: pnpm run e2e
+
+      - name: Upload Playwright report (PR)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-pr
           path: playwright-report/
           retention-days: 30
