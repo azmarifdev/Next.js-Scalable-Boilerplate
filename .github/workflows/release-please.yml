@@ -25,6 +25,68 @@ jobs:
       prs_created: ${{ steps.pick.outputs.prs_created }}
       tag_name: ${{ steps.pick.outputs.tag_name }}
     steps:
+      - name: Ensure releasable commit override for latest merge
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const sha = context.sha;
+
+            // Release Please creates/updates release PR only when it sees a releasable unit.
+            // For squash-merged PRs with non-releasable title types (e.g. chore/ci/docs),
+            // add a commit override so this merge still becomes releasable as a patch.
+            const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner,
+              repo,
+              commit_sha: sha
+            });
+
+            const mergedPr = prs.find((pr) => pr.merged_at && pr.base?.ref === 'main');
+            if (!mergedPr) {
+              core.info('No merged PR associated with this commit; skipping commit override.');
+              return;
+            }
+
+            const title = (mergedPr.title || '').trim();
+            const match = title.match(/^([a-z]+)(\(([^)]+)\))?(!)?:\s+(.+)$/i);
+            if (!match) {
+              core.info('Merged PR title is not conventional; skipping override.');
+              return;
+            }
+
+            const type = match[1].toLowerCase();
+            const scope = match[3] || '';
+            const bang = match[4] || '';
+            const desc = match[5] || '';
+
+            const releasable = new Set(['feat', 'fix', 'deps']);
+            if (releasable.has(type)) {
+              core.info(`Merged PR type "${type}" is releasable; no override needed.`);
+              return;
+            }
+
+            const overrideScope = scope || 'release';
+            const override = `fix(${overrideScope})${bang}: ${desc}`;
+            const begin = 'BEGIN_COMMIT_OVERRIDE';
+            const end = 'END_COMMIT_OVERRIDE';
+            const body = mergedPr.body || '';
+
+            if (body.includes(begin) && body.includes(end)) {
+              core.info('Commit override block already present; not modifying PR body.');
+              return;
+            }
+
+            const nextBody = [body.trim(), begin, override, end].filter(Boolean).join('\n\n');
+            await github.rest.pulls.update({
+              owner,
+              repo,
+              pull_number: mergedPr.number,
+              body: nextBody
+            });
+
+            core.notice(`Added commit override to merged PR #${mergedPr.number}: ${override}`);
+
       - name: Release Please
         id: release_primary
         continue-on-error: true
