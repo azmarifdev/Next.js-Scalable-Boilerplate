@@ -1,9 +1,6 @@
 name: Release Please
 
 on:
-  pull_request:
-    branches:
-      - "**"
   push:
     branches:
       - main
@@ -19,15 +16,7 @@ permissions:
   issues: write
 
 jobs:
-  required-check:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Release Please check for PR
-        run: echo "Release Please automation runs on push to main. PR check passed."
-
   release-please:
-    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     outputs:
@@ -40,7 +29,7 @@ jobs:
         continue-on-error: true
         uses: googleapis/release-please-action@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
           config-file: .release-please-config.json
           manifest-file: .release-please-manifest.json
           skip-github-pull-request: false
@@ -51,7 +40,7 @@ jobs:
         if: steps.release_primary.outcome == 'failure'
         uses: googleapis/release-please-action@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
           config-file: .release-please-config.json
           manifest-file: .release-please-manifest.json
           skip-github-pull-request: false
