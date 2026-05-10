@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.27](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.26...v0.1.27) (2026-05-10)
+
+
+### Bug Fixes
+
+* **readme:** fix section anchors and refresh project structure ([5344458](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/5344458e5c358edb6999bbce3e0c0f3293b2b49f))
+* **readme:** fix section anchors and refresh project structure ([eb14d0b](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/eb14d0bc5eaec1834a3b35bf5252bc24e39271c2))
+* **release:** release pr ([2071f79](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/2071f792cdc1b8e949d48ddeec3eb6842e7eb048))
+* **release:** release pr ([ab766e3](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/ab766e3ae58cb4dc86f48448746dcc19dc5f09dd))
+
 ## [0.1.26](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.25...v0.1.26) (2026-05-10)
 
 
