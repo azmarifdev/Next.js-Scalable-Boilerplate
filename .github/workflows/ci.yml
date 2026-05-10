@@ -4,18 +4,6 @@ on:
   pull_request:
     branches:
       - "**"
-    paths:
-      - "src/**"
-      - "scripts/**"
-      - "drizzle/**"
-      - ".github/workflows/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
-      - "CHANGELOG.md"
-      - ".release-please-config.json"
-      - ".release-please-manifest.json"
-      - "tsconfig.json"
-      - "next.config.ts"
   push:
     branches:
       - main
