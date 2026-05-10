@@ -5,6 +5,8 @@ import { getLocale } from "next-intl/server";
 import { Navbar } from "@/components/landing/Navbar";
 import { getGithubHref, getLocalizedDocEntries, normalizeLocale } from "@/lib/docs/content";
 
+export const dynamic = "force-dynamic";
+
 const categorySummaryByLocale: Record<"en" | "bn", Record<string, string>> = {
   en: {
     "Start Here": "Begin from installation and developer flow, then move into feature development.",

@@ -4,11 +4,12 @@ import { Navbar } from "@/components/landing/Navbar";
 
 export default function HomePage() {
   return (
-    <main className="landing-shell">
+    <main className="landing-shell landing-home">
       <Navbar />
-      <div className="relative pb-16">
-        <Hero />
-        <Features />
+      <div className="landing-home-content relative">
+        <Hero>
+          <Features />
+        </Hero>
       </div>
     </main>
   );

@@ -122,7 +122,7 @@ Since PRs are typically **squash-merged**, your PR title becomes the final commi
 
 - ✅ Update docs when you change behavior (env vars, auth flow, API, etc.)
 - ✅ Keep the relevant `docs/` file in sync with your code
-- ✅ Add translations to `docs/bn/` if you change English docs
+- ✅ Keep documentation in English only (UI localization can still use `next-intl` messages)
 - ❌ Don't leave "TODO" comments in code — either do it or file an issue
 
 ---
