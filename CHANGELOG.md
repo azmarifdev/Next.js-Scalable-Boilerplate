@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.28](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.27...v0.1.28) (2026-05-10)
+
+
+### Documentation
+
+* **github:** refresh setup and ci/cd guides with release troubleshoo… ([8ea7a69](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/8ea7a69bee16a6a9b69a13f0fd9384d2a16c2a10))
+* **github:** refresh setup and ci/cd guides with release troubleshooting ([dabc3a3](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/dabc3a318857d3ace4c2b43f176da82fde103bff))
+
 ## [0.1.27](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.26...v0.1.27) (2026-05-10)
 
 
