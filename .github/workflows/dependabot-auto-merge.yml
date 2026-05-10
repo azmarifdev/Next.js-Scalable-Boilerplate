@@ -13,7 +13,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  automerge:
+  dependabot-automerge:
     if: github.actor == 'dependabot[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 20
