@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.35](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.34...v0.1.35) (2026-05-11)
+
+
+### Bug Fixes
+
+* **maintenance:** sync guides with current workflows, auto-merge pol… ([decfa82](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/decfa8279924dba10539ba25ff7726ec3faa5578))
+* **maintenance:** sync guides with current workflows, auto-merge pol… ([b991576](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/b9915761bba4e43ac765f733441981fa607b2eea))
+
 ## [0.1.34](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.33...v0.1.34) (2026-05-11)
 
 
