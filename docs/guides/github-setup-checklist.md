@@ -74,6 +74,11 @@ Reason:
 - These are automation/maintenance checks and may be skipped by trigger conditions.
 - Keeping them required can deadlock merges.
 
+Dependency automation policy note:
+
+- `Dependabot Auto Merge` is intentionally non-required and policy-guarded.
+- It should skip unsafe updates rather than block every PR.
+
 ---
 
 ## 3. Actions Permissions
@@ -118,6 +123,8 @@ Notes:
 
 - Do not commit real secrets.
 - Store secrets only in GitHub or your deployment provider.
+- For most repositories, `${{ secrets.GITHUB_TOKEN }}` is sufficient for workflow automation.
+- Do not add personal access tokens unless a specific workflow limitation requires it.
 
 ---
 
@@ -206,6 +213,17 @@ Fix order:
    `Marked ... required checks as success on ...`
 2. If line missing: re-run `Release Please` workflow.
 3. If line exists but PR still expected: ruleset has stale/wrong check source mapping. Remove and re-add checks from dropdown.
+
+### Problem: Dependabot auto-merge always skipped
+
+Check:
+
+1. update type is patch (`semver-patch`)
+2. dependency is production dependency
+3. package is not in denylist/core-risk set
+4. ecosystem is npm
+
+If any check fails, skip is expected by policy.
 
 ### Problem: Release PR does not open after merge to `main`
 

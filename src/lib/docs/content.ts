@@ -180,16 +180,31 @@ export const docEntries: DocEntry[] = [
     id: "project-maintenance",
     title: { en: "Project Maintenance", bn: "প্রজেক্ট মেইনটেনেন্স" },
     description: {
-      en: "Daily, weekly, monthly, and quarterly routine health checklist.",
-      bn: "দৈনিক, সাপ্তাহিক, মাসিক, ত্রৈমাসিক health checklist।"
+      en: "Operational maintenance cadence plus CI, release, and dependency troubleshooting runbooks.",
+      bn: "অপারেশনাল মেইনটেনেন্স cadence সহ CI, release এবং dependency troubleshooting runbook।"
     },
     category: { en: "Maintainer Playbook", bn: "মেইনটেইনার প্লেবুক" },
-    readTime: { en: "4 min read", bn: "৪ মিনিট পড়া" },
+    readTime: { en: "8 min read", bn: "৮ মিনিট পড়া" },
     sourcePath: {
       en: "docs/guides/project-maintenance.md",
       bn: "docs/guides/project-maintenance.md"
     },
     slug: ["guides", "project-maintenance"]
+  },
+  {
+    id: "auth-setup-migration",
+    title: { en: "Auth Setup and Migration", bn: "Auth সেটআপ ও মাইগ্রেশন" },
+    description: {
+      en: "Remove demo auth safely, configure better-auth for production, or migrate to custom-auth.",
+      bn: "Demo auth নিরাপদে remove করুন, production better-auth configure করুন, বা custom-auth-এ migrate করুন।"
+    },
+    category: { en: "Maintainer Playbook", bn: "মেইনটেইনার প্লেবুক" },
+    readTime: { en: "7 min read", bn: "৭ মিনিট পড়া" },
+    sourcePath: {
+      en: "docs/guides/auth-setup-and-migration.md",
+      bn: "docs/guides/auth-setup-and-migration.md"
+    },
+    slug: ["guides", "auth-setup-and-migration"]
   },
   {
     id: "guides-index",
@@ -207,8 +222,8 @@ export const docEntries: DocEntry[] = [
     id: "contributing",
     title: { en: "Contributing Guide", bn: "কনট্রিবিউটিং গাইড" },
     description: {
-      en: "PR quality rules, commit conventions, release flow, and dev expectations.",
-      bn: "PR quality rules, commit conventions, release flow, এবং dev expectation।"
+      en: "Contributor workflow, commit standards, testing expectations, and PR quality rules.",
+      bn: "Contributor workflow, commit standard, testing expectation এবং PR quality rules।"
     },
     category: { en: "Maintainer Playbook", bn: "মেইনটেইনার প্লেবুক" },
     readTime: { en: "4 min read", bn: "৪ মিনিট পড়া" },
@@ -280,6 +295,6 @@ export function getGithubHref(sourcePath: string): string {
 }
 
 export async function readDocSource(sourcePath: string): Promise<string> {
-  const absolutePath = path.join(process.cwd(), sourcePath);
+  const absolutePath = path.join(/*turbopackIgnore: true*/ process.cwd(), sourcePath);
   return readFile(absolutePath, "utf-8");
 }

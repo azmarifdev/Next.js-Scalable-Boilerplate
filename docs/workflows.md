@@ -91,6 +91,12 @@ Notes:
 
 - Trigger: `pull_request_target` for Dependabot actor
 - Purpose: merge safe dependency updates under policy.
+- Current safety gates:
+  - semver patch updates only
+  - npm ecosystem only
+  - production dependencies only
+  - denylist protection for core/high-risk packages
+  - guarded merge script fallback when native auto-merge is unavailable
 
 ---
 
@@ -109,6 +115,7 @@ Hardening included:
 - auto commit override for non-releasable squash titles
 - release PR discovery via outputs + API fallback + retry
 - required-check synthetic pass publish on release PR head to prevent `Expected` deadlock
+- contributor cards are generated in a wrapping layout to avoid broken table alignment on odd contributor counts
 
 ### `stale.yml`
 

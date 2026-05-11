@@ -162,6 +162,111 @@ For each major upgrade:
 
 ---
 
+## Maintainer Troubleshooting Playbook
+
+Use this section when recurring operational issues appear in CI/release workflows.
+
+### 1. Dependabot auto-merge fails in guarded merge script
+
+Symptoms:
+
+- Dependabot auto-merge workflow fails early
+- logs show GitHub CLI output or schema-related errors
+
+Typical causes:
+
+- script depends on unstable `gh` JSON fields
+- script path/permission issues in workflow
+- missing token permissions
+
+What to check:
+
+1. `.github/scripts/guarded-pr-merge.sh` exists and is executable
+2. workflow step runs `chmod +x .github/scripts/guarded-pr-merge.sh`
+3. workflow uses `GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}`
+4. `Settings > Actions > General > Workflow permissions` is set to `Read and write`
+
+Safer script behavior:
+
+- prefer command-attempt + fallback over hardcoded schema fields
+- keep `set -euo pipefail` and enough contextual logs
+- fail only on truly unsafe states; skip gracefully when merge policy blocks
+
+### 2. Token policy for boilerplate repositories
+
+Rules:
+
+- never hardcode Personal Access Tokens (PATs) in repo files
+- use `${{ secrets.GITHUB_TOKEN }}` in workflows by default
+- if custom PAT is needed, each user sets it in their own repo secrets
+
+Why:
+
+- this template will be reused by many teams
+- committed tokens are immediate security incidents
+- `GITHUB_TOKEN` is scoped and managed by GitHub Actions
+
+### 3. Supply-chain protection for dependency auto-merge
+
+Blind auto-merge is risky. Use a guarded policy:
+
+- auto-merge only `semver-patch`
+- production dependencies only
+- ecosystem scoped (for this repo: npm)
+- denylist critical/core packages for manual review
+- required CI checks must pass
+
+Manual-review examples:
+
+- `next`, `react`, `react-dom`
+- auth/data foundations (`better-auth`, `drizzle-orm`, `pg`)
+- test/runtime tooling with broad impact (`typescript`, `@types/node`)
+
+### 4. Playwright runtime suddenly increases (for example ~15 minutes)
+
+Common reasons:
+
+- CI runs with `workers: 1` (serial execution)
+- retries are high and flaky tests retry frequently
+- browser/dependency install overhead in each run
+- test suite grew without smoke/full split
+
+Practical tuning:
+
+1. raise CI workers moderately (for example `2`)
+2. reduce retries after stabilizing flaky selectors
+3. split e2e into fast smoke checks vs deeper full suite
+4. keep selectors resilient to auth-state and locale variants
+5. monitor runtime trends in Actions weekly
+
+### 5. Locale/content mismatch in docs pages
+
+Symptoms:
+
+- switching EN/BN changes UI language, but article content stays in one language
+
+Checks:
+
+1. verify locale resolution logic in `src/lib/docs/content.ts`
+2. verify source path mapping per locale
+3. if docs policy is English-only, point all locale source paths to English markdown
+4. remove stale locale doc folders to avoid accidental routing regressions
+
+### 6. Branch/ruleset check drift
+
+Symptoms:
+
+- release or PR checks show `Expected — Waiting for status to be reported`
+
+Fix:
+
+1. open branch protection ruleset
+2. remove stale required check names
+3. re-add required checks from live check-run names
+4. re-run affected workflow
+
+---
+
 ## Summary: Maintenance at a Glance
 
 | Frequency     | What To Do                                                             | Time Required |

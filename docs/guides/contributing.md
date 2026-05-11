@@ -89,6 +89,48 @@ test(e2e): add login flow end-to-end test
 ci(release): add contributor avatars to release notes
 ```
 
+More examples (copied from repository defaults):
+
+```
+feat(auth): add forgot-password form shell
+fix(middleware): redirect unauthorized users to login
+refactor(services): centralize error handling in api client
+docs(readme): add testing section
+test(auth): add login validation tests
+chore(ci): cache npm dependencies
+```
+
+### Git Workflow (Recommended)
+
+Use this workflow for clean history and easier maintenance:
+
+```bash
+# 1) Sync main
+git checkout main
+git pull origin main
+
+# 2) Create a focused branch
+git checkout -b fix/docs-locale-fallback
+
+# 3) Work + stage only related files
+git add <files>
+git commit -m "fix(docs): load english markdown for docs routes"
+
+# 4) Rebase on latest main before PR
+git fetch origin
+git rebase origin/main
+
+# 5) Push and open PR
+git push -u origin fix/docs-locale-fallback
+```
+
+Tips:
+
+- Keep one PR = one concern (example: `docs locale fix`, not `docs + auth + ui` together)
+- Prefer multiple small commits over one huge commit while developing
+- Before merge, squash via PR title using conventional commit format
+- If conflicts happen during rebase, resolve carefully and run tests again
+
 ### PR Titles
 
 Since PRs are typically **squash-merged**, your PR title becomes the final commit message. Follow the same format:
@@ -115,6 +157,16 @@ Since PRs are typically **squash-merged**, your PR title becomes the final commi
 - ✅ Write tests for new features and bug fixes
 - ✅ Update existing tests if your change affects their behavior
 - ✅ Run the full test suite before pushing
+
+### E2E Stability Tips (Playwright)
+
+If tests fail in CI but pass locally, check these first:
+
+- Avoid brittle selectors that depend on one exact text only
+- Prefer role-based selectors with locale-aware fallback patterns
+- If UI may show different auth state (`Sign in` vs `Sign out`), assert both possible states safely
+- Keep `NEXT_PUBLIC_SITE_URL` and `baseURL` consistent with CI (`http://127.0.0.1:3000`)
+- Review retries/workers settings in `playwright.config.ts` if runtime suddenly increases
 
 ---
 
@@ -149,6 +201,14 @@ If a release PR ever shows required checks as `Expected`, do not guess check nam
 Use the ruleset **Add checks** dropdown and re-add exact live check-run names.
 
 See [Release Automation](release-automation.md) for details.
+
+---
+
+## Maintenance Troubleshooting
+
+For CI, auto-merge policy, dependency safety, and long-term maintenance incidents, see:
+
+- [Project Maintenance](project-maintenance.md)
 
 ---
 
