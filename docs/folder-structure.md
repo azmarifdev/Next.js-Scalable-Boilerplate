@@ -237,8 +237,9 @@ src/tests/
 │   ├── auth-api.test.ts    → Auth API integration tests
 │   └── mode-guards.test.ts → Mode guard integration tests
 └── e2e/             → End-to-end tests (Playwright)
-    ├── home.spec.ts        → Auth flow e2e tests
-    └── sanity.check.spec.ts → Basic sanity checks
+    ├── home.spec.ts         → Landing + login/docs redirect behavior
+    ├── i18n.spec.ts         → Locale toggle behavior checks
+    └── sanity.check.spec.ts → Basic route/document sanity checks
 ```
 
 ---
@@ -258,6 +259,8 @@ docs/
 │   └── cloud-providers.md       → Provider-specific deploy guides
 ├── guides/
 │   ├── README.md                → Guides index
+│   ├── contributing.md          → Contributor workflow and commit standards
+│   ├── project-maintenance.md   → Ongoing maintainer playbook and troubleshooting
 │   ├── deployment.md            → Deployment runbook
 │   ├── github-setup-checklist.md → Repo hardening checklist
 │   ├── project-maintenance.md   → Maintenance routines

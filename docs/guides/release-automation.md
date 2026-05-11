@@ -40,6 +40,7 @@ This boilerplate includes several release reliability protections:
 2. **Auto override for non-releasable merge titles** to keep release PR generation consistent.
 3. **Release PR required-check synthetic pass** so release PR does not deadlock with `Expected` checks.
 4. **Release PR discovery with retries** to reduce eventual-consistency race conditions.
+5. **Contributor card rendering with wrapping layout** to avoid odd-count table misalignment in release notes.
 
 File reference:
 
@@ -87,6 +88,7 @@ Avoid:
 - manual tag creation
 - manual editing of generated release PR body
 - forcing workflow rename without updating docs/ruleset checks
+- editing generated contributor HTML manually in published release notes (let workflow regenerate on next release)
 
 ---
 

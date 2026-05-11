@@ -211,6 +211,37 @@ Fix:
 
 - add `DATABASE_URL` and `AUTH_SESSION_SECRET` in repo Secrets (Actions)
 
+### Dependabot auto-merge job fails
+
+If `Dependabot Auto Merge` fails in the guarded merge step:
+
+- confirm `Settings > Actions > General > Workflow permissions` is `Read and write`
+- confirm `Allow GitHub Actions to create and approve pull requests` is enabled
+- check logs from `.github/scripts/guarded-pr-merge.sh` for policy skip/failure reason
+- verify workflow file paths are intact (`.github/scripts/guarded-pr-merge.sh`)
+
+### Docs language seems inconsistent with locale toggle
+
+Current policy for this boilerplate:
+
+- docs article markdown source is maintained in English
+- locale toggle still changes UI labels/navigation text
+- if you want localized markdown later, reintroduce per-locale source mapping in `src/lib/docs/content.ts`
+
+### Playwright in CI is slower than expected
+
+Likely causes:
+
+- CI workers run serially (`workers: 1`)
+- retry count is higher than local
+- browser install/setup happens every CI run
+
+What to do:
+
+- keep selectors resilient (auth-state and locale aware)
+- reduce flaky tests first
+- split smoke/full e2e suites as project grows
+
 ---
 
 ## 9. Production Safety Checklist
