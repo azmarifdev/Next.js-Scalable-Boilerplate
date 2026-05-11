@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.30](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.29...v0.1.30) (2026-05-11)
+
+
+### Bug Fixes
+
+* **ci:** bump actions/dependency-review-action from 4 to 5 ([7966b97](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/7966b97ca54d5821a31c87fbaeccc86514a84656))
+
 ## [0.1.29](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.28...v0.1.29) (2026-05-10)
 
 
