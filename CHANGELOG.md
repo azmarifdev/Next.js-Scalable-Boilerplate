@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.33](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.32...v0.1.33) (2026-05-11)
+
+
+### Bug Fixes
+
+* **deps:** bump next from 16.2.4 to 16.2.6 ([a67a268](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/a67a268158b321262f859a6fea938353e3b6087e))
+* **deps:** bump next from 16.2.4 to 16.2.6 ([c843ecc](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/c843ecc3aa01f151cd8367dd3da4081a9f7c7cdc))
+
 ## [0.1.32](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.31...v0.1.32) (2026-05-11)
 
 
