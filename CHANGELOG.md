@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.32](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.31...v0.1.32) (2026-05-11)
+
+
+### Bug Fixes
+
+* **ci:** make guarded PR merge script compatible with gh field changes ([bd4f3e6](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/bd4f3e6a52b76f914495c328d0e097be2bd20bb9))
+
 ## [0.1.31](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.30...v0.1.31) (2026-05-11)
 
 
