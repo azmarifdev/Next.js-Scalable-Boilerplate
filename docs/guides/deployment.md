@@ -66,6 +66,22 @@ Every deployment needs these variables. Create a list — you'll need to enter t
 | `AUTH_MFA_VERIFY_URL` | External MFA verifier endpoint (recommended if step-up is on) |
 | `ALLOW_DEMO_AUTH=true` | Enables demo login credentials in dev |
 
+### 2.1 Database Provider Compatibility (Important)
+
+This boilerplate expects a **PostgreSQL-compatible** `DATABASE_URL`.
+
+Supported options:
+
+- PostgreSQL (self-hosted or managed)
+- Neon
+- Supabase Postgres
+
+What this means in practice:
+
+- You can switch providers without changing application code if `DATABASE_URL` is valid.
+- Drizzle migrations stay the same across these providers.
+- Supabase is used as database backend only by default (Supabase Auth/Storage are not auto-integrated).
+
 ### 3. Make Sure Your Database is Reachable
 
 Your deployment environment needs to be able to connect to your PostgreSQL database. If you're using a cloud database (Neon, Supabase, AWS RDS, etc.):
@@ -73,6 +89,11 @@ Your deployment environment needs to be able to connect to your PostgreSQL datab
 - ✅ Check that the database URL is correct
 - ✅ Make sure the database IP/domain allows connections from your deployment provider
 - ✅ If your provider supports it, add the database in the same region as your app for lower latency
+
+For Neon/Supabase specifically:
+
+- prefer their pooled/production connection string for serverless hosting
+- keep SSL-required params as recommended by provider docs
 
 ### 4. Run Tests Locally (Recommended)
 
@@ -200,6 +221,20 @@ Some providers have limited build memory. Try:
 - Double-check the `DATABASE_URL` in your provider's environment settings
 - Make sure the database allows connections from your provider's IP range
 - For Neon/Serverless, use the pooled connection string (with `-pooler` in the hostname)
+
+### "Works with local Postgres, fails with Neon/Supabase"
+
+Most common causes:
+
+- missing SSL query parameters in URL
+- using direct/non-pooled URL on serverless platform
+- provider-side network restrictions
+
+Fix:
+
+1. copy the provider's recommended production URL again
+2. verify region/network access settings
+3. re-run migrations against the same URL used by runtime
 
 ### "Login returns 500 error"
 

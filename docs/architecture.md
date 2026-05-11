@@ -171,9 +171,9 @@ src/lib/config/featureFlags.ts ← Feature flag definitions & helpers
 
 ### Database
 
-- **PostgreSQL** — The only supported database
+- **PostgreSQL-compatible providers** — PostgreSQL, Neon, Supabase Postgres
 - **Drizzle ORM** — Type-safe SQL query builder and migration tool
-- **Neon Serverless** — Optional adapter for serverless PostgreSQL
+- **Runtime DB client** — centralized in `src/lib/db/providers/drizzle.ts`
 
 ### Schema Location
 
@@ -182,13 +182,13 @@ src/lib/config/featureFlags.ts ← Feature flag definitions & helpers
 
 ### Provider Pattern
 
-Database connections are managed through providers:
+Database access is centralized through:
 
 ```
-src/lib/db/providers/
-  ├── neon.provider.ts   (serverless/Neon)
-  └── node.provider.ts   (standard Node.js PostgreSQL)
+src/lib/db/providers/drizzle.ts
 ```
+
+Provider switching (PostgreSQL vs Neon vs Supabase Postgres) is handled via `DATABASE_URL`, not separate code providers.
 
 ---
 
