@@ -11,6 +11,8 @@ concurrency:
 permissions:
   contents: write
   pull-requests: write
+  checks: read
+  statuses: read
 
 jobs:
   dependabot-automerge:
@@ -31,11 +33,48 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Evaluate auto-merge policy
+        id: policy
+        env:
+          UPDATE_TYPE: ${{ steps.metadata.outputs.update-type }}
+          DEPENDENCY_TYPE: ${{ steps.metadata.outputs.dependency-type }}
+          PACKAGE_ECOSYSTEM: ${{ steps.metadata.outputs.package-ecosystem }}
+          DEPENDENCY_NAMES: ${{ steps.metadata.outputs.dependency-names }}
+        run: |
+          should_merge="false"
+          reason="Blocked by policy"
+
+          # Industry-style baseline: only semver patch updates are auto-merged.
+          if [[ "${UPDATE_TYPE}" != "version-update:semver-patch" ]]; then
+            reason="Only patch updates are eligible (got: ${UPDATE_TYPE})."
+          # Limit automation to npm ecosystem for this boilerplate.
+          elif [[ "${PACKAGE_ECOSYSTEM}" != "npm_and_yarn" && "${PACKAGE_ECOSYSTEM}" != "npm" ]]; then
+            reason="Only npm updates are eligible (got: ${PACKAGE_ECOSYSTEM})."
+          # Prefer production dependencies only.
+          elif [[ "${DEPENDENCY_TYPE}" != "direct:production" && "${DEPENDENCY_TYPE}" != "indirect:production" ]]; then
+            reason="Only production dependencies are eligible (got: ${DEPENDENCY_TYPE})."
+          # Never auto-merge core/high-risk foundations.
+          elif grep -Eqi '(^|, )(next|react|react-dom|typescript|@types/node|better-auth|drizzle-orm|postgres|pg|@playwright/test)($|, )' <<<"${DEPENDENCY_NAMES}"; then
+            reason="Dependency is in high-risk/core denylist: ${DEPENDENCY_NAMES}."
+          else
+            should_merge="true"
+            reason="Eligible: patch + npm + production dependency + not denylisted."
+          fi
+
+          echo "should_merge=${should_merge}" >> "$GITHUB_OUTPUT"
+          echo "reason=${reason}" >> "$GITHUB_OUTPUT"
+          echo "Auto-merge policy decision: ${should_merge}. ${reason}"
+
       - name: Guarded merge strategy for safe updates
-        if: |
-          steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
-          steps.metadata.outputs.update-type == 'version-update:semver-minor'
+        if: steps.policy.outputs.should_merge == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          test -f .github/scripts/guarded-pr-merge.sh
+          chmod +x .github/scripts/guarded-pr-merge.sh
           bash .github/scripts/guarded-pr-merge.sh "${{ github.event.pull_request.html_url }}" true
+
+      - name: Explain skip reason
+        if: steps.policy.outputs.should_merge != 'true'
+        run: |
+          echo "Dependabot auto-merge skipped: ${{ steps.policy.outputs.reason }}"

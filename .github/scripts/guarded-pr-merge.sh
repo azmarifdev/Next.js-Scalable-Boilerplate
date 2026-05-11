@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+set -x
 
 if [[ $# -lt 1 ]]; then
   echo "Usage: $0 <pr-url> [skip-review-gate]" >&2
@@ -11,6 +12,18 @@ skip_review_gate="${2:-false}"
 repo="${GITHUB_REPOSITORY:?GITHUB_REPOSITORY is required}"
 max_wait_seconds=120
 poll_interval_seconds=5
+
+if [[ -z "${GH_TOKEN:-}" && -z "${GITHUB_TOKEN:-}" ]]; then
+  echo "GH_TOKEN or GITHUB_TOKEN is required for gh CLI authentication." >&2
+  exit 2
+fi
+
+if ! command -v gh >/dev/null 2>&1; then
+  echo "GitHub CLI (gh) is not installed on this runner." >&2
+  exit 2
+fi
+
+echo "Guarded merge context: repo=${repo}, pr_url=${pr_url}, skip_review_gate=${skip_review_gate}"
 
 # Try native auto-merge first. If policy rejects it, fall back to guarded direct merge checks.
 set +e
