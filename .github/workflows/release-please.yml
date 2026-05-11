@@ -317,23 +317,15 @@ jobs:
               "> 📖 [Full Changelog](${fullChangelogUrl})"
             ].join("\n");
 
-            const contributorRows = [];
             const topContributors = contributors.slice(0, 20);
-            for (let i = 0; i < topContributors.length; i += 2) {
-              const pair = topContributors.slice(i, i + 2);
-              const cells = pair
-                .map(
-                  (c) =>
-                    `<td align="center"><a href="https://github.com/${c.login}"><img src="${c.avatarUrl}&s=80" width="64" height="64" alt="@${c.login}" style="border-radius:50%;" /><br /><sub><b>@${c.login}</b></sub></a></td>`
-                )
-                .join("");
-              contributorRows.push(`  <tr>${cells}</tr>`);
-            }
-
-            const contributorsTable = [
-              "<table>",
-              ...contributorRows,
-              "</table>"
+            const contributorCards = topContributors.map(
+              (c) =>
+                `<a href="https://github.com/${c.login}" style="text-align:center; text-decoration:none; width:96px;"><img src="${c.avatarUrl}&s=80" width="64" height="64" alt="@${c.login}" style="border-radius:50%;" /><br /><sub><b>@${c.login}</b></sub></a>`
+            );
+            const contributorsWrap = [
+              '<div style="display:flex; flex-wrap:wrap; gap:16px; align-items:flex-start;">',
+              ...contributorCards,
+              "</div>"
             ].join("\n");
 
             const contributorsSection = [
@@ -343,7 +335,7 @@ jobs:
               "## 👥 Contributors",
               "",
               ...(contributors.length
-                ? [contributorsTable]
+                ? [contributorsWrap]
                 : ["> No external contributors detected for this release window."])
             ].join("\n");
 
