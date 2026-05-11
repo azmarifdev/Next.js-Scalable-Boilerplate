@@ -7,5 +7,5 @@ export const siteConfig = {
   description: "Production-ready Next.js-Boilerplate-PostgresQL-Drizzle",
   url: env.NEXT_PUBLIC_SITE_URL || fallbackUrl,
   locales: ["en", "bn"] as const,
-  defaultLocale: "en" as const
+  defaultLocale: "bn" as const
 };

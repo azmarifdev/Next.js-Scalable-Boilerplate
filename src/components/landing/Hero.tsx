@@ -1,6 +1,7 @@
 import { MoveRight } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import type { ReactNode } from "react";
 import {
   SiDrizzle,
   SiNextdotjs,
@@ -19,11 +20,15 @@ const stackItems = [
   { name: "Shadcn UI", icon: SiShadcnui, color: "#000000" }
 ];
 
-export async function Hero() {
+type HeroProps = {
+  children?: ReactNode;
+};
+
+export async function Hero({ children }: HeroProps) {
   const t = await getTranslations("home");
 
   return (
-    <section className="relative overflow-hidden px-4 pt-12 pb-10 sm:px-6 sm:pt-16 sm:pb-14 lg:px-8">
+    <section className="landing-hero relative overflow-hidden px-4 pt-12 pb-10 sm:px-6 sm:pt-16 sm:pb-14 lg:px-8">
       <div className="absolute inset-0">
         <div className="absolute top-[7%] left-[-4%] h-[500px] w-[220px] rotate-[34deg] bg-[linear-gradient(180deg,rgba(250,232,255,0)_0%,rgba(192,72,255,0.58)_42%,rgba(65,66,255,0)_100%)] blur-[6px]" />
         <div className="absolute top-[36%] left-[10%] h-36 w-36 rounded-full bg-[#4556ff]/30 blur-[82px]" />
@@ -34,7 +39,7 @@ export async function Hero() {
         <div className="absolute inset-x-0 top-[8%] bottom-0 [background-image:linear-gradient(var(--landing-grid-y)_1px,transparent_1px),linear-gradient(90deg,var(--landing-grid-x)_1px,transparent_1px)] [background-size:72px_72px] opacity-25" />
       </div>
 
-      <div className="relative mx-auto flex w-full max-w-[1040px] flex-col items-center text-center">
+      <div className="landing-hero-main relative mx-auto flex w-full max-w-[1040px] flex-col items-center text-center">
         <div className="inline-flex items-center gap-3 rounded-full bg-[var(--landing-surface)] px-4 py-2 text-xs font-medium text-[var(--landing-text)] shadow-[0_12px_45px_rgba(2,6,23,0.18)] backdrop-blur-xl sm:text-sm">
           <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.85)]" />
           <span>
@@ -105,6 +110,8 @@ export async function Hero() {
           ))}
         </div>
       </div>
+
+      {children}
     </section>
   );
 }

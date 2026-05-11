@@ -1,8 +1,6 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
-import { defaultLocale } from "@/i18n/routing";
-
 export type SupportedLocale = "en" | "bn";
 
 interface LocalizedText {
@@ -46,7 +44,7 @@ export const docEntries: DocEntry[] = [
     },
     category: { en: "Start Here", bn: "শুরু করুন" },
     readTime: { en: "6 min read", bn: "৬ মিনিট পড়া" },
-    sourcePath: { en: "README.md", bn: "docs/bn/project-readme.md" },
+    sourcePath: { en: "README.md", bn: "README.md" },
     slug: ["readme"]
   },
   {
@@ -58,7 +56,7 @@ export const docEntries: DocEntry[] = [
     },
     category: { en: "Start Here", bn: "শুরু করুন" },
     readTime: { en: "6 min read", bn: "৬ মিনিট পড়া" },
-    sourcePath: { en: "docs/how-to-use.md", bn: "docs/bn/how-to-use.md" },
+    sourcePath: { en: "docs/how-to-use.md", bn: "docs/how-to-use.md" },
     slug: ["how-to-use"]
   },
   {
@@ -70,7 +68,7 @@ export const docEntries: DocEntry[] = [
     },
     category: { en: "Product Blueprint", bn: "প্রোডাক্ট ব্লুপ্রিন্ট" },
     readTime: { en: "7 min read", bn: "৭ মিনিট পড়া" },
-    sourcePath: { en: "docs/architecture.md", bn: "docs/bn/architecture.md" },
+    sourcePath: { en: "docs/architecture.md", bn: "docs/architecture.md" },
     slug: ["architecture"]
   },
   {
@@ -82,7 +80,7 @@ export const docEntries: DocEntry[] = [
     },
     category: { en: "Product Blueprint", bn: "প্রোডাক্ট ব্লুপ্রিন্ট" },
     readTime: { en: "5 min read", bn: "৫ মিনিট পড়া" },
-    sourcePath: { en: "docs/folder-structure.md", bn: "docs/bn/folder-structure.md" },
+    sourcePath: { en: "docs/folder-structure.md", bn: "docs/folder-structure.md" },
     slug: ["folder-structure"]
   },
   {
@@ -94,7 +92,7 @@ export const docEntries: DocEntry[] = [
     },
     category: { en: "Operations & Release", bn: "অপারেশনস ও রিলিজ" },
     readTime: { en: "5 min read", bn: "৫ মিনিট পড়া" },
-    sourcePath: { en: "docs/workflows.md", bn: "docs/bn/workflows.md" },
+    sourcePath: { en: "docs/workflows.md", bn: "docs/workflows.md" },
     slug: ["workflows"]
   },
   {
@@ -108,7 +106,7 @@ export const docEntries: DocEntry[] = [
     readTime: { en: "4 min read", bn: "৪ মিনিট পড়া" },
     sourcePath: {
       en: "docs/guides/release-automation.md",
-      bn: "docs/bn/guides/release-automation.md"
+      bn: "docs/guides/release-automation.md"
     },
     slug: ["guides", "release-automation"]
   },
@@ -121,7 +119,7 @@ export const docEntries: DocEntry[] = [
     },
     category: { en: "Operations & Release", bn: "অপারেশনস ও রিলিজ" },
     readTime: { en: "5 min read", bn: "৫ মিনিট পড়া" },
-    sourcePath: { en: "docs/guides/deployment.md", bn: "docs/bn/guides/deployment.md" },
+    sourcePath: { en: "docs/guides/deployment.md", bn: "docs/guides/deployment.md" },
     slug: ["guides", "deployment"]
   },
   {
@@ -135,7 +133,7 @@ export const docEntries: DocEntry[] = [
     readTime: { en: "4 min read", bn: "৪ মিনিট পড়া" },
     sourcePath: {
       en: "docs/deployment/cloud-providers.md",
-      bn: "docs/bn/deployment/cloud-providers.md"
+      bn: "docs/deployment/cloud-providers.md"
     },
     slug: ["deployment", "cloud-providers"]
   },
@@ -148,7 +146,7 @@ export const docEntries: DocEntry[] = [
     },
     category: { en: "Security & Access", bn: "সিকিউরিটি ও অ্যাকসেস" },
     readTime: { en: "7 min read", bn: "৭ মিনিট পড়া" },
-    sourcePath: { en: "docs/auth-flow.md", bn: "docs/bn/auth-flow.md" },
+    sourcePath: { en: "docs/auth-flow.md", bn: "docs/auth-flow.md" },
     slug: ["auth-flow"]
   },
   {
@@ -160,7 +158,7 @@ export const docEntries: DocEntry[] = [
     },
     category: { en: "Security & Access", bn: "সিকিউরিটি ও অ্যাকসেস" },
     readTime: { en: "3 min read", bn: "৩ মিনিট পড়া" },
-    sourcePath: { en: "SECURITY.md", bn: "docs/bn/security-policy.md" },
+    sourcePath: { en: "docs/security.md", bn: "docs/security.md" },
     slug: ["security"]
   },
   {
@@ -174,7 +172,7 @@ export const docEntries: DocEntry[] = [
     readTime: { en: "4 min read", bn: "৪ মিনিট পড়া" },
     sourcePath: {
       en: "docs/guides/github-setup-checklist.md",
-      bn: "docs/bn/guides/github-setup-checklist.md"
+      bn: "docs/guides/github-setup-checklist.md"
     },
     slug: ["guides", "github-setup-checklist"]
   },
@@ -189,7 +187,7 @@ export const docEntries: DocEntry[] = [
     readTime: { en: "4 min read", bn: "৪ মিনিট পড়া" },
     sourcePath: {
       en: "docs/guides/project-maintenance.md",
-      bn: "docs/bn/guides/project-maintenance.md"
+      bn: "docs/guides/project-maintenance.md"
     },
     slug: ["guides", "project-maintenance"]
   },
@@ -202,7 +200,7 @@ export const docEntries: DocEntry[] = [
     },
     category: { en: "Maintainer Playbook", bn: "মেইনটেইনার প্লেবুক" },
     readTime: { en: "2 min read", bn: "২ মিনিট পড়া" },
-    sourcePath: { en: "docs/guides/README.md", bn: "docs/bn/guides/README.md" },
+    sourcePath: { en: "docs/guides/README.md", bn: "docs/guides/README.md" },
     slug: ["guides"]
   },
   {
@@ -214,7 +212,7 @@ export const docEntries: DocEntry[] = [
     },
     category: { en: "Maintainer Playbook", bn: "মেইনটেইনার প্লেবুক" },
     readTime: { en: "4 min read", bn: "৪ মিনিট পড়া" },
-    sourcePath: { en: "CONTRIBUTING.md", bn: "docs/bn/contributing.md" },
+    sourcePath: { en: "docs/guides/contributing.md", bn: "docs/guides/contributing.md" },
     slug: ["contributing"]
   },
   {
@@ -228,14 +226,14 @@ export const docEntries: DocEntry[] = [
     readTime: { en: "3 min read", bn: "৩ মিনিট পড়া" },
     sourcePath: {
       en: "docs/migrations/package-manager.md",
-      bn: "docs/bn/migrations/package-manager.md"
+      bn: "docs/migrations/package-manager.md"
     },
     slug: ["migrations", "package-manager"]
   }
 ];
 
 export function normalizeLocale(locale?: string): SupportedLocale {
-  return locale === "bn" ? "bn" : defaultLocale;
+  return locale === "bn" ? "bn" : "en";
 }
 
 export function getLocalizedDocEntries(locale?: string): LocalizedDocEntry[] {

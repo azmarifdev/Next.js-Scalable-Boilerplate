@@ -228,6 +228,7 @@ Before production deploy:
 ## Related Guides
 
 - [GitHub Setup Checklist](guides/github-setup-checklist.md)
+- [Auth Setup and Migration](guides/auth-setup-and-migration.md)
 - [Workflows](workflows.md)
 - [Release Automation](guides/release-automation.md)
 - [Contributing Guide](guides/contributing.md)

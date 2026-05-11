@@ -482,6 +482,63 @@ main {
   color: var(--landing-text);
 }
 
+[data-theme="dark"] .landing-home,
+[data-theme="light"] .landing-home,
+.landing-home {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .landing-home {
+    min-height: 100dvh;
+  }
+
+  .landing-home-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+    height: calc(100dvh - 64px);
+    overflow: hidden;
+    padding: 0;
+  }
+
+  .landing-home .landing-hero {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.75rem;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .landing-home .landing-hero-main {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transform: translateY(-1rem);
+  }
+
+  .landing-home .landing-features {
+    position: relative;
+    margin-top: 0;
+    padding-bottom: 0;
+    z-index: 2;
+  }
+
+  .landing-home .landing-features .rounded-\[28px\] {
+    padding-top: 1.15rem;
+    padding-bottom: 1.15rem;
+  }
+
+  .landing-home .landing-hero h1 {
+    font-size: clamp(2.8rem, 6.4vw, 4.75rem);
+  }
+}
+
 [data-theme="light"] .landing-shell,
 [data-theme="light"] .auth-shell {
   --landing-bg-start: #ffffff;

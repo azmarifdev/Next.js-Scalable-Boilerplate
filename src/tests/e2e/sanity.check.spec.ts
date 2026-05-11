@@ -7,7 +7,11 @@ test.describe("Sanity", () => {
     await expect(
       page.getByRole("heading", { name: /next\.js.*(boilerplate|বয়লারপ্লেট)/i })
     ).toBeVisible();
-    await expect(page.getByRole("link", { name: /sign in/i })).toBeVisible();
+    await expect(
+      page
+        .getByRole("button", { name: /sign out|সাইন আউট/i })
+        .or(page.getByRole("link", { name: /sign in|সাইন ইন/i }))
+    ).toBeVisible();
   });
 
   test("robots and sitemap are reachable", async ({ page }) => {

@@ -11,6 +11,8 @@ concurrency:
 permissions:
   contents: write
   pull-requests: write
+  checks: read
+  statuses: read
 
 jobs:
   pr-automerge:
@@ -31,4 +33,6 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          test -f .github/scripts/guarded-pr-merge.sh
+          chmod +x .github/scripts/guarded-pr-merge.sh
           bash .github/scripts/guarded-pr-merge.sh "${{ github.event.pull_request.html_url }}"

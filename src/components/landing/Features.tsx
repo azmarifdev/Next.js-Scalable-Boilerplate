@@ -8,7 +8,7 @@ export async function Features() {
   const features = t.raw("features") as Array<{ title: string; description: string }>;
 
   return (
-    <section id="features" className="relative px-4 pb-10 sm:px-6 lg:px-8">
+    <section id="features" className="landing-features relative px-4 pb-10 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-[1520px]">
         <div className="rounded-[28px] bg-[linear-gradient(180deg,var(--landing-panel-start),var(--landing-panel-end))] px-5 py-6 shadow-[0_20px_90px_rgba(8,5,24,0.12)] backdrop-blur-xl sm:px-7 lg:px-8">
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">

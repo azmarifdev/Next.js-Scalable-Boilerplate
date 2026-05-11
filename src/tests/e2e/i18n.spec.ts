@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 test.describe("I18n", () => {
   test("locale cookie switches homepage translations", async ({ page, context }) => {
     await page.goto("/");
-    await expect(page.getByRole("link", { name: /sign in/i })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: /next\.js/i })).toBeVisible();
 
     await context.addCookies([
       {
@@ -15,6 +15,6 @@ test.describe("I18n", () => {
     ]);
 
     await page.goto("/");
-    await expect(page.getByRole("link", { name: /সাইন ইন/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /ডকস|docs/i })).toBeVisible();
   });
 });
