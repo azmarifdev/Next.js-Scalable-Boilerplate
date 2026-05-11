@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.31](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.30...v0.1.31) (2026-05-11)
+
+
+### Bug Fixes
+
+* **ci:** bump actions/checkout from 4 to 6 ([4ac33ee](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/4ac33ee0c797d10f17f833c1c406774d114f2e4e))
+
 ## [0.1.30](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.29...v0.1.30) (2026-05-11)
 
 
