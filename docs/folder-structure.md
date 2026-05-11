@@ -169,7 +169,8 @@ src/lib/
 ├── db/              → Database layer
 │   ├── schema.ts          → Drizzle schema definitions
 │   ├── index.ts           → DB client initialization
-│   └── providers/         → Database connection providers
+│   └── providers/
+│       └── drizzle.ts     → Centralized Drizzle client factory (DATABASE_URL based)
 ├── docs/            → Documentation content helpers
 │   └── content.ts         → Doc entries, slug resolution, GitHub links
 ├── observability/   → Logging and tracing

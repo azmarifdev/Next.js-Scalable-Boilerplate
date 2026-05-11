@@ -113,6 +113,47 @@ Open:
 
 ## 5. Database Workflow (PostgreSQL + Drizzle)
 
+### 5.0 Which Databases Are Supported?
+
+This boilerplate uses **PostgreSQL-compatible** databases through `DATABASE_URL`.
+
+You can use:
+
+- PostgreSQL (self-hosted or managed)
+- Neon (serverless PostgreSQL)
+- Supabase Postgres
+
+Important:
+
+- "Postgres" and "PostgreSQL" refer to the same database family.
+- Supabase works here as a PostgreSQL provider (database layer). Supabase Auth/Storage are not automatically wired by default.
+
+### 5.1 Connection String Examples
+
+PostgreSQL (local):
+
+```env
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/app_db
+```
+
+Neon:
+
+```env
+DATABASE_URL=postgresql://<user>:<password>@<host>/<db>?sslmode=require
+```
+
+Supabase:
+
+```env
+DATABASE_URL=postgresql://postgres:<password>@db.<project-ref>.supabase.co:5432/postgres?sslmode=require
+```
+
+Notes:
+
+- Prefer pooled/production connection strings when your provider offers them.
+- Keep SSL-related query params as recommended by your provider.
+- Never commit real credentials.
+
 ### Generate migration files
 
 ```bash
@@ -142,6 +183,13 @@ pnpm run db:studio
 ```bash
 pnpm run db:reset
 ```
+
+Recommended order in a new environment:
+
+1. set `DATABASE_URL`
+2. run `pnpm run db:migrate`
+3. optionally run `pnpm run db:seed`
+4. start app and verify auth flow
 
 ---
 
@@ -192,6 +240,20 @@ Fix:
 
 - add `DATABASE_URL` to `.env.local`
 - or temporarily set `ALLOW_DEMO_AUTH=true` for local exploration
+
+### PostgreSQL URL works locally but fails in deployment
+
+Check:
+
+- URL points to a publicly reachable host (or same private network as app)
+- provider firewall/network access allows your app origin
+- SSL requirements are satisfied (`sslmode=require` where needed)
+- connection string is copied exactly (no hidden spaces/newlines)
+
+For serverless platforms:
+
+- prefer provider-recommended pooled connection string
+- keep region close to your app deployment region
 
 ### Error: `AUTH_SESSION_SECRET ... is required`
 

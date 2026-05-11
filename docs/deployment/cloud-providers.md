@@ -18,6 +18,21 @@ All providers share these requirements:
 
 The environment variables you need depend on your auth mode. See the [Deployment Guide](../guides/deployment.md#2-collect-required-environment-variables) for a full list.
 
+### Database Provider Support Matrix
+
+| Provider Type            | Supported | Notes                                                               |
+| ------------------------ | --------- | ------------------------------------------------------------------- |
+| PostgreSQL (generic)     | ✅ Yes    | Default and primary target                                          |
+| Neon                     | ✅ Yes    | Recommended for serverless hosting; use provider-recommended URL    |
+| Supabase Postgres        | ✅ Yes    | Supported as PostgreSQL backend (DB layer only by default)          |
+| Non-PostgreSQL databases | ❌ No     | Not supported by current Drizzle schema/runtime in this boilerplate |
+
+Connection guidance:
+
+- keep `DATABASE_URL` provider-accurate
+- prefer pooled URL on serverless platforms
+- include SSL settings as required by provider
+
 ---
 
 ## 1. Vercel
