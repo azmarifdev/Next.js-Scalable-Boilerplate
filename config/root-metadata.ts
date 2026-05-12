@@ -1,4 +1,4 @@
-type Metadata = Record<string, unknown>;
+import type { Metadata } from "next";
 
 import { siteConfig } from "../src/lib/config/site-config";
 
@@ -24,12 +24,25 @@ export const rootMetadata: Metadata = {
     url: siteConfig.url,
     title: siteConfig.name,
     description: siteConfig.description,
-    siteName: siteConfig.name
+    siteName: siteConfig.name,
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: siteConfig.name
+      }
+    ]
   },
   twitter: {
     card: "summary_large_image",
     title: siteConfig.name,
-    description: siteConfig.description
+    description: siteConfig.description,
+    images: ["/twitter-image"]
+  },
+  icons: {
+    icon: "/icon.svg",
+    apple: "/apple-icon.svg"
   },
   robots: {
     index: true,
