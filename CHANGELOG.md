@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.36](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.35...v0.1.36) (2026-05-11)
+
+
+### Bug Fixes
+
+* **deployment:** document PostgreSQL, Neon, and Supabase setup for V… ([5ae27ca](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/5ae27cac9451169a05ab9170dd48a70e90929827))
+* **deployment:** document PostgreSQL, Neon, and Supabase setup for V… ([47c202f](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/47c202f6467ded2f3e0474dd682f5b736e56c7f4))
+
 ## [0.1.35](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.34...v0.1.35) (2026-05-11)
 
 
