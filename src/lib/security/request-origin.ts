@@ -29,6 +29,14 @@ function parseUrl(value: string): URL | null {
   }
 }
 
+function resolvePort(url: URL): string {
+  if (url.port) {
+    return url.port;
+  }
+
+  return url.protocol === "https:" ? "443" : "80";
+}
+
 export function requireSameOrigin(
   request: Request,
   options: { requestId?: string; route?: string }
@@ -51,7 +59,9 @@ export function requireSameOrigin(
     requestOriginUrl &&
     originUrl &&
     isLoopbackHost(requestOriginUrl.hostname) &&
-    isLoopbackHost(originUrl.hostname);
+    isLoopbackHost(originUrl.hostname) &&
+    requestOriginUrl.protocol === originUrl.protocol &&
+    resolvePort(requestOriginUrl) === resolvePort(originUrl);
 
   if (!sameLoopbackOrigin) {
     return apiError(

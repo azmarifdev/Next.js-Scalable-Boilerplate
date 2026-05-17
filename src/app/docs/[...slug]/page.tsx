@@ -1,4 +1,5 @@
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import { Marked, Renderer } from "marked";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLocale } from "next-intl/server";
@@ -20,117 +21,92 @@ interface PageProps {
   params: Promise<{ slug: string[] }>;
 }
 
-function renderInline(content: string): string {
-  return content
-    .replace(/`([^`]+)`/g, '<code class="docs-inline-code">$1</code>')
-    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
-    .replace(/\*([^*]+)\*/g, "<em>$1</em>")
-    .replace(
-      /\[([^\]]+)\]\(([^)]+)\)/g,
-      '<a href="$2" target="_blank" rel="noreferrer" class="docs-inline-link">$1</a>'
-    );
-}
+const markedRenderer = new Renderer();
+
+markedRenderer.heading = ({ text, depth }) => {
+  return `<h${depth} class="docs-heading docs-h${depth}">${text}</h${depth}>`;
+};
+
+markedRenderer.paragraph = ({ text }) => {
+  return `<p class="docs-paragraph">${text}</p>`;
+};
+
+markedRenderer.list = ({ ordered, items, start }) => {
+  const tag = ordered ? "ol" : "ul";
+  const cls = ordered ? "docs-list docs-list-ordered" : "docs-list docs-list-unordered";
+  const startAttr = ordered && start !== 1 ? ` start="${start}"` : "";
+  const body = items
+    .map((item) => {
+      const taskAttr = item.task ? ` class="docs-task-list-item"` : "";
+      const checkbox =
+        item.task && item.checked !== undefined
+          ? `<input type="checkbox"${item.checked ? " checked" : ""} disabled /> `
+          : "";
+      return `<li${taskAttr}>${checkbox}${item.text}</li>`;
+    })
+    .join("\n");
+  return `<${tag} class="${cls}"${startAttr}>\n${body}\n</${tag}>`;
+};
+
+markedRenderer.listitem = ({ text, task, checked }) => {
+  const taskAttr = task ? ` class="docs-task-list-item"` : "";
+  const checkbox =
+    task && checked !== undefined
+      ? `<input type="checkbox"${checked ? " checked" : ""} disabled /> `
+      : "";
+  return `<li${taskAttr}>${checkbox}${text}</li>`;
+};
+
+markedRenderer.blockquote = ({ text }) => {
+  return `<blockquote class="docs-blockquote">${text}</blockquote>`;
+};
+
+markedRenderer.code = ({ text, lang }) => {
+  if (lang === "mermaid") {
+    return `<div class="docs-mermaid">\n${text}\n</div>`;
+  }
+  const codeB64 = Buffer.from(text, "utf-8").toString("base64");
+  const escaped = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  return `<div class="docs-code-wrap"><div class="docs-code-toolbar"><button type="button" class="docs-copy-btn" data-copy-b64="${codeB64}">Copy</button></div><pre class="docs-code-block"><code class="language-${lang || "plain"}">${escaped}</code></pre></div>`;
+};
+
+markedRenderer.codespan = ({ text }) => {
+  return `<code class="docs-inline-code">${text}</code>`;
+};
+
+markedRenderer.link = ({ href, text }) => {
+  return `<a href="${href}" target="_blank" rel="noreferrer" class="docs-inline-link">${text}</a>`;
+};
+
+markedRenderer.table = ({ header, rows }) => {
+  const thead = header.map((cell) => `<th class="docs-th">${cell.text}</th>`).join("\n");
+  const tbody = rows
+    .map(
+      (row) =>
+        `<tr class="docs-tr">${row
+          .map((cell) => `<td class="docs-td">${cell.text}</td>`)
+          .join("\n")}</tr>`
+    )
+    .join("\n");
+  return `<div class="docs-table-wrap"><table class="docs-table">\n<thead>\n<tr class="docs-tr">${thead}</tr>\n</thead>\n<tbody>\n${tbody}\n</tbody>\n</table></div>`;
+};
+
+markedRenderer.hr = () => {
+  return `<hr class="docs-hr" />`;
+};
+
+markedRenderer.image = ({ href, text }) => {
+  return `<img src="${href}" alt="${text}" class="docs-image" loading="lazy" />`;
+};
+
+markedRenderer.strong = ({ text }) => `<strong>${text}</strong>`;
+markedRenderer.em = ({ text }) => `<em>${text}</em>`;
+markedRenderer.del = ({ text }) => `<del>${text}</del>`;
+
+const marked = new Marked({ renderer: markedRenderer, gfm: true, breaks: false });
 
 function renderMarkdownToHtml(markdown: string): string {
-  const lines = markdown.replace(/\r\n/g, "\n").split("\n");
-  const html: string[] = [];
-  let inCode = false;
-  let codeLang = "";
-  let codeLines: string[] = [];
-  let inUl = false;
-  let inOl = false;
-
-  const closeLists = () => {
-    if (inUl) {
-      html.push("</ul>");
-      inUl = false;
-    }
-    if (inOl) {
-      html.push("</ol>");
-      inOl = false;
-    }
-  };
-
-  for (const rawLine of lines) {
-    const line = rawLine;
-
-    if (line.startsWith("```")) {
-      closeLists();
-      if (!inCode) {
-        codeLang = line.replace("```", "").trim();
-        codeLines = [];
-        inCode = true;
-      } else {
-        const codeText = codeLines.join("\n");
-        const codeB64 = Buffer.from(codeText, "utf-8").toString("base64");
-        const escapedCode = codeText
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;");
-        html.push(
-          `<div class="docs-code-wrap"><div class="docs-code-toolbar"><button type="button" class="docs-copy-btn" data-copy-b64="${codeB64}">Copy</button></div><pre class="docs-code-block"><code class="language-${codeLang || "plain"}">${escapedCode}</code></pre></div>`
-        );
-        inCode = false;
-        codeLang = "";
-        codeLines = [];
-      }
-      continue;
-    }
-
-    if (inCode) {
-      codeLines.push(line);
-      continue;
-    }
-
-    if (!line.trim()) {
-      closeLists();
-      continue;
-    }
-
-    const headingMatch = line.match(/^(#{1,6})\s+(.+)$/);
-    if (headingMatch) {
-      closeLists();
-      const level = headingMatch[1].length;
-      html.push(
-        `<h${level} class="docs-heading docs-h${level}">${renderInline(headingMatch[2])}</h${level}>`
-      );
-      continue;
-    }
-
-    const orderedMatch = line.match(/^\d+\.\s+(.+)$/);
-    if (orderedMatch) {
-      if (!inOl) {
-        closeLists();
-        html.push('<ol class="docs-list docs-list-ordered">');
-        inOl = true;
-      }
-      html.push(`<li>${renderInline(orderedMatch[1])}</li>`);
-      continue;
-    }
-
-    const unorderedMatch = line.match(/^[-*]\s+(.+)$/);
-    if (unorderedMatch) {
-      if (!inUl) {
-        closeLists();
-        html.push('<ul class="docs-list docs-list-unordered">');
-        inUl = true;
-      }
-      html.push(`<li>${renderInline(unorderedMatch[1])}</li>`);
-      continue;
-    }
-
-    if (line.startsWith("> ")) {
-      closeLists();
-      html.push(`<blockquote class="docs-blockquote">${renderInline(line.slice(2))}</blockquote>`);
-      continue;
-    }
-
-    closeLists();
-    html.push(`<p class="docs-paragraph">${renderInline(line)}</p>`);
-  }
-
-  closeLists();
-  return html.join("\n");
+  return marked.parse(markdown, { async: false }) as string;
 }
 
 export async function generateStaticParams() {
@@ -151,7 +127,7 @@ export default async function DocArticlePage({ params }: PageProps) {
   const contentHtml = renderMarkdownToHtml(markdown);
 
   return (
-    <main className="landing-shell docs-shared-gradient docs-article-shell min-h-screen overflow-x-clip">
+    <main className="landing-shell docs-shared-gradient docs-article-shell scroll-page min-h-screen overflow-x-clip">
       <Navbar />
 
       <section className="px-4 py-8 sm:px-6 lg:px-8">

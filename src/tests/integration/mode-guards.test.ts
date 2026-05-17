@@ -2,6 +2,8 @@
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { TEST_LOCAL_ORIGIN, testUrl } from "@/tests/shared";
+
 describe("mode guards", () => {
   const originalEnv = {
     NEXT_PUBLIC_AUTH_PROVIDER: process.env.NEXT_PUBLIC_AUTH_PROVIDER,
@@ -48,7 +50,7 @@ describe("mode guards", () => {
 
     const { GET } = await import("@/app/api/v1/auth/me/route");
     const { NextRequest } = await import("next/server");
-    const response = await GET(new NextRequest("http://localhost/api/v1/auth/me"));
+    const response = await GET(new NextRequest(testUrl("/api/v1/auth/me")));
     const payload = await response.json();
 
     expect(response.status).toBe(404);
@@ -84,7 +86,7 @@ describe("mode guards", () => {
       },
       3600
     );
-    const request = new NextRequest("http://localhost/login", {
+    const request = new NextRequest(testUrl("/login"), {
       headers: {
         cookie: `auth_token=${token}`
       }
@@ -92,6 +94,6 @@ describe("mode guards", () => {
 
     const response = await proxy(request);
     expect(response.status).toBe(307);
-    expect(response.headers.get("location")).toBe("http://localhost/docs");
+    expect(response.headers.get("location")).toBe(testUrl("/docs"));
   });
 });

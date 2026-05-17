@@ -22,18 +22,6 @@ async function parsePayload(request: Request): Promise<MfaVerifyPayload> {
   return request.json().catch(() => ({}));
 }
 
-function resolveExpectedCode(): string | null {
-  if (process.env.AUTH_MFA_STATIC_CODE) {
-    return process.env.AUTH_MFA_STATIC_CODE;
-  }
-
-  if (process.env.ALLOW_INSECURE_DEV_AUTH === "true") {
-    return "000000";
-  }
-
-  return null;
-}
-
 async function verifyWithExternalMfaProvider(input: {
   code: string;
   userId: string;
@@ -119,7 +107,7 @@ async function verifyMfaHandler(request: Request): Promise<Response> {
   }
 
   const rateLimitKey = `auth:mfa:verify:${session.sub}`;
-  const rateLimitResult = consumeRateLimit(rateLimitKey, MFA_VERIFY_RATE_LIMIT);
+  const rateLimitResult = await consumeRateLimit(rateLimitKey, MFA_VERIFY_RATE_LIMIT);
   if (!rateLimitResult.allowed) {
     const rateLimitedResponse = apiError(
       { code: "RATE_LIMITED", message: "Too many MFA attempts. Please retry later." },
@@ -155,39 +143,13 @@ async function verifyMfaHandler(request: Request): Promise<Response> {
   }
 
   if (externalVerified === null) {
-    const expectedCode = resolveExpectedCode();
-    const staticAllowedInProd = process.env.ALLOW_STATIC_MFA_IN_PRODUCTION === "true";
-    const isProduction = process.env.NODE_ENV === "production";
-    if (!expectedCode) {
-      return apiError(
-        {
-          code: "MFA_NOT_CONFIGURED",
-          message:
-            "Set AUTH_MFA_VERIFY_URL (recommended) or AUTH_MFA_STATIC_CODE for local-only fallback."
-        },
-        { status: 503, requestId, route }
-      );
-    }
-
-    if (isProduction && !staticAllowedInProd) {
-      return apiError(
-        {
-          code: "MFA_NOT_CONFIGURED",
-          message:
-            "Static MFA code is disabled in production. Configure AUTH_MFA_VERIFY_URL or set ALLOW_STATIC_MFA_IN_PRODUCTION=true (not recommended)."
-        },
-        { status: 503, requestId, route }
-      );
-    }
-
-    if (payload.code !== expectedCode) {
-      const invalidCodeResponse = apiError(
-        { code: "MFA_INVALID_CODE", message: "Invalid MFA verification code" },
-        { status: 401, requestId, route }
-      );
-      attachRateLimitHeaders(invalidCodeResponse, rateLimitResult, MFA_VERIFY_RATE_LIMIT.limit);
-      return invalidCodeResponse;
-    }
+    return apiError(
+      {
+        code: "MFA_NOT_CONFIGURED",
+        message: "Set AUTH_MFA_VERIFY_URL before enabling admin step-up MFA."
+      },
+      { status: 503, requestId, route }
+    );
   }
 
   const token = await createSessionToken(

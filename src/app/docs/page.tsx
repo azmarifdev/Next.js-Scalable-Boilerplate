@@ -46,10 +46,10 @@ export default async function DocsPage() {
     }, {})
   );
   return (
-    <main className="landing-shell docs-shared-gradient min-h-screen overflow-x-clip">
+    <main className="landing-shell docs-shared-gradient scroll-page min-h-screen overflow-x-clip">
       <Navbar />
 
-      <section className="relative min-h-[calc(100vh-64px)] overflow-y-auto px-4 pt-4 pb-12 sm:px-6 sm:pt-5 lg:px-8">
+      <section className="relative px-4 pt-4 pb-12 sm:px-6 sm:pt-5 lg:px-8">
         <div className="mx-auto flex w-full max-w-[1120px] flex-col items-center">
           <div className="w-full max-w-[920px] text-center">
             <p className="text-xs font-semibold tracking-[0.24em] text-emerald-300 uppercase">

@@ -1,0 +1,50 @@
+name: Production Database Migration
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Type migrate-production to run production migrations"
+        required: true
+        type: string
+
+concurrency:
+  group: production-database-migration
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  migrate:
+    name: Migrate production database
+    runs-on: ubuntu-latest
+    environment: production
+    if: |
+      github.ref_name == 'main' &&
+      inputs.confirm == 'migrate-production'
+    env:
+      DATABASE_URL: ${{ secrets.MIGRATION_DATABASE_URL || secrets.DATABASE_URL }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 10.33.0
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate migration secret
+        run: test -n "$DATABASE_URL"
+
+      - name: Run migrations
+        run: pnpm run db:migrate

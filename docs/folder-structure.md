@@ -28,6 +28,7 @@ This document maps each major directory to its ownership and responsibility. Use
 src/
 ├── app/             → Next.js App Router (pages, layouts, APIs)
 ├── components/      → Reusable UI components
+├── db/              → Drizzle schema and runtime DB client
 ├── modules/         → Domain-level logic and components
 ├── hooks/           → Shared React hooks
 ├── lib/             → Core infrastructure
@@ -36,9 +37,19 @@ src/
 ├── i18n/            → Internationalization setup
 ├── store/           → State management (optional)
 ├── styles/          → Global CSS
-├── tests/           → Tests (unit, integration, e2e)
+├── tests/           → Tests (unit, integration, e2e) + shared.ts
 ├── types/           → Shared TypeScript type definitions
 ├── utils/           → Shared utility functions
+```
+
+---
+
+## `src/db/` — Database Layer
+
+```
+src/db/
+├── index.ts         → Runtime Drizzle client
+└── schema/          → Drizzle schema definitions
 ```
 
 ---
@@ -51,7 +62,7 @@ This is where pages, layouts, and API routes live.
 src/app/
 ├── (auth)/          → Auth pages (login, register)
 │   ├── login/
-│   │   └── page.tsx       → Login page with demo credentials auto-fill
+│   │   └── page.tsx       → Login page
 │   └── register/
 │       └── page.tsx       → Registration page
 ├── api/
@@ -161,16 +172,13 @@ src/lib/
 ├── config/          → Configuration system
 │   ├── env.ts             → Environment variable schema
 │   ├── validate.ts        → Runtime validation
+│   ├── runtime.ts         → API endpoint resolution
+│   ├── url.ts             → Centralized origin/URL derivation
 │   ├── constants.ts       → App constants
 │   ├── app-config.ts      → Parsed config object
 │   ├── featureFlags.ts    → Feature flag definitions
 │   ├── feature-registry.ts → Feature definitions (routes, permissions)
 │   └── site-config.ts     → Site-wide configuration
-├── db/              → Database layer
-│   ├── schema.ts          → Drizzle schema definitions
-│   ├── index.ts           → DB client initialization
-│   └── providers/
-│       └── drizzle.ts     → Centralized Drizzle client factory (DATABASE_URL based)
 ├── docs/            → Documentation content helpers
 │   └── content.ts         → Doc entries, slug resolution, GitHub links
 ├── observability/   → Logging and tracing
@@ -233,6 +241,7 @@ src/i18n/
 
 ```
 src/tests/
+├── shared.ts        → Shared test helpers (TEST_LOCAL_ORIGIN, testUrl)
 ├── unit/            → Unit tests (Vitest)
 ├── integration/     → Integration tests (Vitest)
 │   ├── auth-api.test.ts    → Auth API integration tests

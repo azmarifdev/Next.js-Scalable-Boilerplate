@@ -41,6 +41,7 @@ This boilerplate includes several release reliability protections:
 3. **Release PR required-check synthetic pass** so release PR does not deadlock with `Expected` checks.
 4. **Release PR discovery with retries** to reduce eventual-consistency race conditions.
 5. **Contributor card rendering with wrapping layout** to avoid odd-count table misalignment in release notes.
+6. **Idempotent release-note enhancement** with managed markers so Credits, Contributors, and Release Metadata are replaced instead of duplicated on workflow reruns.
 
 File reference:
 
@@ -88,7 +89,7 @@ Avoid:
 - manual tag creation
 - manual editing of generated release PR body
 - forcing workflow rename without updating docs/ruleset checks
-- editing generated contributor HTML manually in published release notes (let workflow regenerate on next release)
+- editing generated contributor HTML manually in published release notes; the managed enhancement block is replaced on reruns
 
 ---
 

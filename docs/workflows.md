@@ -21,8 +21,8 @@ Checks produced:
 - `Quality (typecheck)`
 - `Quality (test)`
 - `Build`
-- `Playwright E2E Push` (push only)
-- `Playwright E2E PR` (PR only)
+- `Playwright E2E Push` (push only; runs auth DB flows only when `E2E_DATABASE_URL` or `TEST_DATABASE_URL` is configured)
+- `Playwright E2E PR` (PR only; secret-free smoke coverage, skips auth DB flows)
 
 Notes:
 

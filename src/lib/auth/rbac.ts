@@ -10,6 +10,11 @@ export function getRolePermissions(role: UserRole): Permission[] {
   return ROLE_PERMISSIONS[role];
 }
 
+export function isAdminOnlyPermission(permission: Permission): boolean {
+  const userPermissions = ROLE_PERMISSIONS["user"];
+  return !userPermissions.includes(permission) && ROLE_PERMISSIONS["admin"].includes(permission);
+}
+
 export function hasPermission(role: UserRole, permission: Permission): boolean {
   if (!appConfig.auth.roles.includes(role)) {
     return false;

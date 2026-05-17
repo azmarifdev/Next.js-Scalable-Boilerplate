@@ -24,7 +24,7 @@ The application is organized into these layers:
 ├─────────────────────────────────────────────┤
 │          Core Infrastructure                │
 │  src/lib/auth/   src/lib/config/           │
-│  src/lib/db/     src/lib/security/         │
+│  src/db/         src/lib/security/         │
 │  src/lib/observability/                    │
 ├─────────────────────────────────────────────┤
 │          Integration Providers              │
@@ -173,11 +173,11 @@ src/lib/config/featureFlags.ts ← Feature flag definitions & helpers
 
 - **PostgreSQL-compatible providers** — PostgreSQL, Neon, Supabase Postgres
 - **Drizzle ORM** — Type-safe SQL query builder and migration tool
-- **Runtime DB client** — centralized in `src/lib/db/providers/drizzle.ts`
+- **Runtime DB client** — centralized in `src/db/index.ts`
 
 ### Schema Location
 
-- `src/lib/db/schema.ts` — Main database schema definition
+- `src/db/schema` — Main database schema definition
 - `drizzle/` — Generated migration SQL files
 
 ### Provider Pattern
@@ -185,7 +185,7 @@ src/lib/config/featureFlags.ts ← Feature flag definitions & helpers
 Database access is centralized through:
 
 ```
-src/lib/db/providers/drizzle.ts
+src/db/index.ts
 ```
 
 Provider switching (PostgreSQL vs Neon vs Supabase Postgres) is handled via `DATABASE_URL`, not separate code providers.

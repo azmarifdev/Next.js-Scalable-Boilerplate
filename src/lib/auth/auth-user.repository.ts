@@ -1,8 +1,8 @@
 import { and, eq } from "drizzle-orm";
 
+import { getDrizzleClient } from "@/db";
+import { authUsers } from "@/db/schema";
 import type { AuthAdapter, AuthUserRecord } from "@/lib/auth/adapter";
-import { getDrizzleClient } from "@/lib/db/providers/drizzle";
-import { authUsers } from "@/lib/db/schema";
 import type { UserRole } from "@/types/auth";
 
 export class AuthEmailExistsError extends Error {

@@ -265,18 +265,9 @@ REQUIRE_ADMIN_STEP_UP_AUTH=true
 
 ### Verifier Options
 
-| Option                 | How To Configure              | Use Case                                       |
-| ---------------------- | ----------------------------- | ---------------------------------------------- |
-| External MFA service   | `AUTH_MFA_VERIFY_URL`         | Production — integrates with your MFA provider |
-| Static code (dev only) | `AUTH_MFA_STATIC_CODE=123456` | Local development — quick testing              |
-
-### Production Safety
-
-```env
-# Static MFA is blocked in production by default
-# To allow it (not recommended):
-ALLOW_STATIC_MFA_IN_PRODUCTION=false
-```
+| Option               | How To Configure      | Use Case                                       |
+| -------------------- | --------------------- | ---------------------------------------------- |
+| External MFA service | `AUTH_MFA_VERIFY_URL` | Production — integrates with your MFA provider |
 
 ---
 
@@ -284,10 +275,10 @@ ALLOW_STATIC_MFA_IN_PRODUCTION=false
 
 The navbar dynamically changes based on auth state:
 
-| State             | Shows                                                                   |
-| ----------------- | ----------------------------------------------------------------------- |
-| **Not logged in** | Features · Docs · 🌐 Toggle · ☀️ Toggle · **Sign In** · **Get Started** |
-| **Logged in**     | Features · Docs · 🌐 Toggle · ☀️ Toggle · **Sign Out**                  |
+| State             | Shows                                                  |
+| ----------------- | ------------------------------------------------------ |
+| **Not logged in** | Features · Docs · 🌐 Toggle · ☀️ Toggle · **Sign In**  |
+| **Logged in**     | Features · Docs · 🌐 Toggle · ☀️ Toggle · **Sign Out** |
 
 The auth state is checked via the `useAuth()` hook which calls `GET /api/v1/auth/me` to verify the session.
 

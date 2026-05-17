@@ -12,12 +12,12 @@ import {
 } from "react-icons/si";
 
 const stackItems = [
-  { name: "Next.js 14+", icon: SiNextdotjs, color: "#000000" },
-  { name: "PostgreSQL", icon: SiPostgresql, color: "#4169E1" },
-  { name: "Drizzle ORM", icon: SiDrizzle, color: "#C5F74F" },
-  { name: "TypeScript", icon: SiTypescript, color: "#3178C6" },
-  { name: "Tailwind CSS", icon: SiTailwindcss, color: "#06B6D4" },
-  { name: "Shadcn UI", icon: SiShadcnui, color: "#000000" }
+  { name: "Next.js 14+", icon: SiNextdotjs, colorClass: "text-[#000000]" },
+  { name: "PostgreSQL", icon: SiPostgresql, colorClass: "text-[#4169E1]" },
+  { name: "Drizzle ORM", icon: SiDrizzle, colorClass: "text-[#C5F74F]" },
+  { name: "TypeScript", icon: SiTypescript, colorClass: "text-[#3178C6]" },
+  { name: "Tailwind CSS", icon: SiTailwindcss, colorClass: "text-[#06B6D4]" },
+  { name: "Shadcn UI", icon: SiShadcnui, colorClass: "text-[#000000]" }
 ];
 
 type HeroProps = {
@@ -97,13 +97,13 @@ export async function Hero({ children }: HeroProps) {
           id="stack"
           className="mt-8 flex w-full flex-wrap items-center justify-center gap-2.5 lg:gap-3"
         >
-          {stackItems.map(({ name, icon: Icon, color }) => (
+          {stackItems.map(({ name, icon: Icon, colorClass }) => (
             <div
               key={name}
               className="inline-flex h-12 items-center justify-center rounded-2xl bg-[var(--landing-surface-soft)] px-4 text-sm font-medium text-[var(--landing-text)] shadow-[0_8px_24px_rgba(15,23,42,0.08),inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-md"
             >
               <span className="mr-2.5 inline-flex h-5 w-5 items-center justify-center">
-                <Icon style={{ color }} className="h-full w-full" />
+                <Icon className={`h-full w-full ${colorClass}`} />
               </span>
               {name}
             </div>

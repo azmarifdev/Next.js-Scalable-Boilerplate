@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 
-import { hasPermission } from "@/lib/auth/rbac";
+import { hasPermission, isAdminOnlyPermission } from "@/lib/auth/rbac";
 import { verifySessionToken } from "@/lib/auth/session";
 import { isAdminStepUpEnabled } from "@/lib/auth/step-up";
 import { requireAdminStepUp } from "@/lib/auth/step-up-guard";
@@ -87,9 +87,9 @@ export function requirePermission(
     );
   }
 
-  if (isAdminStepUpEnabled() && permission === "users:read") {
+  if (isAdminStepUpEnabled() && isAdminOnlyPermission(permission)) {
     return requireAdminStepUp({
-      role,
+      role: role as "admin" | "user",
       mfaVerified: options.mfaVerified,
       requestId: options.requestId,
       route: options.route

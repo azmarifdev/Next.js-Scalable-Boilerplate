@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 import type { AuthPayload, AuthResponse } from "@/modules/auth/auth.types";
 import type {
   ExternalIdPAdapter,
@@ -10,6 +12,13 @@ interface ApiErrorLike {
   status?: number;
   code?: string;
 }
+
+const userSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.string().email(),
+  role: z.enum(["admin", "user"])
+});
 
 export class ExternalIdPConfigError extends Error {
   constructor(message: string) {
@@ -37,6 +46,7 @@ async function externalRequest<TResponse, TPayload>(
 ): Promise<TResponse> {
   const baseUrl = resolveExternalIdPBaseUrl();
   let response: Response;
+  const signal = typeof AbortSignal.timeout === "function" ? AbortSignal.timeout(5000) : null;
   try {
     response = await fetch(`${baseUrl}${path}`, {
       method,
@@ -45,6 +55,7 @@ async function externalRequest<TResponse, TPayload>(
         ...(headers ?? {})
       },
       credentials: "include",
+      ...(signal ? { signal } : {}),
       body: payload === undefined ? undefined : JSON.stringify(payload),
       cache: "no-store"
     });
@@ -94,26 +105,13 @@ function extractUserLike(payload: unknown): User | null {
   ];
 
   for (const candidate of candidates) {
-    if (isUserShape(candidate)) {
-      return candidate;
+    const parsed = userSchema.safeParse(candidate);
+    if (parsed.success) {
+      return parsed.data;
     }
   }
 
   return null;
-}
-
-function isUserShape(value: unknown): value is User {
-  if (typeof value !== "object" || value === null) {
-    return false;
-  }
-
-  const candidate = value as Record<string, unknown>;
-  return (
-    typeof candidate.id === "string" &&
-    typeof candidate.name === "string" &&
-    typeof candidate.email === "string" &&
-    (candidate.role === "admin" || candidate.role === "user")
-  );
 }
 
 function normalizeBooleanResult(

@@ -1,3 +1,7 @@
+import { getLocalAppOrigin } from "@/lib/config/url";
+
+const LOCAL_ORIGIN = getLocalAppOrigin();
+
 export function getSafeRedirectPath(
   input: string | null | undefined,
   fallback = "/dashboard"
@@ -6,13 +10,28 @@ export function getSafeRedirectPath(
     return fallback;
   }
 
-  if (!input.startsWith("/")) {
+  try {
+    const baseUrl = new URL(LOCAL_ORIGIN);
+    const resolved = new URL(input, baseUrl);
+
+    if (resolved.origin !== baseUrl.origin) {
+      return fallback;
+    }
+
+    if (!resolved.pathname.startsWith("/")) {
+      return fallback;
+    }
+
+    if (resolved.pathname.startsWith("//")) {
+      return fallback;
+    }
+
+    if (resolved.pathname.includes("\\")) {
+      return fallback;
+    }
+
+    return `${resolved.pathname}${resolved.search}${resolved.hash}`;
+  } catch {
     return fallback;
   }
-
-  if (input.startsWith("//")) {
-    return fallback;
-  }
-
-  return input;
 }

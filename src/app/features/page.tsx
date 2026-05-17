@@ -31,9 +31,9 @@ export default async function FeaturesPage() {
   const featureItems = t.raw("items") as Array<{ title: string; description: string }>;
 
   return (
-    <main className="landing-shell docs-shared-gradient min-h-screen overflow-x-clip">
+    <main className="landing-shell docs-shared-gradient no-scroll-page min-h-screen overflow-x-clip">
       <Navbar />
-      <section className="relative min-h-[calc(100vh-64px)] overflow-y-auto px-4 pt-4 pb-10 sm:px-6 sm:pt-5 lg:px-8">
+      <section className="relative h-[calc(100dvh-64px)] overflow-hidden px-4 pt-4 pb-10 sm:px-6 sm:pt-5 lg:px-8">
         <div className="mx-auto w-full max-w-[1100px]">
           <div className="mx-auto max-w-[840px] text-center">
             <p className="text-xs font-semibold tracking-[0.24em] text-fuchsia-300 uppercase">

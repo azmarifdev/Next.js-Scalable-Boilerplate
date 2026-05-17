@@ -1,11 +1,10 @@
 import { env } from "@/lib/config/env";
-
-const fallbackUrl = "http://localhost:3000";
+import { getSiteOrigin } from "@/lib/config/url";
 
 export const siteConfig = {
   name: env.NEXT_PUBLIC_APP_NAME,
   description: "Production-ready Next.js Boilerplate with PostgreSQL and Drizzle ORM.",
-  url: env.NEXT_PUBLIC_SITE_URL || fallbackUrl,
+  url: getSiteOrigin(),
   locales: ["en", "bn"] as const,
   defaultLocale: "bn" as const
 };

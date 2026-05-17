@@ -4,6 +4,7 @@
 
 This guide is the complete A-to-Z onboarding flow for this boilerplate:
 
+- adopting the template for a real product
 - first local setup
 - environment configuration
 - database and auth setup
@@ -51,19 +52,115 @@ What `pnpm run setup` does:
 1. Creates `.env.local` from `.env.example` if missing
 2. Installs dependencies
 
+Before building product features, read [Adopting This Boilerplate](guides/adopting-boilerplate.md). It lists the project names, metadata, icons, docs, release settings, and deployment values you should replace for a real app.
+
 ---
 
 ## 3. Configure Environment Variables
 
 The runtime reads local configuration from `.env.local`.
 
+### 3.0 Which env file is for what?
+
+- `.env.example`: the template. Safe defaults + comments. Commit this file.
+- `.env.local`: local development only. This is **gitignored** and should never be committed.
+- `.env`: shared non-secret defaults only. Do not put real credentials here.
+- Production env: set values in your deployment provider dashboard (Vercel/Render/Railway/etc).
+- CI env: set values in GitHub Actions Secrets or GitHub Environment secrets.
+
+Rule of thumb:
+
+| Place                      | Use For                                                          | Commit?                   |
+| -------------------------- | ---------------------------------------------------------------- | ------------------------- |
+| `.env.example`             | Documentation/template for all supported variables               | Yes                       |
+| `.env.local`               | Local developer values and local secrets                         | No                        |
+| `.env`                     | Shared non-secret defaults only                                  | Only if it has no secrets |
+| Vercel/hosting env         | Production runtime variables                                     | No                        |
+| GitHub repository secrets  | CI-only values such as `E2E_DATABASE_URL`                        | No                        |
+| GitHub environment secrets | Protected production operations such as `MIGRATION_DATABASE_URL` | No                        |
+
+### 3.0.1 Local URLs and Ports
+
+Local URLs are derived from these values:
+
+```env
+APP_PROTOCOL=http
+APP_HOST=localhost
+PORT=3000
+```
+
+If `NEXT_PUBLIC_SITE_URL` is blank, server-side metadata, sitemap, robots, and E2E defaults use:
+
+```txt
+APP_PROTOCOL://APP_HOST:PORT
+```
+
+To run the app on another port, change one value:
+
+```env
+PORT=4000
+```
+
+Then run:
+
+```bash
+pnpm run dev
+```
+
+Use `NEXT_PUBLIC_SITE_URL` only when you need an explicit public origin:
+
+```env
+NEXT_PUBLIC_SITE_URL=https://your-domain.com
+```
+
+For internal backend mode, keep `NEXT_PUBLIC_API_BASE_URL` blank. Set it only when `NEXT_PUBLIC_BACKEND_MODE=external`.
+
+Most projects only need `.env.example` and `.env.local`.
+
+Use `.env` only when you intentionally want shared non-secret defaults for everyone on the team. If `.env` duplicates empty values like `DATABASE_URL=`, command-line tools may read that value before `.env.local`. Keep secrets and developer-specific values in `.env.local`.
+
+Solo developer example:
+
+```txt
+.env.example  -> committed template
+.env.local    -> your local real values
+.env          -> not needed
+```
+
+Team example:
+
+```env
+# .env
+NEXT_PUBLIC_BACKEND_MODE=internal
+NEXT_PUBLIC_AUTH_PROVIDER=better-auth
+NEXT_PUBLIC_FEATURE_ADMIN=true
+```
+
+```env
+# .env.local
+DATABASE_URL=postgresql://your-local-db
+AUTH_SESSION_SECRET=your-local-secret
+```
+
+Do not store real credentials in `.env` unless that file is gitignored and your team has intentionally chosen that workflow.
+
 ### 3.1 Minimum required for internal mode
 
 ```env
+NEXT_PUBLIC_APP_NAME=Your App
+APP_PROTOCOL=http
+APP_HOST=localhost
+PORT=3000
+NEXT_PUBLIC_SITE_URL=
+NEXT_PUBLIC_API_BASE_URL=
 NEXT_PUBLIC_BACKEND_MODE=internal
 NEXT_PUBLIC_AUTH_PROVIDER=better-auth
+NEXT_PUBLIC_ENABLE_CUSTOM_AUTH=false
+ENABLE_CUSTOM_AUTH=false
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/app_db
 AUTH_SESSION_SECRET=<generate-with-openssl-rand-hex-32>
+NEXT_PUBLIC_FEATURE_ADMIN=true
+REQUIRE_ADMIN_STEP_UP_AUTH=false
 ```
 
 Generate session secret:
@@ -72,29 +169,76 @@ Generate session secret:
 openssl rand -hex 32
 ```
 
-### 3.2 Safe local fallback mode (no database yet)
-
-If you are exploring UI/routes before connecting PostgreSQL:
-
-```env
-ALLOW_DEMO_AUTH=true
-ALLOW_INSECURE_DEV_AUTH=true
-DATABASE_URL=
-AUTH_SESSION_SECRET=local-dev-only-secret
-```
-
-Important:
-
-- This fallback is for local development only.
-- Do not use insecure fallback flags in production.
-
-### 3.3 Custom auth mode
+### 3.2 Custom auth mode
 
 ```env
 NEXT_PUBLIC_AUTH_PROVIDER=custom-auth
 NEXT_PUBLIC_ENABLE_CUSTOM_AUTH=true
 ENABLE_CUSTOM_AUTH=true
 NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL=https://your-auth-service.example.com
+```
+
+### 3.3 Optional production services
+
+These can stay blank locally:
+
+```env
+SENTRY_DSN=
+NEXT_PUBLIC_SENTRY_DSN=
+SENTRY_AUTH_TOKEN=
+SENTRY_ORG=
+SENTRY_PROJECT=
+
+RESEND_API_KEY=
+EMAIL_FROM=
+
+UPSTASH_REDIS_REST_URL=
+UPSTASH_REDIS_REST_TOKEN=
+```
+
+Configure them before public production launch. See [Production Services](guides/production-services.md).
+
+### 3.4 Production runtime values
+
+Set these in your hosting provider, such as Vercel Project Settings -> Environment Variables:
+
+```env
+NEXT_PUBLIC_APP_NAME=Your App
+NEXT_PUBLIC_SITE_URL=https://your-domain.com
+NEXT_PUBLIC_API_BASE_URL=
+
+NEXT_PUBLIC_BACKEND_MODE=internal
+NEXT_PUBLIC_AUTH_PROVIDER=better-auth
+NEXT_PUBLIC_ENABLE_CUSTOM_AUTH=false
+ENABLE_CUSTOM_AUTH=false
+
+DATABASE_URL=postgresql://...
+AUTH_SESSION_SECRET=<separate-production-secret>
+
+NEXT_PUBLIC_FEATURE_ADMIN=true
+REQUIRE_ADMIN_STEP_UP_AUTH=false
+```
+
+Recommended production services:
+
+```env
+SENTRY_DSN=
+NEXT_PUBLIC_SENTRY_DSN=
+SENTRY_AUTH_TOKEN=
+SENTRY_ORG=
+SENTRY_PROJECT=
+
+UPSTASH_REDIS_REST_URL=
+UPSTASH_REDIS_REST_TOKEN=
+
+RESEND_API_KEY=
+EMAIL_FROM=
+```
+
+Production migration values belong in GitHub, not in Vercel build commands:
+
+```env
+MIGRATION_DATABASE_URL=
 ```
 
 ---
@@ -106,6 +250,10 @@ pnpm run dev
 ```
 
 Open:
+
+- `APP_PROTOCOL://APP_HOST:PORT`
+
+With the defaults:
 
 - `http://localhost:3000`
 
@@ -151,6 +299,8 @@ DATABASE_URL=postgresql://postgres:<password>@db.<project-ref>.supabase.co:5432/
 Notes:
 
 - Prefer pooled/production connection strings when your provider offers them.
+- For Neon on Vercel, pooled hostnames commonly include `-pooler`.
+- For GitHub Actions migrations, use `MIGRATION_DATABASE_URL` if you need a separate direct migration URL.
 - Keep SSL-related query params as recommended by your provider.
 - Never commit real credentials.
 
@@ -191,6 +341,18 @@ Recommended order in a new environment:
 3. optionally run `pnpm run db:seed`
 4. start app and verify auth flow
 
+Production migrations should be run from GitHub Actions:
+
+```txt
+Actions -> Production Database Migration -> Run workflow
+```
+
+Input:
+
+```txt
+migrate-production
+```
+
 ---
 
 ## 6. Daily Development Workflow
@@ -205,11 +367,34 @@ pnpm run format:check
 pnpm run build
 ```
 
+If you changed the database schema:
+
+```bash
+pnpm run db:generate
+pnpm run db:migrate
+```
+
+Commit the schema code and generated files under `drizzle/` together.
+
 For E2E:
 
 ```bash
 pnpm run e2e
 ```
+
+E2E behavior:
+
+- Without `E2E_DATABASE_URL`, Playwright runs smoke tests and skips auth DB flows.
+- With `E2E_DATABASE_URL`, Playwright migrates/seeds that database and runs auth flows.
+- Use a disposable test database. Do not point E2E at production.
+
+GitHub path:
+
+```txt
+Repository -> Settings -> Secrets and variables -> Actions -> New repository secret
+```
+
+Secret values are private and are not committed to the repository.
 
 ---
 
@@ -233,13 +418,11 @@ pnpm run e2e
 Cause:
 
 - `NEXT_PUBLIC_BACKEND_MODE=internal`
-- `ALLOW_DEMO_AUTH=false`
 - no DB URL provided
 
 Fix:
 
 - add `DATABASE_URL` to `.env.local`
-- or temporarily set `ALLOW_DEMO_AUTH=true` for local exploration
 
 ### PostgreSQL URL works locally but fails in deployment
 
@@ -260,18 +443,18 @@ For serverless platforms:
 Fix:
 
 - set `AUTH_SESSION_SECRET`
-- or local-only fallback `ALLOW_INSECURE_DEV_AUTH=true`
 
 ### E2E passes locally but fails in GitHub
 
 Cause:
 
-- local Playwright injects fallback envs
-- GitHub Actions `push` workflow expects repository secrets
+- auth E2E requires `E2E_DATABASE_URL`
+- PR workflows intentionally run without database secrets
 
 Fix:
 
-- add `DATABASE_URL` and `AUTH_SESSION_SECRET` in repo Secrets (Actions)
+- add `E2E_DATABASE_URL` or `TEST_DATABASE_URL` in repo Secrets for push auth E2E
+- keep PR E2E secret-free unless you intentionally use a safe test database
 
 ### Dependabot auto-merge job fails
 
@@ -310,17 +493,24 @@ What to do:
 
 Before production deploy:
 
-1. `ALLOW_INSECURE_DEV_AUTH=false`
-2. `ALLOW_DEMO_AUTH=false`
-3. real `DATABASE_URL` configured
-4. strong `AUTH_SESSION_SECRET` configured
+1. real `DATABASE_URL` configured
+2. strong `AUTH_SESSION_SECRET` configured
+3. `NEXT_PUBLIC_SITE_URL` points to the deployed HTTPS URL
+4. `NEXT_PUBLIC_API_BASE_URL` points to the deployed app or external API
 5. HTTPS URLs for external auth
+6. production migration workflow can run from GitHub Actions
+7. Sentry env vars are set if monitoring is enabled
+8. Upstash env vars are set for production rate limiting
+9. Resend env vars are set before enabling email flows
 
 ---
 
 ## Related Guides
 
+- [Adopting This Boilerplate](guides/adopting-boilerplate.md)
+- [Database Setup](guides/database-setup.md)
 - [GitHub Setup Checklist](guides/github-setup-checklist.md)
+- [Production Services](guides/production-services.md)
 - [Auth Setup and Migration](guides/auth-setup-and-migration.md)
 - [Workflows](workflows.md)
 - [Release Automation](guides/release-automation.md)

@@ -1,7 +1,7 @@
 import { and, desc, eq, gte, sql } from "drizzle-orm";
 
-import { getDrizzleClient } from "@/lib/db/providers/drizzle";
-import { authAuditLogs } from "@/lib/db/schema";
+import { getDrizzleClient } from "@/db";
+import { authAuditLogs } from "@/db/schema";
 import { logger } from "@/lib/observability/logger";
 
 export type AuthAuditEvent =
@@ -35,6 +35,7 @@ export interface AuthRiskAssessment {
 
 const RECENT_FAILURE_WINDOW_MS = 10 * 60 * 1000;
 const NEW_DEVICE_WINDOW_MS = 24 * 60 * 60 * 1000;
+const MAX_METADATA_LENGTH = 4000;
 
 function normalizeEmail(email: string | null | undefined): string | null {
   if (!email) {
@@ -56,6 +57,28 @@ function normalizeIp(ipAddress: string | null | undefined): string | null {
   return ipAddress.trim();
 }
 
+function serializeMetadata(metadata?: Record<string, unknown> | null): string | null {
+  if (!metadata) {
+    return null;
+  }
+
+  try {
+    const serialized = JSON.stringify(metadata);
+    if (serialized.length > MAX_METADATA_LENGTH) {
+      logger.warn("auth:audit:metadata_too_large", {
+        length: serialized.length
+      });
+      return null;
+    }
+    return serialized;
+  } catch (error) {
+    logger.warn("auth:audit:metadata_invalid", {
+      error: error instanceof Error ? error.message : "Unknown metadata error"
+    });
+    return null;
+  }
+}
+
 export async function writeAuthAuditLog(input: AuthAuditInput): Promise<void> {
   const db = getDrizzleClient();
   if (!db) {
@@ -74,7 +97,7 @@ export async function writeAuthAuditLog(input: AuthAuditInput): Promise<void> {
       isSuspicious: input.isSuspicious ?? false,
       riskScore: input.riskScore ?? 0,
       reason: input.reason ?? null,
-      metadata: input.metadata ? JSON.stringify(input.metadata) : null
+      metadata: serializeMetadata(input.metadata)
     });
   } catch (error) {
     logger.warn("auth:audit:write_failed", {

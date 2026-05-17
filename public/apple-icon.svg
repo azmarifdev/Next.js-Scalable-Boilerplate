@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-label="Next.js Boilerplate">
+  <defs>
+    <linearGradient id="g" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#8b3dff"/>
+      <stop offset="55%" stop-color="#d946ef"/>
+      <stop offset="100%" stop-color="#fb7185"/>
+    </linearGradient>
+  </defs>
+  <rect width="180" height="180" rx="42" fill="#090614"/>
+  <path d="M47 104 84 49h17l-37 82H47Z" fill="url(#g)"/>
+  <circle cx="125" cy="126" r="11" fill="#22d3ee"/>
+</svg>
