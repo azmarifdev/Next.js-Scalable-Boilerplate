@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.41](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.40...v0.1.41) (2026-05-17)
+
+
+### Bug Fixes
+
+* **markdown:** fixed standalone issues ([1037f90](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/1037f9095e2b89267d9bbb920ef525378a11c110))
+* **markdown:** fixed standalone issues ([bbd7216](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/bbd721681b8dc4a4c036c347e7f3c8f250a8be32))
+
 ## [0.1.40](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.39...v0.1.40) (2026-05-17)
 
 
