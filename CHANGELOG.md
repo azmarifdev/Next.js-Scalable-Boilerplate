@@ -1,5 +1,124 @@
 # Changelog
 
+## [0.1.38](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.37...v0.1.38) (2026-05-13)
+
+
+### Bug Fixes
+
+* **deployment:** fix CSP issue ([b9ea669](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/b9ea6697640c7d8234d2a1d20ae9f6bb1344ac67))
+* **deployment:** fix CSP issue ([0e1d82e](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/0e1d82e03ed6a54ab0c765749b6418e779976a71))
+
+## [0.1.37](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.36...v0.1.37) (2026-05-12)
+
+
+### Bug Fixes
+
+* **deployment:** document PostgreSQL, Neon, and Supabase setup for V… ([eedc5ce](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/eedc5ce0772319b80aca87d862e3e08a5a70374f))
+* **deployment:** document PostgreSQL, Neon, and Supabase setup for V… ([534a8bd](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/534a8bd35231ec4344a8fb29cc2e320b00de5309))
+
+## [0.1.36](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.35...v0.1.36) (2026-05-11)
+
+
+### Bug Fixes
+
+* **deployment:** document PostgreSQL, Neon, and Supabase setup for V… ([5ae27ca](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/5ae27cac9451169a05ab9170dd48a70e90929827))
+* **deployment:** document PostgreSQL, Neon, and Supabase setup for V… ([47c202f](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/47c202f6467ded2f3e0474dd682f5b736e56c7f4))
+
+## [0.1.35](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.34...v0.1.35) (2026-05-11)
+
+
+### Bug Fixes
+
+* **maintenance:** sync guides with current workflows, auto-merge pol… ([decfa82](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/decfa8279924dba10539ba25ff7726ec3faa5578))
+* **maintenance:** sync guides with current workflows, auto-merge pol… ([b991576](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/b9915761bba4e43ac765f733441981fa607b2eea))
+
+## [0.1.34](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.33...v0.1.34) (2026-05-11)
+
+
+### Bug Fixes
+
+* **deps:** bump the prod-dependencies group across 1 directory with 9 updates ([8009aea](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/8009aea7772c06170ecb70478dc38c960622ed49))
+
+## [0.1.33](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.32...v0.1.33) (2026-05-11)
+
+
+### Bug Fixes
+
+* **deps:** bump next from 16.2.4 to 16.2.6 ([a67a268](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/a67a268158b321262f859a6fea938353e3b6087e))
+* **deps:** bump next from 16.2.4 to 16.2.6 ([c843ecc](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/c843ecc3aa01f151cd8367dd3da4081a9f7c7cdc))
+
+## [0.1.32](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.31...v0.1.32) (2026-05-11)
+
+
+### Bug Fixes
+
+* **ci:** make guarded PR merge script compatible with gh field changes ([bd4f3e6](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/bd4f3e6a52b76f914495c328d0e097be2bd20bb9))
+
+## [0.1.31](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.30...v0.1.31) (2026-05-11)
+
+
+### Bug Fixes
+
+* **ci:** bump actions/checkout from 4 to 6 ([4ac33ee](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/4ac33ee0c797d10f17f833c1c406774d114f2e4e))
+
+## [0.1.30](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.29...v0.1.30) (2026-05-11)
+
+
+### Bug Fixes
+
+* **ci:** bump actions/dependency-review-action from 4 to 5 ([7966b97](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/7966b97ca54d5821a31c87fbaeccc86514a84656))
+
+## [0.1.29](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.28...v0.1.29) (2026-05-10)
+
+
+### Bug Fixes
+
+* **deps:** bump the dev-dependencies group with 9 updates ([e3bc781](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/e3bc78115fe94b724fe648bcd91a3fc0d59776d0))
+* **deps:** bump the dev-dependencies group with 9 updates ([3da314b](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/3da314b25f00ed0cfe606eb64b4f3fba92ff1da8))
+
+## [0.1.28](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.27...v0.1.28) (2026-05-10)
+
+
+### Documentation
+
+* **github:** refresh setup and ci/cd guides with release troubleshoo… ([8ea7a69](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/8ea7a69bee16a6a9b69a13f0fd9384d2a16c2a10))
+* **github:** refresh setup and ci/cd guides with release troubleshooting ([dabc3a3](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/dabc3a318857d3ace4c2b43f176da82fde103bff))
+
+## [0.1.27](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.26...v0.1.27) (2026-05-10)
+
+
+### Bug Fixes
+
+* **readme:** fix section anchors and refresh project structure ([5344458](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/5344458e5c358edb6999bbce3e0c0f3293b2b49f))
+* **readme:** fix section anchors and refresh project structure ([eb14d0b](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/eb14d0bc5eaec1834a3b35bf5252bc24e39271c2))
+* **release:** release pr ([2071f79](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/2071f792cdc1b8e949d48ddeec3eb6842e7eb048))
+* **release:** release pr ([ab766e3](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/ab766e3ae58cb4dc86f48448746dcc19dc5f09dd))
+
+## [0.1.26](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.25...v0.1.26) (2026-05-10)
+
+
+### Bug Fixes
+
+* **ci:** always run required PR checks by removing path filter ([6a0a0dc](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/6a0a0dc8dff364e70fb764b03b546a8e7cc562df))
+* **release:** auto-convert non-releasable merges and keep release PR … ([256fa7a](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/256fa7ae847fbfb53c1c5313997ae22c880215a8))
+* **release:** auto-convert non-releasable merges and keep release PR checks mergeable ([b270959](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/b2709593724c4e95affe4f9e9fd73d76ee49ea04))
+* **release:** fix selected release outputs ([1800380](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/180038078b6698a8bc0117bc72c190f37d90cdcb))
+* **release:** fix selected release outputs ([f3167a1](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/f3167a1c7f3c37896ed61d73fff59fd2bb219d53))
+* **release:** mark required auto-convert non-releasable merges and ke… ([ce1b1bd](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/ce1b1bd66c068cf2ce9b54739aef51895ce6025a))
+* **release:** mark required auto-convert non-releasable merges and keep release PR checks mergeable ([53a76e2](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/53a76e29f25a984f4901b81283466852e98354fd))
+
+
+### Documentation
+
+* fix broken markdown links, add guides index reference, and repa… ([6349cff](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/6349cff4f950dfb1df7766332f03fd6fcb3d0972))
+* fix broken markdown links, add guides index reference, and repair drizzle badge ([1801a4b](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/1801a4bc9b333544673e21cf0d1cf72522d7ce05))
+
+
+### CI
+
+* **release:** auto-mark required checks on release PRs without PAT ([6ead226](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/6ead226a70b9ae4b4e6dfb29202bac5fbc5c20f3))
+* **release:** auto-mark required checks on release PRs without PAT ([72a68bf](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/72a68bff2c3636e0b39a9ced9c2b464ca28bec41))
+
 ## [0.1.25](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.24...v0.1.25) (2026-05-10)
 
 
