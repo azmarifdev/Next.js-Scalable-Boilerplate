@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.42](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.41...v0.1.42) (2026-05-17)
+
+
+### Features
+
+* **boilerplate:** added more lang and improved code quality ([ee9d09f](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/ee9d09f3adc5abbb2599446cfdb251c75a140f71))
+* **boilerplate:** added more lang and improved code quality ([7684ea0](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/7684ea0c4390b7bd7fa0d0b2c5de1769f7197ac9))
+
 ## [0.1.41](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.40...v0.1.41) (2026-05-17)
 
 
