@@ -325,7 +325,7 @@ Use the included `Dockerfile` and `docker-compose.yml` for containerized deploym
 docker build -t my-app .
 
 # Run with environment variables
-docker run --env-file .env.local -p 3000:3000 my-app
+docker run --env-file .env.local -p ${PORT:-3000}:${PORT:-3000} my-app
 
 # Or use docker compose (recommended)
 docker compose up --build

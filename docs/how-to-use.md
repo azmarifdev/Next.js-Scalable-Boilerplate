@@ -64,16 +64,103 @@ The runtime reads local configuration from `.env.local`.
 
 - `.env.example`: the template. Safe defaults + comments. Commit this file.
 - `.env.local`: local development only. This is **gitignored** and should never be committed.
+- `.env`: shared non-secret defaults only. Do not put real credentials here.
 - Production env: set values in your deployment provider dashboard (Vercel/Render/Railway/etc).
-- CI env: set values in GitHub Actions Secrets (e.g., `DATABASE_URL`).
+- CI env: set values in GitHub Actions Secrets or GitHub Environment secrets.
+
+Rule of thumb:
+
+| Place                      | Use For                                                          | Commit?                   |
+| -------------------------- | ---------------------------------------------------------------- | ------------------------- |
+| `.env.example`             | Documentation/template for all supported variables               | Yes                       |
+| `.env.local`               | Local developer values and local secrets                         | No                        |
+| `.env`                     | Shared non-secret defaults only                                  | Only if it has no secrets |
+| Vercel/hosting env         | Production runtime variables                                     | No                        |
+| GitHub repository secrets  | CI-only values such as `E2E_DATABASE_URL`                        | No                        |
+| GitHub environment secrets | Protected production operations such as `MIGRATION_DATABASE_URL` | No                        |
+
+### 3.0.1 Local URLs and Ports
+
+Local URLs are derived from these values:
+
+```env
+APP_PROTOCOL=http
+APP_HOST=localhost
+PORT=3000
+```
+
+If `NEXT_PUBLIC_SITE_URL` is blank, server-side metadata, sitemap, robots, and E2E defaults use:
+
+```txt
+APP_PROTOCOL://APP_HOST:PORT
+```
+
+To run the app on another port, change one value:
+
+```env
+PORT=4000
+```
+
+Then run:
+
+```bash
+pnpm run dev
+```
+
+Use `NEXT_PUBLIC_SITE_URL` only when you need an explicit public origin:
+
+```env
+NEXT_PUBLIC_SITE_URL=https://your-domain.com
+```
+
+For internal backend mode, keep `NEXT_PUBLIC_API_BASE_URL` blank. Set it only when `NEXT_PUBLIC_BACKEND_MODE=external`.
+
+Most projects only need `.env.example` and `.env.local`.
+
+Use `.env` only when you intentionally want shared non-secret defaults for everyone on the team. If `.env` duplicates empty values like `DATABASE_URL=`, command-line tools may read that value before `.env.local`. Keep secrets and developer-specific values in `.env.local`.
+
+Solo developer example:
+
+```txt
+.env.example  -> committed template
+.env.local    -> your local real values
+.env          -> not needed
+```
+
+Team example:
+
+```env
+# .env
+NEXT_PUBLIC_BACKEND_MODE=internal
+NEXT_PUBLIC_AUTH_PROVIDER=better-auth
+NEXT_PUBLIC_FEATURE_ADMIN=true
+```
+
+```env
+# .env.local
+DATABASE_URL=postgresql://your-local-db
+AUTH_SESSION_SECRET=your-local-secret
+```
+
+Do not store real credentials in `.env` unless that file is gitignored and your team has intentionally chosen that workflow.
 
 ### 3.1 Minimum required for internal mode
 
 ```env
+NEXT_PUBLIC_APP_NAME=Your App
+APP_PROTOCOL=http
+APP_HOST=localhost
+PORT=3000
+NEXT_PUBLIC_SITE_URL=
+NEXT_PUBLIC_API_BASE_URL=
 NEXT_PUBLIC_BACKEND_MODE=internal
 NEXT_PUBLIC_AUTH_PROVIDER=better-auth
+NEXT_PUBLIC_ENABLE_CUSTOM_AUTH=false
+ENABLE_CUSTOM_AUTH=false
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/app_db
 AUTH_SESSION_SECRET=<generate-with-openssl-rand-hex-32>
+NEXT_PUBLIC_FEATURE_ADMIN=true
+REQUIRE_ADMIN_STEP_UP_AUTH=false
 ```
 
 Generate session secret:
@@ -111,6 +198,49 @@ UPSTASH_REDIS_REST_TOKEN=
 
 Configure them before public production launch. See [Production Services](guides/production-services.md).
 
+### 3.4 Production runtime values
+
+Set these in your hosting provider, such as Vercel Project Settings -> Environment Variables:
+
+```env
+NEXT_PUBLIC_APP_NAME=Your App
+NEXT_PUBLIC_SITE_URL=https://your-domain.com
+NEXT_PUBLIC_API_BASE_URL=
+
+NEXT_PUBLIC_BACKEND_MODE=internal
+NEXT_PUBLIC_AUTH_PROVIDER=better-auth
+NEXT_PUBLIC_ENABLE_CUSTOM_AUTH=false
+ENABLE_CUSTOM_AUTH=false
+
+DATABASE_URL=postgresql://...
+AUTH_SESSION_SECRET=<separate-production-secret>
+
+NEXT_PUBLIC_FEATURE_ADMIN=true
+REQUIRE_ADMIN_STEP_UP_AUTH=false
+```
+
+Recommended production services:
+
+```env
+SENTRY_DSN=
+NEXT_PUBLIC_SENTRY_DSN=
+SENTRY_AUTH_TOKEN=
+SENTRY_ORG=
+SENTRY_PROJECT=
+
+UPSTASH_REDIS_REST_URL=
+UPSTASH_REDIS_REST_TOKEN=
+
+RESEND_API_KEY=
+EMAIL_FROM=
+```
+
+Production migration values belong in GitHub, not in Vercel build commands:
+
+```env
+MIGRATION_DATABASE_URL=
+```
+
 ---
 
 ## 4. Start the App
@@ -120,6 +250,10 @@ pnpm run dev
 ```
 
 Open:
+
+- `APP_PROTOCOL://APP_HOST:PORT`
+
+With the defaults:
 
 - `http://localhost:3000`
 
@@ -233,11 +367,34 @@ pnpm run format:check
 pnpm run build
 ```
 
+If you changed the database schema:
+
+```bash
+pnpm run db:generate
+pnpm run db:migrate
+```
+
+Commit the schema code and generated files under `drizzle/` together.
+
 For E2E:
 
 ```bash
 pnpm run e2e
 ```
+
+E2E behavior:
+
+- Without `E2E_DATABASE_URL`, Playwright runs smoke tests and skips auth DB flows.
+- With `E2E_DATABASE_URL`, Playwright migrates/seeds that database and runs auth flows.
+- Use a disposable test database. Do not point E2E at production.
+
+GitHub path:
+
+```txt
+Repository -> Settings -> Secrets and variables -> Actions -> New repository secret
+```
+
+Secret values are private and are not committed to the repository.
 
 ---
 
@@ -291,12 +448,13 @@ Fix:
 
 Cause:
 
-- local Playwright injects fallback envs
-- GitHub Actions `push` workflow expects repository secrets
+- auth E2E requires `E2E_DATABASE_URL`
+- PR workflows intentionally run without database secrets
 
 Fix:
 
-- add `DATABASE_URL` and `AUTH_SESSION_SECRET` in repo Secrets (Actions)
+- add `E2E_DATABASE_URL` or `TEST_DATABASE_URL` in repo Secrets for push auth E2E
+- keep PR E2E secret-free unless you intentionally use a safe test database
 
 ### Dependabot auto-merge job fails
 

@@ -103,12 +103,35 @@ Required for:
 Go to:
 `Settings` -> `Secrets and variables` -> `Actions`
 
+Click `New repository secret`, enter the exact secret name, paste the value, then save.
+
+Repository secrets are not committed to code and are not shown in pull request diffs. GitHub masks them in logs and only exposes them to workflows that are allowed to receive secrets. Public repositories can safely use GitHub Secrets, but secrets are not passed to untrusted fork pull requests by default.
+
+Use repository secrets for non-production CI values such as test databases and CI-only auth secrets.
+
 Minimum for stable CI:
 
-| Secret                | Required | Example                               |
-| --------------------- | -------- | ------------------------------------- |
-| `DATABASE_URL`        | Yes      | `postgresql://user:pass@host:5432/db` |
-| `AUTH_SESSION_SECRET` | Yes      | `openssl rand -hex 32` output         |
+| Secret                | Required | Example                       |
+| --------------------- | -------- | ----------------------------- |
+| `AUTH_SESSION_SECRET` | Yes      | `openssl rand -hex 32` output |
+
+Optional for auth E2E on push workflows:
+
+| Secret              | Required | Notes                                          |
+| ------------------- | -------- | ---------------------------------------------- |
+| `E2E_DATABASE_URL`  | Optional | Disposable test database for Playwright        |
+| `TEST_DATABASE_URL` | Optional | Fallback name if `E2E_DATABASE_URL` is not set |
+
+Pull request E2E runs without database secrets and skips auth DB flows by default.
+
+Where to get `E2E_DATABASE_URL`:
+
+1. Open Neon, Supabase, or your PostgreSQL provider.
+2. Create a disposable test database or branch.
+3. Copy its PostgreSQL connection string.
+4. Add it as `E2E_DATABASE_URL`.
+
+Never use production `DATABASE_URL` for E2E. Playwright can migrate, seed, and reset this database.
 
 Required for production migrations:
 
@@ -117,7 +140,25 @@ Required for production migrations:
 | `DATABASE_URL`           | Yes      | Fallback migration URL                                        |
 | `MIGRATION_DATABASE_URL` | Optional | Preferred when migrations should use a separate direct DB URL |
 
-Create a GitHub environment named `production` and enable required reviewers. The `Production Database Migration` workflow uses this environment and requires typing `migrate-production`.
+Production migration secrets should preferably be environment secrets, not repository-wide secrets.
+
+Go to:
+`Settings` -> `Environments` -> `New environment`
+
+Create:
+
+```txt
+production
+```
+
+Then add environment secrets:
+
+| Secret                   | Required  | Where To Get It                                                  |
+| ------------------------ | --------- | ---------------------------------------------------------------- |
+| `MIGRATION_DATABASE_URL` | Preferred | Direct PostgreSQL connection string from Neon/Supabase/Postgres  |
+| `DATABASE_URL`           | Fallback  | PostgreSQL connection string if no separate migration URL exists |
+
+Enable required reviewers for the `production` environment. The `Production Database Migration` workflow uses this environment and requires typing `migrate-production`.
 
 Optional:
 

@@ -12,6 +12,82 @@ Whether you're deploying to **Vercel**, **Netlify**, **Railway**, **Render**, **
 
 Before you run any deployment command, go through this list and make sure everything is ready.
 
+### 0. Development vs Production Configuration
+
+Local development uses files on your machine. Production uses provider dashboards and GitHub secrets.
+
+| Location                                | Purpose                                     | Contains Secrets? | Commit?             |
+| --------------------------------------- | ------------------------------------------- | ----------------- | ------------------- |
+| `.env.example`                          | Template for users adopting the boilerplate | No                | Yes                 |
+| `.env.local`                            | Local development values                    | Yes, local only   | No                  |
+| `.env`                                  | Shared non-secret defaults only             | No                | Only if secret-free |
+| Vercel/hosting env                      | Production runtime values                   | Yes               | No                  |
+| GitHub repository secrets               | CI values such as `E2E_DATABASE_URL`        | Yes               | No                  |
+| GitHub `production` environment secrets | Protected production migration values       | Yes               | No                  |
+
+For most teams, keep only:
+
+```txt
+.env.example
+.env.local
+```
+
+Use `.env` only for shared non-secret defaults. Avoid duplicate empty secrets in `.env`, such as `DATABASE_URL=`, because command-line tools may read that before `.env.local`.
+
+Recommended local pattern:
+
+```env
+# .env.local
+DATABASE_URL=postgresql://your-local-or-dev-db
+AUTH_SESSION_SECRET=your-local-secret
+```
+
+Recommended shared default pattern:
+
+```env
+# .env
+NEXT_PUBLIC_BACKEND_MODE=internal
+NEXT_PUBLIC_AUTH_PROVIDER=better-auth
+NEXT_PUBLIC_FEATURE_ADMIN=true
+```
+
+Development minimum:
+
+```env
+APP_PROTOCOL=http
+APP_HOST=localhost
+PORT=3000
+NEXT_PUBLIC_SITE_URL=
+NEXT_PUBLIC_API_BASE_URL=
+NEXT_PUBLIC_BACKEND_MODE=internal
+NEXT_PUBLIC_AUTH_PROVIDER=better-auth
+DATABASE_URL=postgresql://...
+AUTH_SESSION_SECRET=local-secret
+```
+
+Production minimum:
+
+```env
+NEXT_PUBLIC_SITE_URL=https://your-domain.com
+NEXT_PUBLIC_API_BASE_URL=
+NEXT_PUBLIC_BACKEND_MODE=internal
+NEXT_PUBLIC_AUTH_PROVIDER=better-auth
+DATABASE_URL=postgresql://...
+AUTH_SESSION_SECRET=strong-production-secret
+```
+
+For internal backend mode, `NEXT_PUBLIC_API_BASE_URL` can stay blank because API routes are served by the same app. Set it only when the frontend talks to an external backend.
+
+Before pushing code, run:
+
+```bash
+pnpm run lint
+pnpm run typecheck
+pnpm run test
+pnpm run docs:check
+pnpm run build
+```
+
 ### 1. Choose Your Auth Mode
 
 This template supports two authentication modes:
@@ -62,7 +138,7 @@ Note:
 **Recommended for production:**
 | Variable | Purpose |
 |----------|---------|
-| `NEXT_PUBLIC_API_BASE_URL` | Public base URL for API calls |
+| `NEXT_PUBLIC_API_BASE_URL` | External API URL when `NEXT_PUBLIC_BACKEND_MODE=external` |
 | `NEXT_PUBLIC_FEATURE_ADMIN` | Enables or disables admin surfaces |
 | `SENTRY_DSN` / `NEXT_PUBLIC_SENTRY_DSN` | Error monitoring |
 | `SENTRY_AUTH_TOKEN` / `SENTRY_ORG` / `SENTRY_PROJECT` | Source map upload for Sentry |
@@ -151,6 +227,14 @@ Actions -> Production Database Migration -> Run workflow
 ```
 
 Set `DATABASE_URL` or `MIGRATION_DATABASE_URL` in GitHub Secrets. Configure the `production` GitHub environment with required reviewers before using it for production.
+
+Recommended secret placement:
+
+| Secret                   | Where                           | Notes                                            |
+| ------------------------ | ------------------------------- | ------------------------------------------------ |
+| `E2E_DATABASE_URL`       | Repository Actions secret       | Disposable test database for Playwright auth E2E |
+| `MIGRATION_DATABASE_URL` | `production` environment secret | Direct production DB URL for migrations          |
+| `DATABASE_URL`           | Vercel env var                  | Runtime app database URL                         |
 
 Run the workflow from the `main` branch and type:
 

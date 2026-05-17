@@ -1,3 +1,7 @@
+import { getLocalAppOrigin } from "@/lib/config/url";
+
+const LOCAL_ORIGIN = getLocalAppOrigin();
+
 export function getSafeRedirectPath(
   input: string | null | undefined,
   fallback = "/dashboard"
@@ -7,7 +11,7 @@ export function getSafeRedirectPath(
   }
 
   try {
-    const baseUrl = new URL("http://localhost");
+    const baseUrl = new URL(LOCAL_ORIGIN);
     const resolved = new URL(input, baseUrl);
 
     if (resolved.origin !== baseUrl.origin) {

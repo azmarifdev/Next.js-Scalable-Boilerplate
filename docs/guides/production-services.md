@@ -127,25 +127,78 @@ Files:
 
 ## GitHub Secrets
 
-Set these under `Settings -> Secrets and variables -> Actions`:
+Set non-production CI secrets under:
 
-```env
-DATABASE_URL=
+```txt
+Repository -> Settings -> Secrets and variables -> Actions -> New repository secret
 ```
 
-Optional separate migration URL:
+GitHub Secrets are private. They are not committed to the repository, are not visible in pull request diffs, and are masked in workflow logs. Public repositories can use secrets safely, but GitHub does not pass secrets to untrusted fork pull requests by default.
+
+For Playwright auth E2E on push workflows, use a disposable test database:
+
+```env
+E2E_DATABASE_URL=
+```
+
+Where to get it:
+
+1. Create a test-only database or branch in Neon, Supabase, or another PostgreSQL provider.
+2. Copy its PostgreSQL connection string.
+3. Save it as `E2E_DATABASE_URL`.
+
+Do not use the production database. E2E setup can migrate, seed, and reset this database.
+
+Pull request E2E is secret-free by default and skips auth DB flows when `E2E_DATABASE_URL` is not configured.
+
+---
+
+## Production Migration Secrets
+
+Create a GitHub environment:
+
+```txt
+production
+```
+
+Path:
+
+```txt
+Repository -> Settings -> Environments -> production
+```
+
+Enable required reviewers, then add environment secrets:
 
 ```env
 MIGRATION_DATABASE_URL=
 ```
 
+Fallback if you do not use a separate migration URL:
+
+```env
+DATABASE_URL=
+```
+
+Where to get `MIGRATION_DATABASE_URL`:
+
+1. Open your database provider.
+2. Copy the direct PostgreSQL connection string for the production database.
+3. Save it as the `production` environment secret.
+
 Use `MIGRATION_DATABASE_URL` if the runtime URL is pooled but migrations should use a direct PostgreSQL connection.
+
+Runtime app secrets still belong in your deployment provider, such as Vercel:
+
+```env
+DATABASE_URL=
+AUTH_SESSION_SECRET=
+```
 
 ---
 
 ## GitHub Environment
 
-Create a GitHub environment:
+The production migration workflow uses this environment:
 
 ```txt
 production

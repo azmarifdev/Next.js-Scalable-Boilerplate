@@ -51,7 +51,7 @@ cp .env.example .env.local
 pnpm run dev
 ```
 
-Your app is now running at **http://localhost:3000**. 🎉
+Your app is now running at the local origin from `.env.local`. With defaults: **http://localhost:3000**. 🎉
 
 ---
 
@@ -186,7 +186,8 @@ Your app is now running at **http://localhost:3000**. 🎉
 │   ├── 📂 i18n/messages/          # Translation files (en.json, bn.json)
 │   ├── 📂 store/                  # Redux Toolkit slices/store setup
 │   ├── 📂 tests/                  # Test suites
-│   │   ├── 📂 unit/               #   Unit tests (Vitest)
+│   │   ├── � shared.ts           #   Shared test helpers (TEST_LOCAL_ORIGIN, testUrl)
+│   │   ├── �📂 unit/               #   Unit tests (Vitest)
 │   │   ├── 📂 integration/        #   Integration tests (Vitest)
 │   │   └── 📂 e2e/                #   End-to-end tests (Playwright)
 │   ├── 📂 styles/                 # Global CSS

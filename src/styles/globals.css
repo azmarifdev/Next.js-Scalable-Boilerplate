@@ -1204,3 +1204,103 @@ main {
   background: rgba(255, 255, 255, 0.12);
   color: #f8fafc;
 }
+
+/* ── Docs Tables ── */
+
+.docs-table-wrap {
+  margin: 1rem 0;
+  overflow-x: auto;
+  border-radius: 0.85rem;
+  border: 1px solid var(--landing-border);
+}
+
+.docs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.docs-th {
+  background: color-mix(in srgb, var(--landing-surface-soft) 88%, transparent);
+  color: var(--landing-text-strong);
+  font-weight: 650;
+  text-align: left;
+  padding: 0.65rem 0.85rem;
+  border-bottom: 2px solid var(--landing-border);
+}
+
+.docs-td {
+  padding: 0.55rem 0.85rem;
+  border-bottom: 1px solid var(--landing-border);
+  color: var(--landing-muted);
+}
+
+.docs-tr:last-child .docs-td {
+  border-bottom: none;
+}
+
+.docs-tr:nth-child(even) .docs-td {
+  background: color-mix(in srgb, var(--landing-surface-soft) 48%, transparent);
+}
+
+[data-theme="light"] .docs-th {
+  background: color-mix(in srgb, #f1f5f9 88%, transparent);
+  border-bottom-color: #e2e8f0;
+}
+
+[data-theme="light"] .docs-td {
+  border-bottom-color: #e2e8f0;
+}
+
+[data-theme="light"] .docs-tr:nth-child(even) .docs-td {
+  background: color-mix(in srgb, #f8fafc 88%, transparent);
+}
+
+/* ── Docs Horizontal Rule ── */
+
+.docs-hr {
+  margin: 2rem 0;
+  border: none;
+  border-top: 1px solid var(--landing-border);
+}
+
+/* ── Docs Images ── */
+
+.docs-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+  margin: 1rem 0;
+  border: 1px solid var(--landing-border);
+}
+
+/* ── Docs Mermaid ── */
+
+.docs-mermaid {
+  margin: 1rem 0;
+  padding: 1rem;
+  border-radius: 0.85rem;
+  border: 1px solid var(--landing-border);
+  background: color-mix(in srgb, var(--landing-surface-soft) 72%, transparent);
+  overflow-x: auto;
+  text-align: center;
+}
+
+/* ── Docs Task List ── */
+
+.docs-task-list-item {
+  list-style: none;
+}
+
+.docs-task-list-item input[type="checkbox"] {
+  margin-right: 0.4rem;
+  accent-color: #60a5fa;
+}
+
+/* ── Docs Strikethrough ── */
+
+.docs-markdown del {
+  color: var(--landing-muted);
+  text-decoration: line-through;
+}

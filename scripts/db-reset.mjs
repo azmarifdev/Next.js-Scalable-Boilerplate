@@ -10,7 +10,7 @@ if (process.env.ALLOW_DB_RESET !== "true") {
   process.exit(1);
 }
 
-execSync("npm run db:migrate", { stdio: "inherit" });
+execSync("pnpm run db:migrate", { stdio: "inherit" });
 execSync("node scripts/seed.mjs", { stdio: "inherit" });
 
 console.info("Database reset complete.");

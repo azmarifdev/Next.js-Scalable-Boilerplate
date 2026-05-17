@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createSessionToken } from "@/lib/auth/session";
 import { AUTH_COOKIE_NAME } from "@/lib/config/constants";
+import { TEST_LOCAL_ORIGIN, testUrl } from "@/tests/shared";
 
 const ORIGINAL_ENV = {
   NEXT_PUBLIC_BACKEND_MODE: process.env.NEXT_PUBLIC_BACKEND_MODE,
@@ -57,7 +58,7 @@ describe("auth api integration", () => {
     const { POST: registerPost } = await import("@/app/api/v1/auth/register/route");
 
     const response = await registerPost(
-      buildJsonRequest("http://localhost/api/v1/auth/register", {
+      buildJsonRequest(testUrl("/api/v1/auth/register"), {
         name: "No DB",
         email: "nodb@example.com",
         password: "azmarifdev"
@@ -78,7 +79,7 @@ describe("auth api integration", () => {
     const { POST: loginPost } = await import("@/app/api/v1/auth/login/route");
 
     const loginResponse = await loginPost(
-      buildJsonRequest("http://localhost/api/v1/auth/login", {
+      buildJsonRequest(testUrl("/api/v1/auth/login"), {
         email: "missing-db@example.com",
         password: "valid-password"
       })
@@ -96,10 +97,10 @@ describe("auth api integration", () => {
     process.env.AUTH_SESSION_SECRET = "integration-secret";
     const { POST: logoutPost } = await import("@/app/api/v1/auth/logout/route");
 
-    const request = new NextRequest("http://localhost/api/v1/auth/logout", {
+    const request = new NextRequest(testUrl("/api/v1/auth/logout"), {
       method: "POST",
       headers: {
-        origin: "http://localhost"
+        origin: TEST_LOCAL_ORIGIN
       }
     });
     const response = await logoutPost(request);
@@ -126,7 +127,7 @@ describe("auth api integration", () => {
       },
       -1
     );
-    const request = new NextRequest("http://localhost/api/v1/auth/me", {
+    const request = new NextRequest(testUrl("/api/v1/auth/me"), {
       method: "GET",
       headers: {
         cookie: `${AUTH_COOKIE_NAME}=${expiredToken}`
@@ -159,10 +160,10 @@ describe("auth api integration", () => {
     );
 
     const mfaResponse = await mfaVerifyPost(
-      new NextRequest("http://localhost/api/v1/auth/mfa/verify", {
+      new NextRequest(testUrl("/api/v1/auth/mfa/verify"), {
         method: "POST",
         headers: {
-          origin: "http://localhost",
+          origin: TEST_LOCAL_ORIGIN,
           "content-type": "application/json",
           cookie: `${AUTH_COOKIE_NAME}=${adminToken}`
         },

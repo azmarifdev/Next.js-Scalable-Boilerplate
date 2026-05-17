@@ -20,6 +20,10 @@ const appName = z.preprocess(
 
 export const env = createEnv({
   server: {
+    APP_PROTOCOL: optionalString,
+    APP_HOST: optionalString,
+    PORT: optionalString,
+    E2E_BASE_URL: optionalUrl,
     DATABASE_URL: optionalUrl,
     AUTH_SESSION_SECRET: optionalString,
     AUTH_SESSION_SECRETS: optionalString,
@@ -50,6 +54,10 @@ export const env = createEnv({
     NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE: optionalString
   },
   runtimeEnv: {
+    APP_PROTOCOL: process.env.APP_PROTOCOL,
+    APP_HOST: process.env.APP_HOST,
+    PORT: process.env.PORT,
+    E2E_BASE_URL: process.env.E2E_BASE_URL,
     DATABASE_URL: process.env.DATABASE_URL,
     AUTH_SESSION_SECRET: process.env.AUTH_SESSION_SECRET,
     AUTH_SESSION_SECRETS: process.env.AUTH_SESSION_SECRETS,

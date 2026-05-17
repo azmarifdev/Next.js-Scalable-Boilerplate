@@ -27,7 +27,7 @@ pnpm install
 pnpm run dev
 ```
 
-The app will be available at **http://localhost:3000**.
+The app will be available at the origin derived from `APP_PROTOCOL`, `APP_HOST`, and `PORT`. With defaults, that is **http://localhost:3000**.
 
 ---
 
@@ -165,7 +165,7 @@ If tests fail in CI but pass locally, check these first:
 - Avoid brittle selectors that depend on one exact text only
 - Prefer role-based selectors with locale-aware fallback patterns
 - If UI may show different auth state (`Sign in` vs `Sign out`), assert both possible states safely
-- Keep `NEXT_PUBLIC_SITE_URL` and `baseURL` consistent with CI (`http://127.0.0.1:3000`)
+- Keep `PORT`/`E2E_BASE_URL` consistent with `playwright.config.ts` if you change the local test origin
 - Review retries/workers settings in `playwright.config.ts` if runtime suddenly increases
 
 ---

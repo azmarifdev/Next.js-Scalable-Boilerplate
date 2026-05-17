@@ -19,7 +19,9 @@ test("home page loads", async ({ page }) => {
   ).toBeVisible();
 });
 
-test("authenticated user can access docs after login", async ({ page }) => {
+const authTest = process.env.E2E_SKIP_DB_SETUP === "true" ? test.skip : test;
+
+authTest("authenticated user can access docs after login", async ({ page }) => {
   await page.goto("/login");
   await page.locator("input[type='email']").fill(authEmail);
   await page.locator("input[type='password']").fill(authPassword);
@@ -29,7 +31,7 @@ test("authenticated user can access docs after login", async ({ page }) => {
   await expect(page.getByText(/docs journal|ডকস জার্নাল/i)).toBeVisible();
 });
 
-test("signed-in users get redirected from login to docs", async ({ page }) => {
+authTest("signed-in users get redirected from login to docs", async ({ page }) => {
   // First login
   await page.goto("/login");
   await page.locator("input[type='email']").fill(authEmail);

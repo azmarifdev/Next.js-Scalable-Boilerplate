@@ -106,7 +106,7 @@ jobs:
     if: github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'master' || github.ref_name == 'develop')
     env:
       NEXT_PUBLIC_APP_NAME: Nextjs Starter Template
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      E2E_DATABASE_URL: ${{ secrets.E2E_DATABASE_URL || secrets.TEST_DATABASE_URL }}
       AUTH_SESSION_SECRET: ${{ secrets.AUTH_SESSION_SECRET }}
     steps:
       - name: Checkout
@@ -149,11 +149,8 @@ jobs:
       NEXT_PUBLIC_APP_NAME: Nextjs Starter Template
       NEXT_PUBLIC_BACKEND_MODE: internal
       NEXT_PUBLIC_AUTH_PROVIDER: better-auth
-      NEXT_PUBLIC_API_BASE_URL: http://127.0.0.1:3000
-      NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
       AUTH_SESSION_SECRET: e2e-ci-pr-secret
-      ALLOW_DEMO_AUTH: "true"
-      ALLOW_INSECURE_DEV_AUTH: "true"
+      E2E_SKIP_DB_SETUP: "true"
     steps:
       - name: Checkout
         uses: actions/checkout@v6

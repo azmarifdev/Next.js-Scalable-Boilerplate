@@ -38,12 +38,46 @@ Start from `.env.example` and create `.env.local`:
 cp .env.example .env.local
 ```
 
+Use the env files this way:
+
+| File / Place         | Purpose                                            | User Should Change?                              |
+| -------------------- | -------------------------------------------------- | ------------------------------------------------ |
+| `.env.example`       | Template and documentation for supported variables | Yes, when the boilerplate adds/removes variables |
+| `.env.local`         | Local values for one developer machine             | Yes, for local development                       |
+| `.env`               | Shared non-secret defaults only                    | Rarely                                           |
+| Hosting provider env | Production runtime values                          | Yes, before deploy                               |
+| GitHub secrets       | CI, E2E, and migration values                      | Yes, before CI/migration workflows               |
+
+Do not put real production credentials in `.env.example` or `.env`.
+
+You can skip `.env` entirely if it creates confusion. `.env.local` is enough for local development.
+
+Use `.env` only for team-wide non-secret defaults:
+
+```env
+NEXT_PUBLIC_BACKEND_MODE=internal
+NEXT_PUBLIC_AUTH_PROVIDER=better-auth
+NEXT_PUBLIC_FEATURE_ADMIN=true
+```
+
+Keep personal values in `.env.local`:
+
+```env
+DATABASE_URL=postgresql://your-local-db
+AUTH_SESSION_SECRET=your-local-secret
+```
+
+Avoid committing `.env` if it contains real credentials or machine-specific values.
+
 For a normal self-contained app, use internal backend + built-in auth:
 
 ```env
 NEXT_PUBLIC_APP_NAME=Your App Name
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
-NEXT_PUBLIC_API_BASE_URL=http://localhost:3000
+APP_PROTOCOL=http
+APP_HOST=localhost
+PORT=3000
+NEXT_PUBLIC_SITE_URL=
+NEXT_PUBLIC_API_BASE_URL=
 
 NEXT_PUBLIC_BACKEND_MODE=internal
 NEXT_PUBLIC_AUTH_PROVIDER=better-auth
@@ -62,20 +96,21 @@ For production, set the same variables in your hosting provider dashboard. Use y
 
 ```env
 NEXT_PUBLIC_SITE_URL=https://your-app.com
-NEXT_PUBLIC_API_BASE_URL=https://your-app.com
+NEXT_PUBLIC_API_BASE_URL=
 ```
 
 Do not commit real production secrets.
 
 First-time values to change:
 
-| Variable                   | Local Value               | Production Value                     |
-| -------------------------- | ------------------------- | ------------------------------------ |
-| `NEXT_PUBLIC_APP_NAME`     | Your app name             | Your app name                        |
-| `NEXT_PUBLIC_SITE_URL`     | `http://localhost:3000`   | `https://your-domain.com`            |
-| `NEXT_PUBLIC_API_BASE_URL` | `http://localhost:3000`   | `https://your-domain.com`            |
-| `DATABASE_URL`             | Local or dev database URL | Production database URL              |
-| `AUTH_SESSION_SECRET`      | Local generated secret    | Separate production generated secret |
+| Variable                   | Local Value                 | Production Value                            |
+| -------------------------- | --------------------------- | ------------------------------------------- |
+| `NEXT_PUBLIC_APP_NAME`     | Your app name               | Your app name                               |
+| `PORT`                     | Local app port              | Usually provider-managed                    |
+| `NEXT_PUBLIC_SITE_URL`     | Blank or explicit local URL | `https://your-domain.com`                   |
+| `NEXT_PUBLIC_API_BASE_URL` | Blank for internal mode     | Blank for internal mode or external API URL |
+| `DATABASE_URL`             | Local or dev database URL   | Production database URL                     |
+| `AUTH_SESSION_SECRET`      | Local generated secret      | Separate production generated secret        |
 
 Production services to configure when launching:
 

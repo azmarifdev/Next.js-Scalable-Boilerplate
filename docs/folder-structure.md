@@ -37,7 +37,7 @@ src/
 ├── i18n/            → Internationalization setup
 ├── store/           → State management (optional)
 ├── styles/          → Global CSS
-├── tests/           → Tests (unit, integration, e2e)
+├── tests/           → Tests (unit, integration, e2e) + shared.ts
 ├── types/           → Shared TypeScript type definitions
 ├── utils/           → Shared utility functions
 ```
@@ -172,6 +172,8 @@ src/lib/
 ├── config/          → Configuration system
 │   ├── env.ts             → Environment variable schema
 │   ├── validate.ts        → Runtime validation
+│   ├── runtime.ts         → API endpoint resolution
+│   ├── url.ts             → Centralized origin/URL derivation
 │   ├── constants.ts       → App constants
 │   ├── app-config.ts      → Parsed config object
 │   ├── featureFlags.ts    → Feature flag definitions
@@ -239,6 +241,7 @@ src/i18n/
 
 ```
 src/tests/
+├── shared.ts        → Shared test helpers (TEST_LOCAL_ORIGIN, testUrl)
 ├── unit/            → Unit tests (Vitest)
 ├── integration/     → Integration tests (Vitest)
 │   ├── auth-api.test.ts    → Auth API integration tests
