@@ -103,11 +103,11 @@ src/app/
 
 ```
 src/components/
-├── common/          → Shared UI (Button, Input, etc.)
+├── common/          → Shared UI (Button, Input, ScrollRestoration, etc.)
 ├── docs/            → Documentation-specific components
-│   └── DocsMarkdown.tsx   → Client-side markdown renderer
+│   └── DocsMarkdown.tsx   → Client-side markdown renderer (marked-based)
 ├── landing/         → Landing page components
-│   ├── Navbar.tsx         → Auth-aware navigation bar
+│   ├── Navbar.tsx         → Auth-aware navigation bar with 8-locale dropdown
 │   ├── Hero.tsx           → Hero section with tech icons
 │   └── Features.tsx       → Features grid section
 └── ui/              → Base UI primitives (Button, Input, etc.)
@@ -170,10 +170,10 @@ src/lib/
 │   ├── better-auth.provider.ts  → Better Auth implementation
 │   └── auth-audit.repository.ts → Audit log writes
 ├── config/          → Configuration system
-│   ├── env.ts             → Environment variable schema
-│   ├── validate.ts        → Runtime validation
+│   ├── env.ts             → Environment variable schema (t3-env)
+│   ├── validate.ts        → Runtime config validation
 │   ├── runtime.ts         → API endpoint resolution
-│   ├── url.ts             → Centralized origin/URL derivation
+│   ├── url.ts             → Centralized origin/URL derivation (getLocalAppOrigin, getSiteOrigin)
 │   ├── constants.ts       → App constants
 │   ├── app-config.ts      → Parsed config object
 │   ├── featureFlags.ts    → Feature flag definitions
@@ -232,7 +232,13 @@ src/i18n/
 ├── request.ts       → Request-time locale detection
 └── messages/
     ├── en.json      → English translations
-    └── bn.json      → Bangla translations
+    ├── bn.json      → Bangla translations
+    ├── es.json      → Spanish translations
+    ├── fr.json      → French translations
+    ├── de.json      → German translations
+    ├── hi.json      → Hindi translations
+    ├── ja.json      → Japanese translations
+    └── ar.json      → Arabic translations
 ```
 
 ---
