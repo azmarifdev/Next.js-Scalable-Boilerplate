@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { accessSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 export type SupportedLocale = "en" | "bn";
@@ -339,7 +339,72 @@ export function getGithubHref(sourcePath: string): string {
   return `${repoBase}/${sourcePath}`;
 }
 
+// ── Markdown content cache ─────────────────────────────────────────────────
+// Read all source markdown files at startup so the standalone server can serve
+// them without relying on outputFileTracingIncludes.
+
+const docCache = new Map<string, string>();
+
+function findProjectRoot(): string {
+  let dir = process.cwd();
+  // Walk up until we find package.json or hit the filesystem root
+  for (let i = 0; i < 10; i++) {
+    try {
+      const candidate = path.join(dir, "package.json");
+      // If we can access it, this is the project root
+      accessSync(candidate);
+      return dir;
+    } catch {
+      const parent = path.dirname(dir);
+      if (parent === dir) break; // filesystem root
+      dir = parent;
+    }
+  }
+  // Fallback: the standalone output root
+  return process.cwd();
+}
+
+const PROJECT_ROOT = findProjectRoot();
+
+function preloadDoc(sourcePath: string): void {
+  if (docCache.has(sourcePath)) return;
+  // Try (in order): PROJECT_ROOT, process.cwd(), process.cwd()/../..
+  const candidates = [
+    path.join(PROJECT_ROOT, sourcePath),
+    path.join(process.cwd(), sourcePath),
+    path.join(process.cwd(), "..", "..", sourcePath)
+  ];
+  for (const candidate of candidates) {
+    try {
+      const content = readFileSync(candidate, "utf-8");
+      docCache.set(sourcePath, content);
+      return;
+    } catch {
+      // try next candidate
+    }
+  }
+  // If none worked, set empty so we don't retry
+  docCache.set(sourcePath, "");
+}
+
+// Preload every doc source eagerly so standalone deployments work.
+for (const entry of docEntries) {
+  preloadDoc(entry.sourcePath.en);
+  if (entry.sourcePath.bn !== entry.sourcePath.en) {
+    preloadDoc(entry.sourcePath.bn);
+  }
+}
+// Also preload the root README.md (used by the "readme" doc)
+preloadDoc("README.md");
+
 export async function readDocSource(sourcePath: string): Promise<string> {
-  const absolutePath = path.join(/*turbopackIgnore: true*/ process.cwd(), sourcePath);
-  return readFile(absolutePath, "utf-8");
+  // Ensure it's cached (in case a new entry was added after preload)
+  if (!docCache.has(sourcePath)) {
+    preloadDoc(sourcePath);
+  }
+  const content = docCache.get(sourcePath);
+  if (content === undefined || content === "") {
+    throw new Error(`Doc source not found: ${sourcePath}`);
+  }
+  return content;
 }

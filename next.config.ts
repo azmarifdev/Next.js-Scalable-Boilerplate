@@ -26,9 +26,6 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   output: "standalone",
-  outputFileTracingIncludes: {
-    "/docs/[...slug]": ["README.md", "docs/**/*.md"]
-  },
   poweredByHeader: false,
   typedRoutes: true,
   allowedDevOrigins: ["127.0.0.1", "localhost"],
