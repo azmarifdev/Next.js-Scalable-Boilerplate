@@ -60,6 +60,21 @@ export const docEntries: DocEntry[] = [
     slug: ["how-to-use"]
   },
   {
+    id: "adopting-boilerplate",
+    title: { en: "Adopting This Boilerplate", bn: "বয়লারপ্লেট অ্যাডপশন" },
+    description: {
+      en: "What to rename, configure, replace, remove, and verify for a real product.",
+      bn: "রিয়েল প্রোডাক্টের জন্য কী rename, configure, replace, remove এবং verify করবেন।"
+    },
+    category: { en: "Start Here", bn: "শুরু করুন" },
+    readTime: { en: "10 min read", bn: "১০ মিনিট পড়া" },
+    sourcePath: {
+      en: "docs/guides/adopting-boilerplate.md",
+      bn: "docs/guides/adopting-boilerplate.md"
+    },
+    slug: ["guides", "adopting-boilerplate"]
+  },
+  {
     id: "architecture",
     title: { en: "Architecture", bn: "আর্কিটেকচার" },
     description: {
@@ -121,6 +136,36 @@ export const docEntries: DocEntry[] = [
     readTime: { en: "5 min read", bn: "৫ মিনিট পড়া" },
     sourcePath: { en: "docs/guides/deployment.md", bn: "docs/guides/deployment.md" },
     slug: ["guides", "deployment"]
+  },
+  {
+    id: "database-setup",
+    title: { en: "Database Setup", bn: "ডাটাবেস সেটআপ" },
+    description: {
+      en: "PostgreSQL, Neon, Drizzle migrations, runtime access, and production migration workflow.",
+      bn: "PostgreSQL, Neon, Drizzle migration, runtime access এবং production migration workflow।"
+    },
+    category: { en: "Operations & Release", bn: "অপারেশনস ও রিলিজ" },
+    readTime: { en: "5 min read", bn: "৫ মিনিট পড়া" },
+    sourcePath: {
+      en: "docs/guides/database-setup.md",
+      bn: "docs/guides/database-setup.md"
+    },
+    slug: ["guides", "database-setup"]
+  },
+  {
+    id: "production-services",
+    title: { en: "Production Services", bn: "প্রোডাকশন সার্ভিস" },
+    description: {
+      en: "Configure Sentry, Resend, Upstash Redis, and production migration secrets.",
+      bn: "Sentry, Resend, Upstash Redis এবং production migration secret কনফিগার করুন।"
+    },
+    category: { en: "Operations & Release", bn: "অপারেশনস ও রিলিজ" },
+    readTime: { en: "5 min read", bn: "৫ মিনিট পড়া" },
+    sourcePath: {
+      en: "docs/guides/production-services.md",
+      bn: "docs/guides/production-services.md"
+    },
+    slug: ["guides", "production-services"]
   },
   {
     id: "cloud-providers",
@@ -195,8 +240,8 @@ export const docEntries: DocEntry[] = [
     id: "auth-setup-migration",
     title: { en: "Auth Setup and Migration", bn: "Auth সেটআপ ও মাইগ্রেশন" },
     description: {
-      en: "Remove demo auth safely, configure better-auth for production, or migrate to custom-auth.",
-      bn: "Demo auth নিরাপদে remove করুন, production better-auth configure করুন, বা custom-auth-এ migrate করুন।"
+      en: "Configure better-auth for production or migrate to custom-auth.",
+      bn: "Production better-auth configure করুন, বা custom-auth-এ migrate করুন।"
     },
     category: { en: "Maintainer Playbook", bn: "মেইনটেইনার প্লেবুক" },
     readTime: { en: "7 min read", bn: "৭ মিনিট পড়া" },

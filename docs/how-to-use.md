@@ -4,6 +4,7 @@
 
 This guide is the complete A-to-Z onboarding flow for this boilerplate:
 
+- adopting the template for a real product
 - first local setup
 - environment configuration
 - database and auth setup
@@ -51,11 +52,20 @@ What `pnpm run setup` does:
 1. Creates `.env.local` from `.env.example` if missing
 2. Installs dependencies
 
+Before building product features, read [Adopting This Boilerplate](guides/adopting-boilerplate.md). It lists the project names, metadata, icons, docs, release settings, and deployment values you should replace for a real app.
+
 ---
 
 ## 3. Configure Environment Variables
 
 The runtime reads local configuration from `.env.local`.
+
+### 3.0 Which env file is for what?
+
+- `.env.example`: the template. Safe defaults + comments. Commit this file.
+- `.env.local`: local development only. This is **gitignored** and should never be committed.
+- Production env: set values in your deployment provider dashboard (Vercel/Render/Railway/etc).
+- CI env: set values in GitHub Actions Secrets (e.g., `DATABASE_URL`).
 
 ### 3.1 Minimum required for internal mode
 
@@ -72,23 +82,7 @@ Generate session secret:
 openssl rand -hex 32
 ```
 
-### 3.2 Safe local fallback mode (no database yet)
-
-If you are exploring UI/routes before connecting PostgreSQL:
-
-```env
-ALLOW_DEMO_AUTH=true
-ALLOW_INSECURE_DEV_AUTH=true
-DATABASE_URL=
-AUTH_SESSION_SECRET=local-dev-only-secret
-```
-
-Important:
-
-- This fallback is for local development only.
-- Do not use insecure fallback flags in production.
-
-### 3.3 Custom auth mode
+### 3.2 Custom auth mode
 
 ```env
 NEXT_PUBLIC_AUTH_PROVIDER=custom-auth
@@ -96,6 +90,26 @@ NEXT_PUBLIC_ENABLE_CUSTOM_AUTH=true
 ENABLE_CUSTOM_AUTH=true
 NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL=https://your-auth-service.example.com
 ```
+
+### 3.3 Optional production services
+
+These can stay blank locally:
+
+```env
+SENTRY_DSN=
+NEXT_PUBLIC_SENTRY_DSN=
+SENTRY_AUTH_TOKEN=
+SENTRY_ORG=
+SENTRY_PROJECT=
+
+RESEND_API_KEY=
+EMAIL_FROM=
+
+UPSTASH_REDIS_REST_URL=
+UPSTASH_REDIS_REST_TOKEN=
+```
+
+Configure them before public production launch. See [Production Services](guides/production-services.md).
 
 ---
 
@@ -151,6 +165,8 @@ DATABASE_URL=postgresql://postgres:<password>@db.<project-ref>.supabase.co:5432/
 Notes:
 
 - Prefer pooled/production connection strings when your provider offers them.
+- For Neon on Vercel, pooled hostnames commonly include `-pooler`.
+- For GitHub Actions migrations, use `MIGRATION_DATABASE_URL` if you need a separate direct migration URL.
 - Keep SSL-related query params as recommended by your provider.
 - Never commit real credentials.
 
@@ -190,6 +206,18 @@ Recommended order in a new environment:
 2. run `pnpm run db:migrate`
 3. optionally run `pnpm run db:seed`
 4. start app and verify auth flow
+
+Production migrations should be run from GitHub Actions:
+
+```txt
+Actions -> Production Database Migration -> Run workflow
+```
+
+Input:
+
+```txt
+migrate-production
+```
 
 ---
 
@@ -233,13 +261,11 @@ pnpm run e2e
 Cause:
 
 - `NEXT_PUBLIC_BACKEND_MODE=internal`
-- `ALLOW_DEMO_AUTH=false`
 - no DB URL provided
 
 Fix:
 
 - add `DATABASE_URL` to `.env.local`
-- or temporarily set `ALLOW_DEMO_AUTH=true` for local exploration
 
 ### PostgreSQL URL works locally but fails in deployment
 
@@ -260,7 +286,6 @@ For serverless platforms:
 Fix:
 
 - set `AUTH_SESSION_SECRET`
-- or local-only fallback `ALLOW_INSECURE_DEV_AUTH=true`
 
 ### E2E passes locally but fails in GitHub
 
@@ -310,17 +335,24 @@ What to do:
 
 Before production deploy:
 
-1. `ALLOW_INSECURE_DEV_AUTH=false`
-2. `ALLOW_DEMO_AUTH=false`
-3. real `DATABASE_URL` configured
-4. strong `AUTH_SESSION_SECRET` configured
+1. real `DATABASE_URL` configured
+2. strong `AUTH_SESSION_SECRET` configured
+3. `NEXT_PUBLIC_SITE_URL` points to the deployed HTTPS URL
+4. `NEXT_PUBLIC_API_BASE_URL` points to the deployed app or external API
 5. HTTPS URLs for external auth
+6. production migration workflow can run from GitHub Actions
+7. Sentry env vars are set if monitoring is enabled
+8. Upstash env vars are set for production rate limiting
+9. Resend env vars are set before enabling email flows
 
 ---
 
 ## Related Guides
 
+- [Adopting This Boilerplate](guides/adopting-boilerplate.md)
+- [Database Setup](guides/database-setup.md)
 - [GitHub Setup Checklist](guides/github-setup-checklist.md)
+- [Production Services](guides/production-services.md)
 - [Auth Setup and Migration](guides/auth-setup-and-migration.md)
 - [Workflows](workflows.md)
 - [Release Automation](guides/release-automation.md)

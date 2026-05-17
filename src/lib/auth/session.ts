@@ -20,8 +20,6 @@ interface SessionKey {
   value: string;
 }
 
-const DEV_FALLBACK_SECRET = "dev-only-insecure-session-secret";
-
 function uint8ToBase64Url(bytes: Uint8Array): string {
   const base64 = btoa(String.fromCharCode(...bytes));
   return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
@@ -58,14 +56,7 @@ function getSessionKeys(): SessionKey[] {
     return [{ kid: "k1", value: legacy }];
   }
 
-  const allowInsecureDevFallback = process.env.ALLOW_INSECURE_DEV_AUTH === "true";
-  if (!allowInsecureDevFallback) {
-    throw new Error(
-      "AUTH_SESSION_SECRET or AUTH_SESSION_SECRETS is required. For local-only fallback set ALLOW_INSECURE_DEV_AUTH=true."
-    );
-  }
-
-  return [{ kid: "dev-k1", value: DEV_FALLBACK_SECRET }];
+  throw new Error("AUTH_SESSION_SECRET or AUTH_SESSION_SECRETS is required.");
 }
 
 function timingSafeEqualBytes(a: Uint8Array, b: Uint8Array): boolean {

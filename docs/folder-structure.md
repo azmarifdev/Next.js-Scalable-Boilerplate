@@ -28,6 +28,7 @@ This document maps each major directory to its ownership and responsibility. Use
 src/
 ├── app/             → Next.js App Router (pages, layouts, APIs)
 ├── components/      → Reusable UI components
+├── db/              → Drizzle schema and runtime DB client
 ├── modules/         → Domain-level logic and components
 ├── hooks/           → Shared React hooks
 ├── lib/             → Core infrastructure
@@ -43,6 +44,16 @@ src/
 
 ---
 
+## `src/db/` — Database Layer
+
+```
+src/db/
+├── index.ts         → Runtime Drizzle client
+└── schema/          → Drizzle schema definitions
+```
+
+---
+
 ## `src/app/` — Next.js App Router
 
 This is where pages, layouts, and API routes live.
@@ -51,7 +62,7 @@ This is where pages, layouts, and API routes live.
 src/app/
 ├── (auth)/          → Auth pages (login, register)
 │   ├── login/
-│   │   └── page.tsx       → Login page with demo credentials auto-fill
+│   │   └── page.tsx       → Login page
 │   └── register/
 │       └── page.tsx       → Registration page
 ├── api/
@@ -166,11 +177,6 @@ src/lib/
 │   ├── featureFlags.ts    → Feature flag definitions
 │   ├── feature-registry.ts → Feature definitions (routes, permissions)
 │   └── site-config.ts     → Site-wide configuration
-├── db/              → Database layer
-│   ├── schema.ts          → Drizzle schema definitions
-│   ├── index.ts           → DB client initialization
-│   └── providers/
-│       └── drizzle.ts     → Centralized Drizzle client factory (DATABASE_URL based)
 ├── docs/            → Documentation content helpers
 │   └── content.ts         → Doc entries, slug resolution, GitHub links
 ├── observability/   → Logging and tracing

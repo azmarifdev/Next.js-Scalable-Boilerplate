@@ -151,7 +151,7 @@ export default async function DocArticlePage({ params }: PageProps) {
   const contentHtml = renderMarkdownToHtml(markdown);
 
   return (
-    <main className="landing-shell docs-shared-gradient docs-article-shell min-h-screen overflow-x-clip">
+    <main className="landing-shell docs-shared-gradient docs-article-shell scroll-page min-h-screen overflow-x-clip">
       <Navbar />
 
       <section className="px-4 py-8 sm:px-6 lg:px-8">

@@ -45,7 +45,7 @@ pnpm run setup
 
 # Configure environment
 cp .env.example .env.local
-# Edit .env.local with your PostgreSQL connection string and session secret
+# Edit .env.local with your app name, URLs, PostgreSQL URL, and session secret
 
 # Start developing
 pnpm run dev
@@ -71,6 +71,9 @@ Your app is now running at **http://localhost:3000**. 🎉
 | **Forms**            | [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)         | Performant forms with schema validation                        |
 | **i18n**             | [next-intl](https://next-intl.dev/)                                               | Internationalization with English & Bangla locales             |
 | **HTTP Client**      | [Axios](https://axios-http.com/)                                                  | Typed HTTP client for API communication                        |
+| **Observability**    | [Sentry](https://sentry.io/)                                                      | Production error monitoring and source maps                    |
+| **Email**            | [Resend](https://resend.com/)                                                     | Transactional email provider                                   |
+| **Rate Limiting**    | [Upstash Redis](https://upstash.com/)                                             | Shared serverless rate limiting                                |
 | **Testing**          | [Vitest](https://vitest.dev/) + [Playwright](https://playwright.dev/)             | Unit, integration, and end-to-end testing                      |
 | **Package Manager**  | [pnpm](https://pnpm.io/)                                                          | Fast, disk-efficient package management                        |
 
@@ -94,12 +97,13 @@ Your app is now running at **http://localhost:3000**. 🎉
 
 ### 🗄️ Database
 
-| Feature                      | Details                                                 |
-| ---------------------------- | ------------------------------------------------------- |
-| **PostgreSQL + Drizzle ORM** | Type-safe queries with full SQL migration support       |
-| **Neon Serverless Support**  | Works with serverless PostgreSQL providers              |
-| **Schema Migrations**        | Auto-generate and apply SQL migrations with Drizzle Kit |
-| **Drizzle Studio**           | GUI database browser at `pnpm run db:studio`            |
+| Feature                      | Details                                                     |
+| ---------------------------- | ----------------------------------------------------------- |
+| **PostgreSQL + Drizzle ORM** | Type-safe queries with full SQL migration support           |
+| **Neon Serverless Support**  | Works with serverless PostgreSQL providers                  |
+| **Schema Migrations**        | Auto-generate and apply SQL migrations with Drizzle Kit     |
+| **Manual CI Migrations**     | Production migrations run from GitHub Actions with approval |
+| **Drizzle Studio**           | GUI database browser at `pnpm run db:studio`                |
 
 ### 🌐 Internationalization
 
@@ -232,10 +236,12 @@ All documentation is in the `docs/` directory and covers everything from setup t
 
 ### Getting Started
 
-| Guide                               | Description                                         |
-| ----------------------------------- | --------------------------------------------------- |
-| [📘 How to Use](docs/how-to-use.md) | First-time setup, env configuration, daily workflow |
-| [📘 Quick Start](#-quick-start)     | 3-command setup above                               |
+| Guide                                                               | Description                                                           |
+| ------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| [📘 How to Use](docs/how-to-use.md)                                 | First-time setup, env configuration, daily workflow                   |
+| [📘 Adopting This Boilerplate](docs/guides/adopting-boilerplate.md) | What to rename, configure, replace, remove, and verify for a real app |
+| [📘 Database Setup](docs/guides/database-setup.md)                  | PostgreSQL, Neon, Drizzle migrations, and production migration flow   |
+| [📘 Quick Start](#-quick-start)                                     | 3-command setup above                                                 |
 
 ### Architecture & Design
 

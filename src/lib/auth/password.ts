@@ -8,13 +8,13 @@ export async function hashPassword(password: string): Promise<string> {
   const salt = randomBytes(16);
   const derivedKey = (await scrypt(password, salt, KEY_LENGTH)) as Buffer;
 
-  return `scrypt$${salt.toString("base64")}$${derivedKey.toString("base64")}`;
+  return `scrypt_v1$${salt.toString("base64")}$${derivedKey.toString("base64")}`;
 }
 
 export async function verifyPassword(password: string, passwordHash: string): Promise<boolean> {
   const [algorithm, saltB64, hashB64] = passwordHash.split("$");
 
-  if (algorithm !== "scrypt" || !saltB64 || !hashB64) {
+  if ((algorithm !== "scrypt" && algorithm !== "scrypt_v1") || !saltB64 || !hashB64) {
     return false;
   }
 

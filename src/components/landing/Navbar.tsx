@@ -179,13 +179,6 @@ export function Navbar() {
               >
                 {t("signIn")}
               </Link>
-
-              <Link
-                className="inline-flex items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#9b3dff_0%,#d946ef_40%,#fb7185_100%)] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(217,70,239,0.36)] transition duration-200 hover:scale-[1.01] hover:shadow-[0_16px_36px_rgba(236,72,153,0.40)] sm:px-6"
-                href="/register"
-              >
-                {t("getStarted")}
-              </Link>
             </>
           )}
         </div>

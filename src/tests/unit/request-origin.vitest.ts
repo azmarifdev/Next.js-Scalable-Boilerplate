@@ -51,4 +51,36 @@ describe("requireSameOrigin", () => {
     expect(response?.status).toBe(403);
     expect(payload?.error?.code).toBe("FORBIDDEN_ORIGIN");
   });
+
+  it("rejects loopback with different protocol", async () => {
+    const request = new Request("http://127.0.0.1:3000/api/v1/auth/login", {
+      method: "POST",
+      headers: {
+        origin: "https://localhost:3000"
+      }
+    });
+
+    const response = requireSameOrigin(request, {});
+    expect(response).not.toBeNull();
+
+    const payload = await response?.json();
+    expect(response?.status).toBe(403);
+    expect(payload?.error?.code).toBe("FORBIDDEN_ORIGIN");
+  });
+
+  it("rejects loopback with different port", async () => {
+    const request = new Request("http://127.0.0.1:3000/api/v1/auth/login", {
+      method: "POST",
+      headers: {
+        origin: "http://localhost:4000"
+      }
+    });
+
+    const response = requireSameOrigin(request, {});
+    expect(response).not.toBeNull();
+
+    const payload = await response?.json();
+    expect(response?.status).toBe(403);
+    expect(payload?.error?.code).toBe("FORBIDDEN_ORIGIN");
+  });
 });

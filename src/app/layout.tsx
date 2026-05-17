@@ -47,7 +47,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         suppressHydrationWarning
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <AppProviders>{children}</AppProviders>
+          <AppProviders initialTheme={initialTheme}>{children}</AppProviders>
         </NextIntlClientProvider>
       </body>
     </html>

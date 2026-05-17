@@ -5,14 +5,12 @@ import { createSessionToken, verifySessionToken } from "@/lib/auth/session";
 describe("session token", () => {
   const original = {
     AUTH_SESSION_SECRET: process.env.AUTH_SESSION_SECRET,
-    AUTH_SESSION_SECRETS: process.env.AUTH_SESSION_SECRETS,
-    ALLOW_INSECURE_DEV_AUTH: process.env.ALLOW_INSECURE_DEV_AUTH
+    AUTH_SESSION_SECRETS: process.env.AUTH_SESSION_SECRETS
   };
 
   afterEach(() => {
     process.env.AUTH_SESSION_SECRET = original.AUTH_SESSION_SECRET;
     process.env.AUTH_SESSION_SECRETS = original.AUTH_SESSION_SECRETS;
-    process.env.ALLOW_INSECURE_DEV_AUTH = original.ALLOW_INSECURE_DEV_AUTH;
   });
 
   it("creates and verifies a valid token", async () => {
@@ -54,16 +52,15 @@ describe("session token", () => {
     await expect(verifySessionToken(malformedSignatureToken)).resolves.toBeNull();
   });
 
-  it("fails fast when secret is missing and insecure fallback is disabled", async () => {
+  it("fails fast when secret is missing", async () => {
     delete process.env.AUTH_SESSION_SECRET;
     delete process.env.AUTH_SESSION_SECRETS;
-    process.env.ALLOW_INSECURE_DEV_AUTH = "false";
 
     await expect(
       createSessionToken(
         { sub: "u_3", name: "No Secret", email: "no@example.com", role: "user" },
         60
       )
-    ).rejects.toThrow(/ALLOW_INSECURE_DEV_AUTH=true/);
+    ).rejects.toThrow(/AUTH_SESSION_SECRET or AUTH_SESSION_SECRETS is required/);
   });
 });

@@ -39,6 +39,11 @@ NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL=https://your-auth-provider.example.com
 
 Every deployment needs these variables. Create a list — you'll need to enter them into your provider's dashboard.
 
+Note:
+
+- `.env.local` is **not** used in production. Set these in your hosting provider env settings.
+- CI-only values (like `MIGRATION_DATABASE_URL`) belong in GitHub Actions Secrets.
+
 **Always required:**
 | Variable | Example Value | Purpose |
 |----------|--------------|---------|
@@ -54,6 +59,16 @@ Every deployment needs these variables. Create a list — you'll need to enter t
 
 > **Tip:** Generate a strong session secret with: `openssl rand -hex 32`
 
+**Recommended for production:**
+| Variable | Purpose |
+|----------|---------|
+| `NEXT_PUBLIC_API_BASE_URL` | Public base URL for API calls |
+| `NEXT_PUBLIC_FEATURE_ADMIN` | Enables or disables admin surfaces |
+| `SENTRY_DSN` / `NEXT_PUBLIC_SENTRY_DSN` | Error monitoring |
+| `SENTRY_AUTH_TOKEN` / `SENTRY_ORG` / `SENTRY_PROJECT` | Source map upload for Sentry |
+| `RESEND_API_KEY` / `EMAIL_FROM` | Transactional email |
+| `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | Shared serverless rate limiting |
+
 **Required for custom auth (`custom-auth`):**
 | Variable | Example Value | Purpose |
 |----------|--------------|---------|
@@ -64,7 +79,6 @@ Every deployment needs these variables. Create a list — you'll need to enter t
 |----------|---------|
 | `REQUIRE_ADMIN_STEP_UP_AUTH=true` | Enables MFA for admin routes |
 | `AUTH_MFA_VERIFY_URL` | External MFA verifier endpoint (recommended if step-up is on) |
-| `ALLOW_DEMO_AUTH=true` | Enables demo login credentials in dev |
 
 ### 2.1 Database Provider Compatibility (Important)
 
@@ -93,6 +107,7 @@ Your deployment environment needs to be able to connect to your PostgreSQL datab
 For Neon/Supabase specifically:
 
 - prefer their pooled/production connection string for serverless hosting
+- use a direct PostgreSQL connection string for migrations if pooled URLs fail migration locks or TCP access
 - keep SSL-required params as recommended by provider docs
 
 ### 4. Run Tests Locally (Recommended)
@@ -127,15 +142,23 @@ pnpm run db:generate
 pnpm run db:migrate
 ```
 
-### Option B: Run migrations as part of deployment
+### Option B: Run migrations from GitHub Actions
 
-On providers like Railway or Render, you can add a **post-deploy command**:
+Use the manual production workflow:
 
-```bash
-pnpm run db:migrate
+```txt
+Actions -> Production Database Migration -> Run workflow
 ```
 
-Some providers let you run this via a "Post-deploy hook" or a separate one-off task.
+Set `DATABASE_URL` or `MIGRATION_DATABASE_URL` in GitHub Secrets. Configure the `production` GitHub environment with required reviewers before using it for production.
+
+Run the workflow from the `main` branch and type:
+
+```txt
+migrate-production
+```
+
+Use `MIGRATION_DATABASE_URL` when runtime uses a pooled URL but migrations should use a direct connection.
 
 > ⚠️ **Important:** Never run `db:generate` in production — it can create unintended schema changes. Run it locally and commit the generated files.
 
@@ -174,14 +197,13 @@ Open your app's URL. You should see:
 Navigate to `/login` and `/register`. Both pages should render without errors:
 
 - The auth form should appear
-- The "Demo Credentials" auto-fill button should work (if you enabled it)
 - Switching between login and register via the link should work
 
 ### ✅ 3. Authentication Flow
 
 - Register a new account → you should be redirected to `/docs`
 - Log out → the navbar should show "Sign In" again
-- Log in with the demo credentials → you should be redirected to `/docs`
+- Log in with the real account → you should be redirected to `/docs`
 - After login, the navbar should show a "Sign Out" button
 
 ### ✅ 4. Docs Page
@@ -204,6 +226,8 @@ If anything doesn't work, check your provider's logs:
 - Build logs — did the build complete without errors?
 - Runtime logs — any API errors? Database connection issues?
 - Migration logs — did the database migration run successfully?
+- Sentry issues — did the smoke test create new errors?
+- Upstash metrics — are auth rate-limit requests reaching Redis?
 
 ---
 
@@ -241,6 +265,25 @@ Fix:
 - Check that `AUTH_SESSION_SECRET` is set in the environment
 - Verify the `DATABASE_URL` is correct
 - Check runtime logs for the specific error message
+
+### "Rate limiting works locally but not consistently in production"
+
+- Set `UPSTASH_REDIS_REST_URL`
+- Set `UPSTASH_REDIS_REST_TOKEN`
+- Verify auth requests show activity in Upstash
+
+### "Sentry does not receive errors"
+
+- Set `SENTRY_DSN`
+- Set `NEXT_PUBLIC_SENTRY_DSN`
+- Redeploy after setting env vars
+- Add `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, and `SENTRY_PROJECT` for source maps
+
+### "Emails do not send"
+
+- Set `RESEND_API_KEY`
+- Set `EMAIL_FROM`
+- Verify the sending domain in Resend
 
 ### "Redirect not working correctly"
 

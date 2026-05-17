@@ -12,9 +12,12 @@ Think of this as your **operations playbook**. You don't need to read everything
 
 | Guide                                                   | What It Covers                                                                                                        | Who It's For                                           |
 | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| [Adopting This Boilerplate](adopting-boilerplate.md)    | What to rename, configure, replace, remove, and verify when starting a real project from this template                | Product teams and developers creating a new app        |
 | [Contributing Guide](contributing.md)                   | PR rules, commit conventions, dev setup, testing guidelines                                                           | Contributors and new team members                      |
-| [Auth Setup and Migration](auth-setup-and-migration.md) | Remove demo auth safely, configure better-auth for production, or switch to custom-auth                               | Maintainers and teams preparing staging/production     |
+| [Auth Setup and Migration](auth-setup-and-migration.md) | Configure better-auth for production or switch to custom-auth                                                         | Maintainers and teams preparing staging/production     |
+| [Database Setup](database-setup.md)                     | PostgreSQL, Neon, Drizzle migrations, runtime DB access, and production migration workflow                            | Developers configuring data infrastructure             |
 | [Deployment Guide](deployment.md)                       | End-to-end deployment: pre-checks, build validation, database migration, provider setup, and post-deploy verification | Anyone deploying to production or staging              |
+| [Production Services](production-services.md)           | Sentry, Resend, Upstash Redis, and production migration secrets                                                       | Maintainers preparing a public production launch       |
 | [GitHub Setup Checklist](github-setup-checklist.md)     | Branch protection, required CI checks, secrets management, labels, and release permissions                            | Repository admins and team leads setting up a new repo |
 | [Project Maintenance](project-maintenance.md)           | Daily, weekly, monthly, and quarterly routines to keep the project stable and secure                                  | Active maintainers and regular contributors            |
 | [Release Automation](release-automation.md)             | How Release Please works, conventional commit rules, version bumps, and troubleshooting                               | Anyone involved in the release process                 |
@@ -25,12 +28,15 @@ Think of this as your **operations playbook**. You don't need to read everything
 
 If you're new to this boilerplate, follow this order:
 
-1. **Learn how to contribute** → [Contributing Guide](contributing.md)
-2. **Pick your auth path** → [Auth Setup and Migration](auth-setup-and-migration.md)
-3. **Set up your repo** → [GitHub Setup Checklist](github-setup-checklist.md)
-4. **Ship to production** → [Deployment Guide](deployment.md)
-5. **Understand releases** → [Release Automation](release-automation.md)
-6. **Keep things healthy** → [Project Maintenance](project-maintenance.md)
+1. **Adopt the template** → [Adopting This Boilerplate](adopting-boilerplate.md)
+2. **Learn how to contribute** → [Contributing Guide](contributing.md)
+3. **Pick your auth path** → [Auth Setup and Migration](auth-setup-and-migration.md)
+4. **Configure the database** → [Database Setup](database-setup.md)
+5. **Set up your repo** → [GitHub Setup Checklist](github-setup-checklist.md)
+6. **Configure production services** → [Production Services](production-services.md)
+7. **Ship to production** → [Deployment Guide](deployment.md)
+8. **Understand releases** → [Release Automation](release-automation.md)
+9. **Keep things healthy** → [Project Maintenance](project-maintenance.md)
 
 ---
 

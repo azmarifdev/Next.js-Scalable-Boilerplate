@@ -40,8 +40,14 @@ function applyTheme(theme: AppTheme): void {
   document.cookie = `${THEME_STORAGE_KEY}=${theme}; Path=/; Max-Age=31536000; SameSite=Lax`;
 }
 
-export function ThemeProvider({ children }: { children: ReactNode }): ReactNode {
-  const [theme, setThemeState] = useState<AppTheme>(getInitialTheme);
+export function ThemeProvider({
+  children,
+  initialTheme
+}: {
+  children: ReactNode;
+  initialTheme?: AppTheme;
+}): ReactNode {
+  const [theme, setThemeState] = useState<AppTheme>(() => initialTheme ?? getInitialTheme());
 
   useEffect(() => {
     applyTheme(theme);

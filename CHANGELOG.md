@@ -476,7 +476,7 @@
 - **release:** harden release-please and improve release automation docs ([84b9046](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/84b90467b565e3a89dda74e65c0d9c5d1c70a38f))
 - **release:** harden release-please and improve release automation docs ([fcca5c6](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/fcca5c60d362a3bb1394b9faed2f65dae26c60aa))
 
-## Changelog
+## Maintainer Notes
 
 All notable changes to this project will be documented in this file.
 

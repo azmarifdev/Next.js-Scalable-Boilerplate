@@ -6,13 +6,28 @@ export function getSafeRedirectPath(
     return fallback;
   }
 
-  if (!input.startsWith("/")) {
+  try {
+    const baseUrl = new URL("http://localhost");
+    const resolved = new URL(input, baseUrl);
+
+    if (resolved.origin !== baseUrl.origin) {
+      return fallback;
+    }
+
+    if (!resolved.pathname.startsWith("/")) {
+      return fallback;
+    }
+
+    if (resolved.pathname.startsWith("//")) {
+      return fallback;
+    }
+
+    if (resolved.pathname.includes("\\")) {
+      return fallback;
+    }
+
+    return `${resolved.pathname}${resolved.search}${resolved.hash}`;
+  } catch {
     return fallback;
   }
-
-  if (input.startsWith("//")) {
-    return fallback;
-  }
-
-  return input;
 }

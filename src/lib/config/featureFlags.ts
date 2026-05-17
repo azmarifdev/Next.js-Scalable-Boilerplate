@@ -1,10 +1,6 @@
 import { appConfig } from "@/lib/config/app-config";
 
-export type FeatureFlag =
-  | "ENABLE_ADMIN"
-  | "ENABLE_CUSTOM_AUTH"
-  | "ALLOW_DEMO_AUTH"
-  | "ALLOW_INSECURE_DEV_AUTH";
+export type FeatureFlag = "ENABLE_ADMIN" | "ENABLE_CUSTOM_AUTH";
 
 export type FeatureFlagCategory = "auth-modes" | "optional-modules" | "dev-features";
 
@@ -16,9 +12,7 @@ export interface FeatureFlagDefinition {
 
 export const featureFlagDefinitions: FeatureFlagDefinition[] = [
   { key: "ENABLE_CUSTOM_AUTH", label: "Optional Custom Auth Module", category: "auth-modes" },
-  { key: "ENABLE_ADMIN", label: "Admin Module", category: "optional-modules" },
-  { key: "ALLOW_DEMO_AUTH", label: "Demo Auth", category: "dev-features" },
-  { key: "ALLOW_INSECURE_DEV_AUTH", label: "Insecure Dev Auth", category: "dev-features" }
+  { key: "ENABLE_ADMIN", label: "Admin Module", category: "optional-modules" }
 ];
 
 export type FeatureFlags = Record<FeatureFlag, boolean>;
@@ -28,9 +22,7 @@ export function getFeatureFlags(): FeatureFlags {
     ENABLE_ADMIN: appConfig.features.admin,
     ENABLE_CUSTOM_AUTH:
       process.env.NEXT_PUBLIC_ENABLE_CUSTOM_AUTH === "true" ||
-      process.env.ENABLE_CUSTOM_AUTH === "true",
-    ALLOW_DEMO_AUTH: process.env.ALLOW_DEMO_AUTH === "true",
-    ALLOW_INSECURE_DEV_AUTH: process.env.ALLOW_INSECURE_DEV_AUTH === "true"
+      process.env.ENABLE_CUSTOM_AUTH === "true"
   };
 }
 

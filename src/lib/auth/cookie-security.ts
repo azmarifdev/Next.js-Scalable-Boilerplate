@@ -1,3 +1,6 @@
 export function shouldUseSecureCookies(): boolean {
-  return process.env.NODE_ENV === "production" && process.env.ALLOW_INSECURE_DEV_AUTH !== "true";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+  const isHttps = siteUrl.startsWith("https://");
+
+  return process.env.NODE_ENV === "production" || isHttps;
 }

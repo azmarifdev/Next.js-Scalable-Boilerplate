@@ -1,0 +1,1180 @@
+diff --git a/drizzle.config.ts b/drizzle.config.ts
+index f5b408f..99d0732 100644
+--- a/drizzle.config.ts
++++ b/drizzle.config.ts
+@@ -1,10 +1,18 @@
++import { config } from "dotenv";
+ import { defineConfig } from "drizzle-kit";
+ 
++if (process.env.DATABASE_URL?.trim() === "") {
++  delete process.env.DATABASE_URL;
++}
++
++config({ path: ".env.local" });
++config();
++
+ export default defineConfig({
+-  schema: "./src/lib/db/schema.ts",
++  schema: "./src/db/schema",
+   out: "./drizzle",
+   dialect: "postgresql",
+   dbCredentials: {
+-    url: process.env.DATABASE_URL ?? ""
++    url: process.env.DATABASE_URL!
+   }
+ });
+diff --git a/next.config.ts b/next.config.ts
+index f061965..9f39b6c 100644
+--- a/next.config.ts
++++ b/next.config.ts
+@@ -1,4 +1,5 @@
+ import bundleAnalyzer from "@next/bundle-analyzer";
++import { withSentryConfig } from "@sentry/nextjs";
+ import type { NextConfig } from "next";
+ import createNextIntlPlugin from "next-intl/plugin";
+ 
+@@ -37,6 +38,9 @@ const securityHeaders = [
+ const nextConfig: NextConfig = {
+   reactStrictMode: true,
+   output: "standalone",
++  outputFileTracingIncludes: {
++    "/docs/[...slug]": ["README.md", "docs/**/*.md"]
++  },
+   poweredByHeader: false,
+   typedRoutes: true,
+   allowedDevOrigins: ["127.0.0.1", "localhost"],
+@@ -50,4 +54,19 @@ const nextConfig: NextConfig = {
+   }
+ };
+ 
+-export default withBundleAnalyzer(withNextIntl(nextConfig));
++export default withSentryConfig(withBundleAnalyzer(withNextIntl(nextConfig)), {
++  org: process.env.SENTRY_ORG,
++  project: process.env.SENTRY_PROJECT,
++  authToken: process.env.SENTRY_AUTH_TOKEN,
++  silent: true,
++  telemetry: false,
++  tunnelRoute: "/monitoring",
++  sourcemaps: {
++    disable: !process.env.SENTRY_AUTH_TOKEN
++  },
++  webpack: {
++    treeshake: {
++      removeDebugLogging: true
++    }
++  }
++});
+diff --git a/src/app/api/v1/auth/login/route.ts b/src/app/api/v1/auth/login/route.ts
+index 65d9d09..563d9c3 100644
+--- a/src/app/api/v1/auth/login/route.ts
++++ b/src/app/api/v1/auth/login/route.ts
+@@ -8,7 +8,6 @@ import {
+   resetFailedLoginAttempts
+ } from "@/lib/auth/auth-user.repository";
+ import { shouldUseSecureCookies } from "@/lib/auth/cookie-security";
+-import { tryDevAuthLogin } from "@/lib/auth/dev-auth-fallback";
+ import { verifyPassword } from "@/lib/auth/password";
+ import { createSessionToken } from "@/lib/auth/session";
+ import { isAdminStepUpEnabled } from "@/lib/auth/step-up";
+@@ -108,9 +107,8 @@ async function loginHandler(request: NextRequest): Promise<Response> {
+     "auth.login",
+     async () => {
+       const isDbConfigured = isAuthDatabaseConfigured();
+-      const allowDevFallback = process.env.ALLOW_DEMO_AUTH === "true";
+ 
+-      if (!isDbConfigured && !allowDevFallback) {
++      if (!isDbConfigured) {
+         if (wantsHtml) {
+           return redirectWithRequestId(request, "/login?error=service_unavailable", requestId);
+         }
+@@ -127,7 +125,10 @@ async function loginHandler(request: NextRequest): Promise<Response> {
+       const payload = await parsePayload(request);
+       const parsed = loginSchema.safeParse(payload);
+       const rateLimitIdentity = parsed.success ? parsed.data.email.toLowerCase() : "invalid";
+-      const loginRateLimit = consumeRateLimit(`auth:login:${rateLimitIdentity}`, AUTH_RATE_LIMIT);
++      const loginRateLimit = await consumeRateLimit(
++        `auth:login:${rateLimitIdentity}`,
++        AUTH_RATE_LIMIT
++      );
+ 
+       if (!loginRateLimit.allowed) {
+         const message = "Too many attempts. Please retry in a minute.";
+@@ -170,124 +171,77 @@ async function loginHandler(request: NextRequest): Promise<Response> {
+         mfaRequired?: boolean;
+       } | null = null;
+ 
+-      if (isDbConfigured) {
+-        const authUser = await findAuthUserByEmail(parsed.data.email.toLowerCase());
+-        if (!authUser) {
+-          await writeAuthAuditLog({
+-            event: "login_failed",
+-            status: "failure",
+-            email: parsed.data.email,
+-            ipAddress,
+-            userAgent,
+-            reason: "user_not_found"
+-          });
+-          if (wantsHtml) {
+-            return redirectWithRequestId(request, "/login?error=invalid_credentials", requestId);
+-          }
+-          return apiError(
+-            { code: "INVALID_CREDENTIALS", message: "Invalid email or password" },
+-            { status: 401, requestId, route }
+-          );
++      const authUser = await findAuthUserByEmail(parsed.data.email.toLowerCase());
++      if (!authUser) {
++        await writeAuthAuditLog({
++          event: "login_failed",
++          status: "failure",
++          email: parsed.data.email,
++          ipAddress,
++          userAgent,
++          reason: "user_not_found"
++        });
++        if (wantsHtml) {
++          return redirectWithRequestId(request, "/login?error=invalid_credentials", requestId);
+         }
++        return apiError(
++          { code: "INVALID_CREDENTIALS", message: "Invalid email or password" },
++          { status: 401, requestId, route }
++        );
++      }
+ 
+-        if (authUser.lockedUntil && authUser.lockedUntil.getTime() > Date.now()) {
+-          await writeAuthAuditLog({
+-            event: "login_failed",
+-            status: "failure",
+-            email: authUser.email,
+-            userId: authUser.id,
+-            ipAddress,
+-            userAgent,
+-            reason: "account_locked"
+-          });
+-          if (wantsHtml) {
+-            return redirectWithRequestId(request, "/login?error=rate_limited", requestId);
+-          }
+-          return apiError(
+-            { code: "LOGIN_LOCKED", message: "Too many login attempts. Please try again later." },
+-            { status: 429, requestId, route }
+-          );
++      if (authUser.lockedUntil && authUser.lockedUntil.getTime() > Date.now()) {
++        await writeAuthAuditLog({
++          event: "login_failed",
++          status: "failure",
++          email: authUser.email,
++          userId: authUser.id,
++          ipAddress,
++          userAgent,
++          reason: "account_locked"
++        });
++        if (wantsHtml) {
++          return redirectWithRequestId(request, "/login?error=rate_limited", requestId);
+         }
++        return apiError(
++          { code: "LOGIN_LOCKED", message: "Too many login attempts. Please try again later." },
++          { status: 429, requestId, route }
++        );
++      }
+ 
+-        const passwordMatches = await verifyPassword(parsed.data.password, authUser.passwordHash);
+-        if (!passwordMatches) {
+-          const nextAttempts = authUser.failedLoginAttempts + 1;
+-          const lockUntil =
+-            nextAttempts >= MAX_FAILED_ATTEMPTS ? new Date(Date.now() + LOCK_WINDOW_MS) : null;
+-
+-          await recordFailedLoginAttempt(authUser, lockUntil);
+-          await writeAuthAuditLog({
+-            event: "login_failed",
+-            status: "failure",
+-            email: authUser.email,
+-            userId: authUser.id,
+-            ipAddress,
+-            userAgent,
+-            reason: "password_mismatch"
+-          });
+-          if (wantsHtml) {
+-            return redirectWithRequestId(request, "/login?error=invalid_credentials", requestId);
+-          }
+-          return apiError(
+-            { code: "INVALID_CREDENTIALS", message: "Invalid email or password" },
+-            { status: 401, requestId, route }
+-          );
+-        }
++      const passwordMatches = await verifyPassword(parsed.data.password, authUser.passwordHash);
++      if (!passwordMatches) {
++        const nextAttempts = authUser.failedLoginAttempts + 1;
++        const lockUntil =
++          nextAttempts >= MAX_FAILED_ATTEMPTS ? new Date(Date.now() + LOCK_WINDOW_MS) : null;
+ 
+-        await resetFailedLoginAttempts(authUser.id);
+-        user = {
+-          id: authUser.id,
+-          name: authUser.name,
++        await recordFailedLoginAttempt(authUser, lockUntil);
++        await writeAuthAuditLog({
++          event: "login_failed",
++          status: "failure",
+           email: authUser.email,
+-          role: authUser.role
+-        };
+-      } else if (allowDevFallback) {
+-        const devAuth = await tryDevAuthLogin({
+-          email: parsed.data.email,
+-          password: parsed.data.password
++          userId: authUser.id,
++          ipAddress,
++          userAgent,
++          reason: "password_mismatch"
+         });
+-        if (!devAuth.user) {
+-          const errorCode = devAuth.status === 429 ? "LOGIN_LOCKED" : "INVALID_CREDENTIALS";
+-          await writeAuthAuditLog({
+-            event: "login_failed",
+-            status: "failure",
+-            email: parsed.data.email,
+-            ipAddress,
+-            userAgent,
+-            reason: devAuth.status === 429 ? "account_locked" : "invalid_credentials"
+-          });
+-          if (wantsHtml) {
+-            return redirectWithRequestId(
+-              request,
+-              devAuth.status === 429
+-                ? "/login?error=rate_limited"
+-                : "/login?error=invalid_credentials",
+-              requestId
+-            );
+-          }
+-          return apiError(
+-            {
+-              code: errorCode,
+-              message: devAuth.message ?? "Invalid email or password"
+-            },
+-            { status: devAuth.status, requestId, route }
+-          );
+-        }
+-        user = devAuth.user;
+-      } else {
+         if (wantsHtml) {
+-          return redirectWithRequestId(request, "/login?error=service_unavailable", requestId);
++          return redirectWithRequestId(request, "/login?error=invalid_credentials", requestId);
+         }
+-
+         return apiError(
+-          {
+-            code: "AUTH_UNAVAILABLE",
+-            message: "Authentication is unavailable. Configure DATABASE_URL first."
+-          },
+-          { status: 503, requestId, route }
++          { code: "INVALID_CREDENTIALS", message: "Invalid email or password" },
++          { status: 401, requestId, route }
+         );
+       }
+ 
++      await resetFailedLoginAttempts(authUser.id);
++      user = {
++        id: authUser.id,
++        name: authUser.name,
++        email: authUser.email,
++        role: authUser.role
++      };
++
+       const mfaVerified = user.role !== "admin" || !isAdminStepUpEnabled();
+       const token = await createSessionToken(
+         {
+diff --git a/src/app/api/v1/auth/mfa/verify/route.ts b/src/app/api/v1/auth/mfa/verify/route.ts
+index 803ab1e..19f7850 100644
+--- a/src/app/api/v1/auth/mfa/verify/route.ts
++++ b/src/app/api/v1/auth/mfa/verify/route.ts
+@@ -22,18 +22,6 @@ async function parsePayload(request: Request): Promise<MfaVerifyPayload> {
+   return request.json().catch(() => ({}));
+ }
+ 
+-function resolveExpectedCode(): string | null {
+-  if (process.env.AUTH_MFA_STATIC_CODE) {
+-    return process.env.AUTH_MFA_STATIC_CODE;
+-  }
+-
+-  if (process.env.ALLOW_INSECURE_DEV_AUTH === "true") {
+-    return "000000";
+-  }
+-
+-  return null;
+-}
+-
+ async function verifyWithExternalMfaProvider(input: {
+   code: string;
+   userId: string;
+@@ -119,7 +107,7 @@ async function verifyMfaHandler(request: Request): Promise<Response> {
+   }
+ 
+   const rateLimitKey = `auth:mfa:verify:${session.sub}`;
+-  const rateLimitResult = consumeRateLimit(rateLimitKey, MFA_VERIFY_RATE_LIMIT);
++  const rateLimitResult = await consumeRateLimit(rateLimitKey, MFA_VERIFY_RATE_LIMIT);
+   if (!rateLimitResult.allowed) {
+     const rateLimitedResponse = apiError(
+       { code: "RATE_LIMITED", message: "Too many MFA attempts. Please retry later." },
+@@ -155,39 +143,13 @@ async function verifyMfaHandler(request: Request): Promise<Response> {
+   }
+ 
+   if (externalVerified === null) {
+-    const expectedCode = resolveExpectedCode();
+-    const staticAllowedInProd = process.env.ALLOW_STATIC_MFA_IN_PRODUCTION === "true";
+-    const isProduction = process.env.NODE_ENV === "production";
+-    if (!expectedCode) {
+-      return apiError(
+-        {
+-          code: "MFA_NOT_CONFIGURED",
+-          message:
+-            "Set AUTH_MFA_VERIFY_URL (recommended) or AUTH_MFA_STATIC_CODE for local-only fallback."
+-        },
+-        { status: 503, requestId, route }
+-      );
+-    }
+-
+-    if (isProduction && !staticAllowedInProd) {
+-      return apiError(
+-        {
+-          code: "MFA_NOT_CONFIGURED",
+-          message:
+-            "Static MFA code is disabled in production. Configure AUTH_MFA_VERIFY_URL or set ALLOW_STATIC_MFA_IN_PRODUCTION=true (not recommended)."
+-        },
+-        { status: 503, requestId, route }
+-      );
+-    }
+-
+-    if (payload.code !== expectedCode) {
+-      const invalidCodeResponse = apiError(
+-        { code: "MFA_INVALID_CODE", message: "Invalid MFA verification code" },
+-        { status: 401, requestId, route }
+-      );
+-      attachRateLimitHeaders(invalidCodeResponse, rateLimitResult, MFA_VERIFY_RATE_LIMIT.limit);
+-      return invalidCodeResponse;
+-    }
++    return apiError(
++      {
++        code: "MFA_NOT_CONFIGURED",
++        message: "Set AUTH_MFA_VERIFY_URL before enabling admin step-up MFA."
++      },
++      { status: 503, requestId, route }
++    );
+   }
+ 
+   const token = await createSessionToken(
+diff --git a/src/app/sitemap.ts b/src/app/sitemap.ts
+index 9ff75f4..72491d5 100644
+--- a/src/app/sitemap.ts
++++ b/src/app/sitemap.ts
+@@ -10,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
+     "/docs",
+     "/docs/readme",
+     "/docs/how-to-use",
++    "/docs/guides/adopting-boilerplate",
+     "/docs/architecture",
+     "/docs/auth-flow",
+     "/docs/folder-structure",
+diff --git a/src/components/landing/Navbar.tsx b/src/components/landing/Navbar.tsx
+index baca2d8..0d8e7b7 100644
+--- a/src/components/landing/Navbar.tsx
++++ b/src/components/landing/Navbar.tsx
+@@ -172,21 +172,12 @@ export function Navbar() {
+               {t("signOut")}
+             </button>
+           ) : (
+-            <>
+-              <Link
+-                className="hidden rounded-2xl bg-[var(--landing-surface-soft)] px-4 py-2.5 text-sm font-medium text-[var(--landing-text-strong)] shadow-[0_8px_20px_rgba(15,23,42,0.10),inset_0_1px_0_rgba(255,255,255,0.20)] transition duration-200 hover:bg-white/[0.06] md:inline-flex"
+-                href="/login"
+-              >
+-                {t("signIn")}
+-              </Link>
+-
+-              <Link
+-                className="inline-flex items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#9b3dff_0%,#d946ef_40%,#fb7185_100%)] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(217,70,239,0.36)] transition duration-200 hover:scale-[1.01] hover:shadow-[0_16px_36px_rgba(236,72,153,0.40)] sm:px-6"
+-                href="/register"
+-              >
+-                {t("getStarted")}
+-              </Link>
+-            </>
++            <Link
++              className="inline-flex rounded-2xl bg-[var(--landing-surface-soft)] px-4 py-2.5 text-sm font-medium text-[var(--landing-text-strong)] shadow-[0_8px_20px_rgba(15,23,42,0.10),inset_0_1px_0_rgba(255,255,255,0.20)] transition duration-200 hover:bg-white/[0.06]"
++              href="/login"
++            >
++              {t("signIn")}
++            </Link>
+           )}
+         </div>
+       </div>
+diff --git a/src/instrumentation-client.ts b/src/instrumentation-client.ts
+index 8fb7b49..7fa26b0 100644
+--- a/src/instrumentation-client.ts
++++ b/src/instrumentation-client.ts
+@@ -1,2 +1,5 @@
+-// Client instrumentation intentionally left minimal.
+-// Add optional tools (analytics/session replay) here per environment.
++import "../sentry.client.config";
++
++import * as Sentry from "@sentry/nextjs";
++
++export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
+diff --git a/src/instrumentation.ts b/src/instrumentation.ts
+index 63747bf..ecb6528 100644
+--- a/src/instrumentation.ts
++++ b/src/instrumentation.ts
+@@ -1 +1,13 @@
+-export async function register() {}
++import * as Sentry from "@sentry/nextjs";
++
++export async function register() {
++  if (process.env.NEXT_RUNTIME === "nodejs") {
++    await import("../sentry.server.config");
++  }
++
++  if (process.env.NEXT_RUNTIME === "edge") {
++    await import("../sentry.edge.config");
++  }
++}
++
++export const onRequestError = Sentry.captureRequestError;
+diff --git a/src/lib/auth/auth-audit.repository.ts b/src/lib/auth/auth-audit.repository.ts
+index de7c2e2..e58264c 100644
+--- a/src/lib/auth/auth-audit.repository.ts
++++ b/src/lib/auth/auth-audit.repository.ts
+@@ -1,7 +1,7 @@
+ import { and, desc, eq, gte, sql } from "drizzle-orm";
+ 
+-import { getDrizzleClient } from "@/lib/db/providers/drizzle";
+-import { authAuditLogs } from "@/lib/db/schema";
++import { getDrizzleClient } from "@/db";
++import { authAuditLogs } from "@/db/schema";
+ import { logger } from "@/lib/observability/logger";
+ 
+ export type AuthAuditEvent =
+diff --git a/src/lib/auth/auth-user.repository.ts b/src/lib/auth/auth-user.repository.ts
+index 6884f2b..2712d07 100644
+--- a/src/lib/auth/auth-user.repository.ts
++++ b/src/lib/auth/auth-user.repository.ts
+@@ -1,8 +1,8 @@
+ import { and, eq } from "drizzle-orm";
+ 
++import { getDrizzleClient } from "@/db";
++import { authUsers } from "@/db/schema";
+ import type { AuthAdapter, AuthUserRecord } from "@/lib/auth/adapter";
+-import { getDrizzleClient } from "@/lib/db/providers/drizzle";
+-import { authUsers } from "@/lib/db/schema";
+ import type { UserRole } from "@/types/auth";
+ 
+ export class AuthEmailExistsError extends Error {
+diff --git a/src/lib/auth/cookie-security.ts b/src/lib/auth/cookie-security.ts
+index cdc2669..69679a4 100644
+--- a/src/lib/auth/cookie-security.ts
++++ b/src/lib/auth/cookie-security.ts
+@@ -1,3 +1,3 @@
+ export function shouldUseSecureCookies(): boolean {
+-  return process.env.NODE_ENV === "production" && process.env.ALLOW_INSECURE_DEV_AUTH !== "true";
++  return process.env.NODE_ENV === "production";
+ }
+diff --git a/src/lib/auth/dev-auth-fallback.ts b/src/lib/auth/dev-auth-fallback.ts
+deleted file mode 100644
+index bac0744..0000000
+--- a/src/lib/auth/dev-auth-fallback.ts
++++ /dev/null
+@@ -1,67 +0,0 @@
+-import { verifyPassword } from "@/lib/auth/password";
+-import type { User } from "@/types/user";
+-
+-interface DevAuthUser {
+-  id: string;
+-  name: string;
+-  email: string;
+-  role: "admin" | "user";
+-  passwordHash: string;
+-  failedAttempts: number;
+-  lockedUntil: Date | null;
+-}
+-
+-const devUser: DevAuthUser = {
+-  id: "u_demo_admin",
+-  name: "Demo Admin",
+-  email: "nextjs.boilerplate@azmarif.dev",
+-  role: "admin",
+-  passwordHash:
+-    "scrypt$tIgcUQChjtBP9tB2cwlxpQ==$O/ATAw1I+XqirPJRgT6akvanm9i3l/3eQCt4ZAUPJ01yJPM+4pvxqY+6qVH6cPChXOz5pREg9YpixZvB7b4zcA==",
+-  failedAttempts: 0,
+-  lockedUntil: null
+-};
+-
+-const MAX_FAILED_ATTEMPTS = 5;
+-const LOCK_WINDOW_MS = 15 * 60 * 1000;
+-
+-function toUser(user: DevAuthUser): User {
+-  return {
+-    id: user.id,
+-    name: user.name,
+-    email: user.email,
+-    role: user.role
+-  };
+-}
+-
+-export async function tryDevAuthLogin(input: {
+-  email: string;
+-  password: string;
+-}): Promise<{ user?: User; status: number; message?: string }> {
+-  if (process.env.ALLOW_DEMO_AUTH !== "true") {
+-    return { status: 503, message: "Demo auth is disabled" };
+-  }
+-
+-  const normalizedEmail = input.email.toLowerCase();
+-  if (normalizedEmail !== devUser.email) {
+-    return { status: 401, message: "Invalid email or password" };
+-  }
+-
+-  if (devUser.lockedUntil && devUser.lockedUntil.getTime() > Date.now()) {
+-    return { status: 429, message: "Too many login attempts. Please try again later." };
+-  }
+-
+-  const passwordMatches = await verifyPassword(input.password, devUser.passwordHash);
+-  if (!passwordMatches) {
+-    devUser.failedAttempts += 1;
+-    if (devUser.failedAttempts >= MAX_FAILED_ATTEMPTS) {
+-      devUser.lockedUntil = new Date(Date.now() + LOCK_WINDOW_MS);
+-    }
+-    return { status: 401, message: "Invalid email or password" };
+-  }
+-
+-  devUser.failedAttempts = 0;
+-  devUser.lockedUntil = null;
+-
+-  return { status: 200, user: toUser(devUser) };
+-}
+diff --git a/src/lib/auth/session.ts b/src/lib/auth/session.ts
+index 33f6061..7bf1a4f 100644
+--- a/src/lib/auth/session.ts
++++ b/src/lib/auth/session.ts
+@@ -20,8 +20,6 @@ interface SessionKey {
+   value: string;
+ }
+ 
+-const DEV_FALLBACK_SECRET = "dev-only-insecure-session-secret";
+-
+ function uint8ToBase64Url(bytes: Uint8Array): string {
+   const base64 = btoa(String.fromCharCode(...bytes));
+   return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+@@ -58,14 +56,7 @@ function getSessionKeys(): SessionKey[] {
+     return [{ kid: "k1", value: legacy }];
+   }
+ 
+-  const allowInsecureDevFallback = process.env.ALLOW_INSECURE_DEV_AUTH === "true";
+-  if (!allowInsecureDevFallback) {
+-    throw new Error(
+-      "AUTH_SESSION_SECRET or AUTH_SESSION_SECRETS is required. For local-only fallback set ALLOW_INSECURE_DEV_AUTH=true."
+-    );
+-  }
+-
+-  return [{ kid: "dev-k1", value: DEV_FALLBACK_SECRET }];
++  throw new Error("AUTH_SESSION_SECRET or AUTH_SESSION_SECRETS is required.");
+ }
+ 
+ function timingSafeEqualBytes(a: Uint8Array, b: Uint8Array): boolean {
+diff --git a/src/lib/config/env.ts b/src/lib/config/env.ts
+index af00560..d4c506f 100644
+--- a/src/lib/config/env.ts
++++ b/src/lib/config/env.ts
+@@ -23,14 +23,19 @@ export const env = createEnv({
+     DATABASE_URL: optionalUrl,
+     AUTH_SESSION_SECRET: optionalString,
+     AUTH_SESSION_SECRETS: optionalString,
+-    AUTH_MFA_STATIC_CODE: optionalString,
+     AUTH_MFA_VERIFY_URL: optionalUrl,
+     AUTH_MFA_VERIFY_BEARER_TOKEN: optionalString,
+-    ALLOW_STATIC_MFA_IN_PRODUCTION: optionalBooleanString,
+-    ALLOW_DEMO_AUTH: optionalBooleanString,
+-    ALLOW_INSECURE_DEV_AUTH: optionalBooleanString,
+     REQUIRE_ADMIN_STEP_UP_AUTH: optionalBooleanString,
+-    ENABLE_CUSTOM_AUTH: optionalBooleanString
++    ENABLE_CUSTOM_AUTH: optionalBooleanString,
++    SENTRY_DSN: optionalUrl,
++    SENTRY_AUTH_TOKEN: optionalString,
++    SENTRY_ORG: optionalString,
++    SENTRY_PROJECT: optionalString,
++    SENTRY_TRACES_SAMPLE_RATE: optionalString,
++    RESEND_API_KEY: optionalString,
++    EMAIL_FROM: optionalString,
++    UPSTASH_REDIS_REST_URL: optionalUrl,
++    UPSTASH_REDIS_REST_TOKEN: optionalString
+   },
+   client: {
+     NEXT_PUBLIC_APP_NAME: appName,
+@@ -40,20 +45,27 @@ export const env = createEnv({
+     NEXT_PUBLIC_BACKEND_MODE: z.enum(["external", "internal"]).default("internal"),
+     NEXT_PUBLIC_AUTH_PROVIDER: z.enum(["better-auth", "custom-auth"]).default("better-auth"),
+     NEXT_PUBLIC_ENABLE_CUSTOM_AUTH: optionalBooleanString,
+-    NEXT_PUBLIC_FEATURE_ADMIN: optionalBooleanString
++    NEXT_PUBLIC_FEATURE_ADMIN: optionalBooleanString,
++    NEXT_PUBLIC_SENTRY_DSN: optionalUrl,
++    NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE: optionalString
+   },
+   runtimeEnv: {
+     DATABASE_URL: process.env.DATABASE_URL,
+     AUTH_SESSION_SECRET: process.env.AUTH_SESSION_SECRET,
+     AUTH_SESSION_SECRETS: process.env.AUTH_SESSION_SECRETS,
+-    AUTH_MFA_STATIC_CODE: process.env.AUTH_MFA_STATIC_CODE,
+     AUTH_MFA_VERIFY_URL: process.env.AUTH_MFA_VERIFY_URL,
+     AUTH_MFA_VERIFY_BEARER_TOKEN: process.env.AUTH_MFA_VERIFY_BEARER_TOKEN,
+-    ALLOW_STATIC_MFA_IN_PRODUCTION: process.env.ALLOW_STATIC_MFA_IN_PRODUCTION,
+-    ALLOW_DEMO_AUTH: process.env.ALLOW_DEMO_AUTH,
+-    ALLOW_INSECURE_DEV_AUTH: process.env.ALLOW_INSECURE_DEV_AUTH,
+     REQUIRE_ADMIN_STEP_UP_AUTH: process.env.REQUIRE_ADMIN_STEP_UP_AUTH,
+     ENABLE_CUSTOM_AUTH: process.env.ENABLE_CUSTOM_AUTH,
++    SENTRY_DSN: process.env.SENTRY_DSN,
++    SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
++    SENTRY_ORG: process.env.SENTRY_ORG,
++    SENTRY_PROJECT: process.env.SENTRY_PROJECT,
++    SENTRY_TRACES_SAMPLE_RATE: process.env.SENTRY_TRACES_SAMPLE_RATE,
++    RESEND_API_KEY: process.env.RESEND_API_KEY,
++    EMAIL_FROM: process.env.EMAIL_FROM,
++    UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
++    UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
+     NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
+     NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
+     NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL: process.env.NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL,
+@@ -61,6 +73,8 @@ export const env = createEnv({
+     NEXT_PUBLIC_BACKEND_MODE: process.env.NEXT_PUBLIC_BACKEND_MODE,
+     NEXT_PUBLIC_AUTH_PROVIDER: process.env.NEXT_PUBLIC_AUTH_PROVIDER,
+     NEXT_PUBLIC_ENABLE_CUSTOM_AUTH: process.env.NEXT_PUBLIC_ENABLE_CUSTOM_AUTH,
+-    NEXT_PUBLIC_FEATURE_ADMIN: process.env.NEXT_PUBLIC_FEATURE_ADMIN
++    NEXT_PUBLIC_FEATURE_ADMIN: process.env.NEXT_PUBLIC_FEATURE_ADMIN,
++    NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
++    NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE: process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE
+   }
+ });
+diff --git a/src/lib/config/featureFlags.ts b/src/lib/config/featureFlags.ts
+index cd3865e..35dfe00 100644
+--- a/src/lib/config/featureFlags.ts
++++ b/src/lib/config/featureFlags.ts
+@@ -1,10 +1,6 @@
+ import { appConfig } from "@/lib/config/app-config";
+ 
+-export type FeatureFlag =
+-  | "ENABLE_ADMIN"
+-  | "ENABLE_CUSTOM_AUTH"
+-  | "ALLOW_DEMO_AUTH"
+-  | "ALLOW_INSECURE_DEV_AUTH";
++export type FeatureFlag = "ENABLE_ADMIN" | "ENABLE_CUSTOM_AUTH";
+ 
+ export type FeatureFlagCategory = "auth-modes" | "optional-modules" | "dev-features";
+ 
+@@ -16,9 +12,7 @@ export interface FeatureFlagDefinition {
+ 
+ export const featureFlagDefinitions: FeatureFlagDefinition[] = [
+   { key: "ENABLE_CUSTOM_AUTH", label: "Optional Custom Auth Module", category: "auth-modes" },
+-  { key: "ENABLE_ADMIN", label: "Admin Module", category: "optional-modules" },
+-  { key: "ALLOW_DEMO_AUTH", label: "Demo Auth", category: "dev-features" },
+-  { key: "ALLOW_INSECURE_DEV_AUTH", label: "Insecure Dev Auth", category: "dev-features" }
++  { key: "ENABLE_ADMIN", label: "Admin Module", category: "optional-modules" }
+ ];
+ 
+ export type FeatureFlags = Record<FeatureFlag, boolean>;
+@@ -28,9 +22,7 @@ export function getFeatureFlags(): FeatureFlags {
+     ENABLE_ADMIN: appConfig.features.admin,
+     ENABLE_CUSTOM_AUTH:
+       process.env.NEXT_PUBLIC_ENABLE_CUSTOM_AUTH === "true" ||
+-      process.env.ENABLE_CUSTOM_AUTH === "true",
+-    ALLOW_DEMO_AUTH: process.env.ALLOW_DEMO_AUTH === "true",
+-    ALLOW_INSECURE_DEV_AUTH: process.env.ALLOW_INSECURE_DEV_AUTH === "true"
++      process.env.ENABLE_CUSTOM_AUTH === "true"
+   };
+ }
+ 
+diff --git a/src/lib/config/validate.ts b/src/lib/config/validate.ts
+index 22ac0db..57b92e7 100644
+--- a/src/lib/config/validate.ts
++++ b/src/lib/config/validate.ts
+@@ -10,18 +10,15 @@ function collectErrors(): string[] {
+     process.env.ENABLE_CUSTOM_AUTH === "true";
+ 
+   if (appConfig.backendMode === "internal") {
+-    const allowDemoAuth = process.env.ALLOW_DEMO_AUTH === "true";
+     const hasSessionSecret = Boolean(
+       env.AUTH_SESSION_SECRET?.trim() || env.AUTH_SESSION_SECRETS?.trim()
+     );
+ 
+-    if (!hasSessionSecret && process.env.ALLOW_INSECURE_DEV_AUTH !== "true") {
+-      errors.push(
+-        "AUTH_SESSION_SECRET or AUTH_SESSION_SECRETS is required for internal auth (or set ALLOW_INSECURE_DEV_AUTH=true for local development only)."
+-      );
++    if (!hasSessionSecret) {
++      errors.push("AUTH_SESSION_SECRET or AUTH_SESSION_SECRETS is required for internal auth.");
+     }
+ 
+-    if (!allowDemoAuth && !env.DATABASE_URL?.trim()) {
++    if (!env.DATABASE_URL?.trim()) {
+       errors.push("DATABASE_URL is required when NEXT_PUBLIC_BACKEND_MODE=internal.");
+     }
+   }
+diff --git a/src/lib/db/index.ts b/src/lib/db/index.ts
+deleted file mode 100644
+index a558f38..0000000
+--- a/src/lib/db/index.ts
++++ /dev/null
+@@ -1,12 +0,0 @@
+-import { getDrizzleClient } from "@/lib/db/providers/drizzle";
+-
+-type PostgresClient = ReturnType<typeof getDrizzleClient>;
+-
+-export type ActiveDbProvider = { provider: "postgres"; client: PostgresClient };
+-
+-export async function getActiveDbProvider(): Promise<ActiveDbProvider> {
+-  return {
+-    provider: "postgres",
+-    client: getDrizzleClient()
+-  };
+-}
+diff --git a/src/lib/db/providers/drizzle.ts b/src/lib/db/providers/drizzle.ts
+deleted file mode 100644
+index 239db7c..0000000
+--- a/src/lib/db/providers/drizzle.ts
++++ /dev/null
+@@ -1,11 +0,0 @@
+-import { drizzle } from "drizzle-orm/neon-http";
+-
+-import { env } from "@/lib/config/env";
+-
+-export function getDrizzleClient() {
+-  if (!env.DATABASE_URL) {
+-    return null;
+-  }
+-
+-  return drizzle(env.DATABASE_URL);
+-}
+diff --git a/src/lib/db/schema.ts b/src/lib/db/schema.ts
+deleted file mode 100644
+index 8eaddd6..0000000
+--- a/src/lib/db/schema.ts
++++ /dev/null
+@@ -1,36 +0,0 @@
+-import { boolean, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+-
+-export const users = pgTable("users", {
+-  id: text("id").primaryKey(),
+-  name: text("name").notNull(),
+-  email: text("email").notNull().unique(),
+-  age: integer("age"),
+-  createdAt: timestamp("created_at").defaultNow().notNull()
+-});
+-
+-export const authUsers = pgTable("auth_users", {
+-  id: text("id").primaryKey(),
+-  name: text("name").notNull(),
+-  email: text("email").notNull().unique(),
+-  role: text("role").notNull().default("user"),
+-  passwordHash: text("password_hash").notNull(),
+-  failedLoginAttempts: integer("failed_login_attempts").notNull().default(0),
+-  lockedUntil: timestamp("locked_until"),
+-  createdAt: timestamp("created_at").defaultNow().notNull(),
+-  updatedAt: timestamp("updated_at").defaultNow().notNull()
+-});
+-
+-export const authAuditLogs = pgTable("auth_audit_logs", {
+-  id: text("id").primaryKey(),
+-  event: text("event").notNull(),
+-  status: text("status").notNull(),
+-  email: text("email"),
+-  userId: text("user_id"),
+-  ipAddress: text("ip_address"),
+-  userAgent: text("user_agent"),
+-  isSuspicious: boolean("is_suspicious").notNull().default(false),
+-  riskScore: integer("risk_score").notNull().default(0),
+-  reason: text("reason"),
+-  metadata: text("metadata"),
+-  createdAt: timestamp("created_at").defaultNow().notNull()
+-});
+diff --git a/src/lib/docs/content.ts b/src/lib/docs/content.ts
+index 695aaa4..7a19ee9 100644
+--- a/src/lib/docs/content.ts
++++ b/src/lib/docs/content.ts
+@@ -59,6 +59,21 @@ export const docEntries: DocEntry[] = [
+     sourcePath: { en: "docs/how-to-use.md", bn: "docs/how-to-use.md" },
+     slug: ["how-to-use"]
+   },
++  {
++    id: "adopting-boilerplate",
++    title: { en: "Adopting This Boilerplate", bn: "বয়লারপ্লেট অ্যাডপশন" },
++    description: {
++      en: "What to rename, configure, replace, remove, and verify for a real product.",
++      bn: "রিয়েল প্রোডাক্টের জন্য কী rename, configure, replace, remove এবং verify করবেন।"
++    },
++    category: { en: "Start Here", bn: "শুরু করুন" },
++    readTime: { en: "10 min read", bn: "১০ মিনিট পড়া" },
++    sourcePath: {
++      en: "docs/guides/adopting-boilerplate.md",
++      bn: "docs/guides/adopting-boilerplate.md"
++    },
++    slug: ["guides", "adopting-boilerplate"]
++  },
+   {
+     id: "architecture",
+     title: { en: "Architecture", bn: "আর্কিটেকচার" },
+@@ -122,6 +137,36 @@ export const docEntries: DocEntry[] = [
+     sourcePath: { en: "docs/guides/deployment.md", bn: "docs/guides/deployment.md" },
+     slug: ["guides", "deployment"]
+   },
++  {
++    id: "database-setup",
++    title: { en: "Database Setup", bn: "ডাটাবেস সেটআপ" },
++    description: {
++      en: "PostgreSQL, Neon, Drizzle migrations, runtime access, and production migration workflow.",
++      bn: "PostgreSQL, Neon, Drizzle migration, runtime access এবং production migration workflow।"
++    },
++    category: { en: "Operations & Release", bn: "অপারেশনস ও রিলিজ" },
++    readTime: { en: "5 min read", bn: "৫ মিনিট পড়া" },
++    sourcePath: {
++      en: "docs/guides/database-setup.md",
++      bn: "docs/guides/database-setup.md"
++    },
++    slug: ["guides", "database-setup"]
++  },
++  {
++    id: "production-services",
++    title: { en: "Production Services", bn: "প্রোডাকশন সার্ভিস" },
++    description: {
++      en: "Configure Sentry, Resend, Upstash Redis, and production migration secrets.",
++      bn: "Sentry, Resend, Upstash Redis এবং production migration secret কনফিগার করুন।"
++    },
++    category: { en: "Operations & Release", bn: "অপারেশনস ও রিলিজ" },
++    readTime: { en: "5 min read", bn: "৫ মিনিট পড়া" },
++    sourcePath: {
++      en: "docs/guides/production-services.md",
++      bn: "docs/guides/production-services.md"
++    },
++    slug: ["guides", "production-services"]
++  },
+   {
+     id: "cloud-providers",
+     title: { en: "Cloud Providers", bn: "ক্লাউড প্রোভাইডার" },
+@@ -195,8 +240,8 @@ export const docEntries: DocEntry[] = [
+     id: "auth-setup-migration",
+     title: { en: "Auth Setup and Migration", bn: "Auth সেটআপ ও মাইগ্রেশন" },
+     description: {
+-      en: "Remove demo auth safely, configure better-auth for production, or migrate to custom-auth.",
+-      bn: "Demo auth নিরাপদে remove করুন, production better-auth configure করুন, বা custom-auth-এ migrate করুন।"
++      en: "Configure better-auth for production or migrate to custom-auth.",
++      bn: "Production better-auth configure করুন, বা custom-auth-এ migrate করুন।"
+     },
+     category: { en: "Maintainer Playbook", bn: "মেইনটেইনার প্লেবুক" },
+     readTime: { en: "7 min read", bn: "৭ মিনিট পড়া" },
+diff --git a/src/lib/security/rate-limit.ts b/src/lib/security/rate-limit.ts
+index 7b93ff9..77a6a5e 100644
+--- a/src/lib/security/rate-limit.ts
++++ b/src/lib/security/rate-limit.ts
+@@ -1,3 +1,7 @@
++import { Redis } from "@upstash/redis";
++
++import { logger } from "@/lib/observability/logger";
++
+ export interface RateLimitOptions {
+   limit: number;
+   windowMs: number;
+@@ -16,6 +20,20 @@ interface Entry {
+ 
+ const inMemoryStore = new Map<string, Entry>();
+ const MAX_STORE_KEYS = 5000;
++let redisClient: Redis | null | undefined;
++
++function getRedisClient(): Redis | null {
++  if (redisClient !== undefined) {
++    return redisClient;
++  }
++
++  const hasUpstashConfig = Boolean(
++    process.env.UPSTASH_REDIS_REST_URL?.trim() && process.env.UPSTASH_REDIS_REST_TOKEN?.trim()
++  );
++
++  redisClient = hasUpstashConfig ? Redis.fromEnv() : null;
++  return redisClient;
++}
+ 
+ function currentWindow(now: number, windowMs: number): number {
+   return now - (now % windowMs) + windowMs;
+@@ -44,7 +62,7 @@ function enforceStoreCap(): void {
+   }
+ }
+ 
+-export function consumeRateLimit(key: string, options: RateLimitOptions): RateLimitResult {
++function consumeInMemoryRateLimit(key: string, options: RateLimitOptions): RateLimitResult {
+   const now = Date.now();
+   pruneExpiredEntries(now);
+   enforceStoreCap();
+@@ -70,6 +88,46 @@ export function consumeRateLimit(key: string, options: RateLimitOptions): RateLi
+   };
+ }
+ 
++async function consumeRedisRateLimit(
++  redis: Redis,
++  key: string,
++  options: RateLimitOptions
++): Promise<RateLimitResult> {
++  const now = Date.now();
++  const resetAt = currentWindow(now, options.windowMs);
++  const windowKey = `rate-limit:${key}:${resetAt}`;
++  const count = await redis.incr(windowKey);
++
++  if (count === 1) {
++    await redis.pexpire(windowKey, Math.max(resetAt - now, 1_000));
++  }
++
++  return {
++    allowed: count <= options.limit,
++    remaining: Math.max(options.limit - count, 0),
++    resetAt
++  };
++}
++
++export async function consumeRateLimit(
++  key: string,
++  options: RateLimitOptions
++): Promise<RateLimitResult> {
++  const redis = getRedisClient();
++  if (!redis) {
++    return consumeInMemoryRateLimit(key, options);
++  }
++
++  try {
++    return await consumeRedisRateLimit(redis, key, options);
++  } catch (error) {
++    logger.warn("rate-limit:redis_failed", {
++      error: error instanceof Error ? error.message : "Unknown Redis error"
++    });
++    return consumeInMemoryRateLimit(key, options);
++  }
++}
++
+ export function attachRateLimitHeaders(
+   response: Response,
+   result: RateLimitResult,
+diff --git a/src/tests/integration/auth-api.test.ts b/src/tests/integration/auth-api.test.ts
+index 8efd3a8..5dd31ce 100644
+--- a/src/tests/integration/auth-api.test.ts
++++ b/src/tests/integration/auth-api.test.ts
+@@ -10,12 +10,9 @@ const ORIGINAL_ENV = {
+   NEXT_PUBLIC_BACKEND_MODE: process.env.NEXT_PUBLIC_BACKEND_MODE,
+   NEXT_PUBLIC_AUTH_PROVIDER: process.env.NEXT_PUBLIC_AUTH_PROVIDER,
+   DATABASE_URL: process.env.DATABASE_URL,
+-  ALLOW_DEMO_AUTH: process.env.ALLOW_DEMO_AUTH,
+-  ALLOW_INSECURE_DEV_AUTH: process.env.ALLOW_INSECURE_DEV_AUTH,
+   AUTH_SESSION_SECRET: process.env.AUTH_SESSION_SECRET,
+   AUTH_SESSION_SECRETS: process.env.AUTH_SESSION_SECRETS,
+-  REQUIRE_ADMIN_STEP_UP_AUTH: process.env.REQUIRE_ADMIN_STEP_UP_AUTH,
+-  AUTH_MFA_STATIC_CODE: process.env.AUTH_MFA_STATIC_CODE
++  REQUIRE_ADMIN_STEP_UP_AUTH: process.env.REQUIRE_ADMIN_STEP_UP_AUTH
+ };
+ const mutableEnv = process.env as Record<string, string | undefined>;
+ 
+@@ -36,12 +33,9 @@ afterEach(() => {
+   restoreEnv("NEXT_PUBLIC_BACKEND_MODE", ORIGINAL_ENV.NEXT_PUBLIC_BACKEND_MODE);
+   restoreEnv("NEXT_PUBLIC_AUTH_PROVIDER", ORIGINAL_ENV.NEXT_PUBLIC_AUTH_PROVIDER);
+   restoreEnv("DATABASE_URL", ORIGINAL_ENV.DATABASE_URL);
+-  restoreEnv("ALLOW_DEMO_AUTH", ORIGINAL_ENV.ALLOW_DEMO_AUTH);
+-  restoreEnv("ALLOW_INSECURE_DEV_AUTH", ORIGINAL_ENV.ALLOW_INSECURE_DEV_AUTH);
+   restoreEnv("AUTH_SESSION_SECRET", ORIGINAL_ENV.AUTH_SESSION_SECRET);
+   restoreEnv("AUTH_SESSION_SECRETS", ORIGINAL_ENV.AUTH_SESSION_SECRETS);
+   restoreEnv("REQUIRE_ADMIN_STEP_UP_AUTH", ORIGINAL_ENV.REQUIRE_ADMIN_STEP_UP_AUTH);
+-  restoreEnv("AUTH_MFA_STATIC_CODE", ORIGINAL_ENV.AUTH_MFA_STATIC_CODE);
+ });
+ 
+ function buildJsonRequest(url: string, body: Record<string, unknown>): NextRequest {
+@@ -76,58 +70,24 @@ describe("auth api integration", () => {
+     expect(payload.error.code).toBe("AUTH_UNAVAILABLE");
+   });
+ 
+-  it("supports login + me + protected resources with envelope", async () => {
++  it("returns service unavailable envelope for login when DB is missing", async () => {
+     process.env.NEXT_PUBLIC_BACKEND_MODE = "internal";
+     process.env.NEXT_PUBLIC_AUTH_PROVIDER = "better-auth";
+     delete process.env.DATABASE_URL;
+-    process.env.ALLOW_DEMO_AUTH = "true";
+-    process.env.ALLOW_INSECURE_DEV_AUTH = "true";
+     process.env.AUTH_SESSION_SECRET = "integration-secret";
+     const { POST: loginPost } = await import("@/app/api/v1/auth/login/route");
+-    const { GET: meGet } = await import("@/app/api/v1/auth/me/route");
+-    const { POST: refreshPost } = await import("@/app/api/v1/auth/refresh/route");
+ 
+     const loginResponse = await loginPost(
+       buildJsonRequest("http://localhost/api/v1/auth/login", {
+-        email: "nextjs.boilerplate@azmarif.dev",
+-        password: "azmarifdev"
++        email: "missing-db@example.com",
++        password: "valid-password"
+       })
+     );
++    const payload = await loginResponse.json();
+ 
+-    expect(loginResponse.status).toBe(200);
+-    const loginPayload = await loginResponse.json();
+-    expect(loginPayload.success).toBe(true);
+-    expect(loginPayload.data.user.role).toBe("admin");
+-
+-    const setCookie = loginResponse.headers.get("set-cookie");
+-    expect(setCookie).toContain(`${AUTH_COOKIE_NAME}=`);
+-
+-    const meRequest = new NextRequest("http://localhost/api/v1/auth/me", {
+-      method: "GET",
+-      headers: {
+-        cookie: setCookie ?? ""
+-      }
+-    });
+-    const meResponse = await meGet(meRequest);
+-    const mePayload = await meResponse.json();
+-
+-    expect(meResponse.status).toBe(200);
+-    expect(mePayload.success).toBe(true);
+-    expect(mePayload.data.email).toBe("nextjs.boilerplate@azmarif.dev");
+-
+-    const refreshRequest = new NextRequest("http://localhost/api/v1/auth/refresh", {
+-      method: "POST",
+-      headers: {
+-        cookie: setCookie ?? "",
+-        origin: "http://localhost"
+-      }
+-    });
+-    const refreshResponse = await refreshPost(refreshRequest);
+-    const refreshPayload = await refreshResponse.json();
+-
+-    expect(refreshResponse.status).toBe(200);
+-    expect(refreshPayload.success).toBe(true);
+-    expect(refreshPayload.data.refreshed).toBe(true);
++    expect(loginResponse.status).toBe(503);
++    expect(payload.success).toBe(false);
++    expect(payload.error.code).toBe("AUTH_UNAVAILABLE");
+   });
+ 
+   it("clears auth cookie on logout", async () => {
+@@ -180,58 +140,23 @@ describe("auth api integration", () => {
+     expect(payload.error.code).toBe("INVALID_SESSION");
+   });
+ 
+-  it("locks demo account after repeated failed logins", async () => {
++  it("returns service unavailable when admin MFA step-up verifier is missing", async () => {
+     process.env.NEXT_PUBLIC_BACKEND_MODE = "internal";
+     process.env.NEXT_PUBLIC_AUTH_PROVIDER = "better-auth";
+-    delete process.env.DATABASE_URL;
+-    process.env.ALLOW_DEMO_AUTH = "true";
+-    process.env.ALLOW_INSECURE_DEV_AUTH = "true";
+-    process.env.AUTH_SESSION_SECRET = "integration-secret";
+-    const { POST: loginPost } = await import("@/app/api/v1/auth/login/route");
+-
+-    for (let attempt = 0; attempt < 5; attempt += 1) {
+-      const failed = await loginPost(
+-        buildJsonRequest("http://localhost/api/v1/auth/login", {
+-          email: "nextjs.boilerplate@azmarif.dev",
+-          password: "wrong-password"
+-        })
+-      );
+-      expect(failed.status).toBe(401);
+-    }
+-
+-    const locked = await loginPost(
+-      buildJsonRequest("http://localhost/api/v1/auth/login", {
+-        email: "nextjs.boilerplate@azmarif.dev",
+-        password: "azmarifdev"
+-      })
+-    );
+-    const payload = await locked.json();
+-    expect(locked.status).toBe(429);
+-    expect(payload.error.code).toBe("LOGIN_LOCKED");
+-  });
+-
+-  it("verifies admin MFA step-up and returns upgraded session cookie", async () => {
+-    process.env.NEXT_PUBLIC_BACKEND_MODE = "internal";
+-    process.env.NEXT_PUBLIC_AUTH_PROVIDER = "better-auth";
+-    delete process.env.DATABASE_URL;
+-    process.env.ALLOW_DEMO_AUTH = "true";
+-    process.env.ALLOW_INSECURE_DEV_AUTH = "true";
+     process.env.REQUIRE_ADMIN_STEP_UP_AUTH = "true";
+-    process.env.AUTH_MFA_STATIC_CODE = "123456";
+     process.env.AUTH_SESSION_SECRET = "integration-secret";
+ 
+-    const { POST: loginPost } = await import("@/app/api/v1/auth/login/route");
+     const { POST: mfaVerifyPost } = await import("@/app/api/v1/auth/mfa/verify/route");
+-
+-    const loginResponse = await loginPost(
+-      buildJsonRequest("http://localhost/api/v1/auth/login", {
+-        email: "nextjs.boilerplate@azmarif.dev",
+-        password: "azmarifdev"
+-      })
++    const adminToken = await createSessionToken(
++      {
++        sub: "u_admin",
++        name: "Admin",
++        email: "admin@example.com",
++        role: "admin",
++        mfaVerified: false
++      },
++      60
+     );
+-    const loginCookie = loginResponse.headers.get("set-cookie") ?? "";
+-    expect(loginResponse.status).toBe(200);
+-    expect(loginCookie).toContain(`${AUTH_COOKIE_NAME}=`);
+ 
+     const mfaResponse = await mfaVerifyPost(
+       new NextRequest("http://localhost/api/v1/auth/mfa/verify", {
+@@ -239,16 +164,15 @@ describe("auth api integration", () => {
+         headers: {
+           origin: "http://localhost",
+           "content-type": "application/json",
+-          cookie: loginCookie
++          cookie: `${AUTH_COOKIE_NAME}=${adminToken}`
+         },
+         body: JSON.stringify({ code: "123456" })
+       })
+     );
+     const mfaPayload = await mfaResponse.json();
+ 
+-    expect(mfaResponse.status).toBe(200);
+-    expect(mfaPayload.success).toBe(true);
+-    expect(mfaPayload.data.verified).toBe(true);
+-    expect(mfaResponse.headers.get("set-cookie")).toContain(`${AUTH_COOKIE_NAME}=`);
++    expect(mfaResponse.status).toBe(503);
++    expect(mfaPayload.success).toBe(false);
++    expect(mfaPayload.error.code).toBe("MFA_NOT_CONFIGURED");
+   });
+ });
+diff --git a/src/tests/unit/session.vitest.ts b/src/tests/unit/session.vitest.ts
+index 14452d8..949505a 100644
+--- a/src/tests/unit/session.vitest.ts
++++ b/src/tests/unit/session.vitest.ts
+@@ -5,14 +5,12 @@ import { createSessionToken, verifySessionToken } from "@/lib/auth/session";
+ describe("session token", () => {
+   const original = {
+     AUTH_SESSION_SECRET: process.env.AUTH_SESSION_SECRET,
+-    AUTH_SESSION_SECRETS: process.env.AUTH_SESSION_SECRETS,
+-    ALLOW_INSECURE_DEV_AUTH: process.env.ALLOW_INSECURE_DEV_AUTH
++    AUTH_SESSION_SECRETS: process.env.AUTH_SESSION_SECRETS
+   };
+ 
+   afterEach(() => {
+     process.env.AUTH_SESSION_SECRET = original.AUTH_SESSION_SECRET;
+     process.env.AUTH_SESSION_SECRETS = original.AUTH_SESSION_SECRETS;
+-    process.env.ALLOW_INSECURE_DEV_AUTH = original.ALLOW_INSECURE_DEV_AUTH;
+   });
+ 
+   it("creates and verifies a valid token", async () => {
+@@ -54,16 +52,15 @@ describe("session token", () => {
+     await expect(verifySessionToken(malformedSignatureToken)).resolves.toBeNull();
+   });
+ 
+-  it("fails fast when secret is missing and insecure fallback is disabled", async () => {
++  it("fails fast when secret is missing", async () => {
+     delete process.env.AUTH_SESSION_SECRET;
+     delete process.env.AUTH_SESSION_SECRETS;
+-    process.env.ALLOW_INSECURE_DEV_AUTH = "false";
+ 
+     await expect(
+       createSessionToken(
+         { sub: "u_3", name: "No Secret", email: "no@example.com", role: "user" },
+         60
+       )
+-    ).rejects.toThrow(/ALLOW_INSECURE_DEV_AUTH=true/);
++    ).rejects.toThrow(/AUTH_SESSION_SECRET or AUTH_SESSION_SECRETS is required/);
+   });
+ });

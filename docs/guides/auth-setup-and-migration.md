@@ -4,9 +4,9 @@
 
 This guide helps you:
 
-1. safely disable demo auth
-2. move to production-safe internal auth (`better-auth`)
-3. optionally switch to external `custom-auth`
+1. configure production-safe internal auth (`better-auth`)
+2. optionally switch to external `custom-auth`
+3. verify auth behavior before deployment
 
 Use this before staging/production deploys.
 
@@ -21,18 +21,13 @@ Use this before staging/production deploys.
 
 ---
 
-## Part A: Remove Demo Auth (Required for Production)
-
-Demo auth uses development fallback flags. Keep it only for local exploration.
+## Part A: Configure Better Auth
 
 ### 1) Set production-safe env values
 
 ```env
 NEXT_PUBLIC_BACKEND_MODE=internal
 NEXT_PUBLIC_AUTH_PROVIDER=better-auth
-
-ALLOW_DEMO_AUTH=false
-ALLOW_INSECURE_DEV_AUTH=false
 
 DATABASE_URL=postgresql://user:pass@host:5432/db
 AUTH_SESSION_SECRET=<strong-random-secret>
@@ -44,28 +39,14 @@ Generate a strong secret:
 openssl rand -hex 32
 ```
 
-### 2) Verify no insecure fallback remains
-
-Search for accidental true flags:
-
-```bash
-rg -n "ALLOW_DEMO_AUTH|ALLOW_INSECURE_DEV_AUTH" .env* docs -S
-```
-
-Expected production values:
-
-- `ALLOW_DEMO_AUTH=false`
-- `ALLOW_INSECURE_DEV_AUTH=false`
-
-### 3) Test auth behavior locally
+### 2) Test auth behavior locally
 
 1. Start app
 2. open `/login`
-3. try demo credentials (should not bypass)
-4. register a real account
-5. sign out and sign in with real credentials
+3. register a real account
+4. sign out and sign in with real credentials
 
-### 4) Verify session cookie security
+### 3) Verify session cookie security
 
 In production, cookie should be:
 
@@ -147,21 +128,12 @@ Your provider should support:
 
 ## Recommended Environments
 
-### Local development (quick UI exploration only)
-
 ```env
-ALLOW_DEMO_AUTH=true
-ALLOW_INSECURE_DEV_AUTH=true
+DATABASE_URL=postgresql://user:pass@host:5432/db
+AUTH_SESSION_SECRET=<strong-random-secret>
 ```
 
-### Staging / Production
-
-```env
-ALLOW_DEMO_AUTH=false
-ALLOW_INSECURE_DEV_AUTH=false
-```
-
-Never keep demo/insecure flags enabled in public environments.
+Use the same real-auth shape locally, in staging, and in production. Change only URLs, database credentials, and secrets per environment.
 
 ---
 
@@ -206,11 +178,9 @@ Check:
 
 ## Final Production Checklist
 
-1. `ALLOW_DEMO_AUTH=false`
-2. `ALLOW_INSECURE_DEV_AUTH=false`
-3. correct auth provider selected (`better-auth` or `custom-auth`)
-4. all required secrets configured
-5. login/register/logout/me flows verified in production URL
+1. correct auth provider selected (`better-auth` or `custom-auth`)
+2. all required secrets configured
+3. login/register/logout/me flows verified in production URL
 
 ---
 

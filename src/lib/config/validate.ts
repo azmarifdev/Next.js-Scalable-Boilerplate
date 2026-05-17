@@ -10,18 +10,15 @@ function collectErrors(): string[] {
     process.env.ENABLE_CUSTOM_AUTH === "true";
 
   if (appConfig.backendMode === "internal") {
-    const allowDemoAuth = process.env.ALLOW_DEMO_AUTH === "true";
     const hasSessionSecret = Boolean(
       env.AUTH_SESSION_SECRET?.trim() || env.AUTH_SESSION_SECRETS?.trim()
     );
 
-    if (!hasSessionSecret && process.env.ALLOW_INSECURE_DEV_AUTH !== "true") {
-      errors.push(
-        "AUTH_SESSION_SECRET or AUTH_SESSION_SECRETS is required for internal auth (or set ALLOW_INSECURE_DEV_AUTH=true for local development only)."
-      );
+    if (!hasSessionSecret) {
+      errors.push("AUTH_SESSION_SECRET or AUTH_SESSION_SECRETS is required for internal auth.");
     }
 
-    if (!allowDemoAuth && !env.DATABASE_URL?.trim()) {
+    if (!env.DATABASE_URL?.trim()) {
       errors.push("DATABASE_URL is required when NEXT_PUBLIC_BACKEND_MODE=internal.");
     }
   }

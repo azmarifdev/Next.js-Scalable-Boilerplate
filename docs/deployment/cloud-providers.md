@@ -85,12 +85,19 @@ Add these in your Vercel project dashboard under **Settings > Environment Variab
 | `NEXT_PUBLIC_AUTH_PROVIDER` | All        | `better-auth` or `custom-auth`              |
 | `DATABASE_URL`              | All        | Your PostgreSQL connection string           |
 | `AUTH_SESSION_SECRET`       | All        | Generate with `openssl rand -hex 32`        |
+| `SENTRY_DSN`                | Production | Optional error monitoring                   |
+| `NEXT_PUBLIC_SENTRY_DSN`    | Production | Optional client error monitoring            |
+| `RESEND_API_KEY`            | Production | Optional transactional email                |
+| `EMAIL_FROM`                | Production | Optional transactional email sender         |
+| `UPSTASH_REDIS_REST_URL`    | Production | Recommended production rate limiting        |
+| `UPSTASH_REDIS_REST_TOKEN`  | Production | Recommended production rate limiting        |
 
 ### Post-Deployment
 
 - Vercel assigns a `.vercel.app` domain automatically
 - Set `NEXT_PUBLIC_SITE_URL` to this domain (or your custom domain)
-- Run database migrations from your local machine (Vercel doesn't run build-time DB commands)
+- Run database migrations from GitHub Actions with the `Production Database Migration` workflow
+- Keep migration commands out of the Vercel build command
 
 ### Vercel-Specific Notes
 

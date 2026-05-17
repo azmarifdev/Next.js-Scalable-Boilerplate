@@ -110,6 +110,15 @@ Minimum for stable CI:
 | `DATABASE_URL`        | Yes      | `postgresql://user:pass@host:5432/db` |
 | `AUTH_SESSION_SECRET` | Yes      | `openssl rand -hex 32` output         |
 
+Required for production migrations:
+
+| Secret                   | Required | Notes                                                         |
+| ------------------------ | -------- | ------------------------------------------------------------- |
+| `DATABASE_URL`           | Yes      | Fallback migration URL                                        |
+| `MIGRATION_DATABASE_URL` | Optional | Preferred when migrations should use a separate direct DB URL |
+
+Create a GitHub environment named `production` and enable required reviewers. The `Production Database Migration` workflow uses this environment and requires typing `migrate-production`.
+
 Optional:
 
 | Secret                             | When needed                              |
@@ -117,6 +126,7 @@ Optional:
 | `AUTH_MFA_VERIFY_URL`              | external MFA verifier                    |
 | `AUTH_MFA_VERIFY_BEARER_TOKEN`     | MFA verifier auth                        |
 | `NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL` | custom auth provider mode                |
+| `SENTRY_AUTH_TOKEN`                | Sentry source map uploads from CI/builds |
 | `RELEASE_PLEASE_TOKEN`             | optional PAT-based release PR triggering |
 
 Notes:

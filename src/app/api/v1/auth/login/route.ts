@@ -8,7 +8,6 @@ import {
   resetFailedLoginAttempts
 } from "@/lib/auth/auth-user.repository";
 import { shouldUseSecureCookies } from "@/lib/auth/cookie-security";
-import { tryDevAuthLogin } from "@/lib/auth/dev-auth-fallback";
 import { verifyPassword } from "@/lib/auth/password";
 import { createSessionToken } from "@/lib/auth/session";
 import { isAdminStepUpEnabled } from "@/lib/auth/step-up";
@@ -30,6 +29,9 @@ const AUTH_RATE_LIMIT = {
   limit: 15,
   windowMs: 60_000
 };
+
+const DUMMY_PASSWORD_HASH =
+  "scrypt$JHeTdqjVPU0YQTeUEFLxsQ==$X8HYYYHun3rSf+8EOG+zP1C9LbvhUrJfapQk0IoW4KtvROyd5cRk03TP1DEZmkIN+qgrfUPkJJ9VxdHTwvW8XQ==";
 
 function getRequestIpAddress(request: NextRequest): string | null {
   return (
@@ -108,9 +110,8 @@ async function loginHandler(request: NextRequest): Promise<Response> {
     "auth.login",
     async () => {
       const isDbConfigured = isAuthDatabaseConfigured();
-      const allowDevFallback = process.env.ALLOW_DEMO_AUTH === "true";
 
-      if (!isDbConfigured && !allowDevFallback) {
+      if (!isDbConfigured) {
         if (wantsHtml) {
           return redirectWithRequestId(request, "/login?error=service_unavailable", requestId);
         }
@@ -127,7 +128,10 @@ async function loginHandler(request: NextRequest): Promise<Response> {
       const payload = await parsePayload(request);
       const parsed = loginSchema.safeParse(payload);
       const rateLimitIdentity = parsed.success ? parsed.data.email.toLowerCase() : "invalid";
-      const loginRateLimit = consumeRateLimit(`auth:login:${rateLimitIdentity}`, AUTH_RATE_LIMIT);
+      const loginRateLimit = await consumeRateLimit(
+        `auth:login:${rateLimitIdentity}`,
+        AUTH_RATE_LIMIT
+      );
 
       if (!loginRateLimit.allowed) {
         const message = "Too many attempts. Please retry in a minute.";
@@ -170,123 +174,77 @@ async function loginHandler(request: NextRequest): Promise<Response> {
         mfaRequired?: boolean;
       } | null = null;
 
-      if (isDbConfigured) {
-        const authUser = await findAuthUserByEmail(parsed.data.email.toLowerCase());
-        if (!authUser) {
-          await writeAuthAuditLog({
-            event: "login_failed",
-            status: "failure",
-            email: parsed.data.email,
-            ipAddress,
-            userAgent,
-            reason: "user_not_found"
-          });
-          if (wantsHtml) {
-            return redirectWithRequestId(request, "/login?error=invalid_credentials", requestId);
-          }
-          return apiError(
-            { code: "INVALID_CREDENTIALS", message: "Invalid email or password" },
-            { status: 401, requestId, route }
-          );
-        }
-
-        if (authUser.lockedUntil && authUser.lockedUntil.getTime() > Date.now()) {
-          await writeAuthAuditLog({
-            event: "login_failed",
-            status: "failure",
-            email: authUser.email,
-            userId: authUser.id,
-            ipAddress,
-            userAgent,
-            reason: "account_locked"
-          });
-          if (wantsHtml) {
-            return redirectWithRequestId(request, "/login?error=rate_limited", requestId);
-          }
-          return apiError(
-            { code: "LOGIN_LOCKED", message: "Too many login attempts. Please try again later." },
-            { status: 429, requestId, route }
-          );
-        }
-
-        const passwordMatches = await verifyPassword(parsed.data.password, authUser.passwordHash);
-        if (!passwordMatches) {
-          const nextAttempts = authUser.failedLoginAttempts + 1;
-          const lockUntil =
-            nextAttempts >= MAX_FAILED_ATTEMPTS ? new Date(Date.now() + LOCK_WINDOW_MS) : null;
-
-          await recordFailedLoginAttempt(authUser, lockUntil);
-          await writeAuthAuditLog({
-            event: "login_failed",
-            status: "failure",
-            email: authUser.email,
-            userId: authUser.id,
-            ipAddress,
-            userAgent,
-            reason: "password_mismatch"
-          });
-          if (wantsHtml) {
-            return redirectWithRequestId(request, "/login?error=invalid_credentials", requestId);
-          }
-          return apiError(
-            { code: "INVALID_CREDENTIALS", message: "Invalid email or password" },
-            { status: 401, requestId, route }
-          );
-        }
-
-        await resetFailedLoginAttempts(authUser.id);
-        user = {
-          id: authUser.id,
-          name: authUser.name,
-          email: authUser.email,
-          role: authUser.role
-        };
-      } else if (allowDevFallback) {
-        const devAuth = await tryDevAuthLogin({
+      const authUser = await findAuthUserByEmail(parsed.data.email.toLowerCase());
+      if (!authUser) {
+        await verifyPassword(parsed.data.password, DUMMY_PASSWORD_HASH);
+        await writeAuthAuditLog({
+          event: "login_failed",
+          status: "failure",
           email: parsed.data.email,
-          password: parsed.data.password
+          ipAddress,
+          userAgent,
+          reason: "user_not_found"
         });
-        if (!devAuth.user) {
-          const errorCode = devAuth.status === 429 ? "LOGIN_LOCKED" : "INVALID_CREDENTIALS";
-          await writeAuthAuditLog({
-            event: "login_failed",
-            status: "failure",
-            email: parsed.data.email,
-            ipAddress,
-            userAgent,
-            reason: devAuth.status === 429 ? "account_locked" : "invalid_credentials"
-          });
-          if (wantsHtml) {
-            return redirectWithRequestId(
-              request,
-              devAuth.status === 429
-                ? "/login?error=rate_limited"
-                : "/login?error=invalid_credentials",
-              requestId
-            );
-          }
-          return apiError(
-            {
-              code: errorCode,
-              message: devAuth.message ?? "Invalid email or password"
-            },
-            { status: devAuth.status, requestId, route }
-          );
-        }
-        user = devAuth.user;
-      } else {
         if (wantsHtml) {
-          return redirectWithRequestId(request, "/login?error=service_unavailable", requestId);
+          return redirectWithRequestId(request, "/login?error=invalid_credentials", requestId);
         }
-
         return apiError(
-          {
-            code: "AUTH_UNAVAILABLE",
-            message: "Authentication is unavailable. Configure DATABASE_URL first."
-          },
-          { status: 503, requestId, route }
+          { code: "INVALID_CREDENTIALS", message: "Invalid email or password" },
+          { status: 401, requestId, route }
         );
       }
+
+      if (authUser.lockedUntil && authUser.lockedUntil.getTime() > Date.now()) {
+        await writeAuthAuditLog({
+          event: "login_failed",
+          status: "failure",
+          email: authUser.email,
+          userId: authUser.id,
+          ipAddress,
+          userAgent,
+          reason: "account_locked"
+        });
+        if (wantsHtml) {
+          return redirectWithRequestId(request, "/login?error=rate_limited", requestId);
+        }
+        return apiError(
+          { code: "LOGIN_LOCKED", message: "Too many login attempts. Please try again later." },
+          { status: 429, requestId, route }
+        );
+      }
+
+      const passwordMatches = await verifyPassword(parsed.data.password, authUser.passwordHash);
+      if (!passwordMatches) {
+        const nextAttempts = authUser.failedLoginAttempts + 1;
+        const lockUntil =
+          nextAttempts >= MAX_FAILED_ATTEMPTS ? new Date(Date.now() + LOCK_WINDOW_MS) : null;
+
+        await recordFailedLoginAttempt(authUser, lockUntil);
+        await writeAuthAuditLog({
+          event: "login_failed",
+          status: "failure",
+          email: authUser.email,
+          userId: authUser.id,
+          ipAddress,
+          userAgent,
+          reason: "password_mismatch"
+        });
+        if (wantsHtml) {
+          return redirectWithRequestId(request, "/login?error=invalid_credentials", requestId);
+        }
+        return apiError(
+          { code: "INVALID_CREDENTIALS", message: "Invalid email or password" },
+          { status: 401, requestId, route }
+        );
+      }
+
+      await resetFailedLoginAttempts(authUser.id);
+      user = {
+        id: authUser.id,
+        name: authUser.name,
+        email: authUser.email,
+        role: authUser.role
+      };
 
       const mfaVerified = user.role !== "admin" || !isAdminStepUpEnabled();
       const token = await createSessionToken(

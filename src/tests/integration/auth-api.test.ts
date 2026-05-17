@@ -10,12 +10,9 @@ const ORIGINAL_ENV = {
   NEXT_PUBLIC_BACKEND_MODE: process.env.NEXT_PUBLIC_BACKEND_MODE,
   NEXT_PUBLIC_AUTH_PROVIDER: process.env.NEXT_PUBLIC_AUTH_PROVIDER,
   DATABASE_URL: process.env.DATABASE_URL,
-  ALLOW_DEMO_AUTH: process.env.ALLOW_DEMO_AUTH,
-  ALLOW_INSECURE_DEV_AUTH: process.env.ALLOW_INSECURE_DEV_AUTH,
   AUTH_SESSION_SECRET: process.env.AUTH_SESSION_SECRET,
   AUTH_SESSION_SECRETS: process.env.AUTH_SESSION_SECRETS,
-  REQUIRE_ADMIN_STEP_UP_AUTH: process.env.REQUIRE_ADMIN_STEP_UP_AUTH,
-  AUTH_MFA_STATIC_CODE: process.env.AUTH_MFA_STATIC_CODE
+  REQUIRE_ADMIN_STEP_UP_AUTH: process.env.REQUIRE_ADMIN_STEP_UP_AUTH
 };
 const mutableEnv = process.env as Record<string, string | undefined>;
 
@@ -36,12 +33,9 @@ afterEach(() => {
   restoreEnv("NEXT_PUBLIC_BACKEND_MODE", ORIGINAL_ENV.NEXT_PUBLIC_BACKEND_MODE);
   restoreEnv("NEXT_PUBLIC_AUTH_PROVIDER", ORIGINAL_ENV.NEXT_PUBLIC_AUTH_PROVIDER);
   restoreEnv("DATABASE_URL", ORIGINAL_ENV.DATABASE_URL);
-  restoreEnv("ALLOW_DEMO_AUTH", ORIGINAL_ENV.ALLOW_DEMO_AUTH);
-  restoreEnv("ALLOW_INSECURE_DEV_AUTH", ORIGINAL_ENV.ALLOW_INSECURE_DEV_AUTH);
   restoreEnv("AUTH_SESSION_SECRET", ORIGINAL_ENV.AUTH_SESSION_SECRET);
   restoreEnv("AUTH_SESSION_SECRETS", ORIGINAL_ENV.AUTH_SESSION_SECRETS);
   restoreEnv("REQUIRE_ADMIN_STEP_UP_AUTH", ORIGINAL_ENV.REQUIRE_ADMIN_STEP_UP_AUTH);
-  restoreEnv("AUTH_MFA_STATIC_CODE", ORIGINAL_ENV.AUTH_MFA_STATIC_CODE);
 });
 
 function buildJsonRequest(url: string, body: Record<string, unknown>): NextRequest {
@@ -76,58 +70,24 @@ describe("auth api integration", () => {
     expect(payload.error.code).toBe("AUTH_UNAVAILABLE");
   });
 
-  it("supports login + me + protected resources with envelope", async () => {
+  it("returns service unavailable envelope for login when DB is missing", async () => {
     process.env.NEXT_PUBLIC_BACKEND_MODE = "internal";
     process.env.NEXT_PUBLIC_AUTH_PROVIDER = "better-auth";
     delete process.env.DATABASE_URL;
-    process.env.ALLOW_DEMO_AUTH = "true";
-    process.env.ALLOW_INSECURE_DEV_AUTH = "true";
     process.env.AUTH_SESSION_SECRET = "integration-secret";
     const { POST: loginPost } = await import("@/app/api/v1/auth/login/route");
-    const { GET: meGet } = await import("@/app/api/v1/auth/me/route");
-    const { POST: refreshPost } = await import("@/app/api/v1/auth/refresh/route");
 
     const loginResponse = await loginPost(
       buildJsonRequest("http://localhost/api/v1/auth/login", {
-        email: "nextjs.boilerplate@azmarif.dev",
-        password: "azmarifdev"
+        email: "missing-db@example.com",
+        password: "valid-password"
       })
     );
+    const payload = await loginResponse.json();
 
-    expect(loginResponse.status).toBe(200);
-    const loginPayload = await loginResponse.json();
-    expect(loginPayload.success).toBe(true);
-    expect(loginPayload.data.user.role).toBe("admin");
-
-    const setCookie = loginResponse.headers.get("set-cookie");
-    expect(setCookie).toContain(`${AUTH_COOKIE_NAME}=`);
-
-    const meRequest = new NextRequest("http://localhost/api/v1/auth/me", {
-      method: "GET",
-      headers: {
-        cookie: setCookie ?? ""
-      }
-    });
-    const meResponse = await meGet(meRequest);
-    const mePayload = await meResponse.json();
-
-    expect(meResponse.status).toBe(200);
-    expect(mePayload.success).toBe(true);
-    expect(mePayload.data.email).toBe("nextjs.boilerplate@azmarif.dev");
-
-    const refreshRequest = new NextRequest("http://localhost/api/v1/auth/refresh", {
-      method: "POST",
-      headers: {
-        cookie: setCookie ?? "",
-        origin: "http://localhost"
-      }
-    });
-    const refreshResponse = await refreshPost(refreshRequest);
-    const refreshPayload = await refreshResponse.json();
-
-    expect(refreshResponse.status).toBe(200);
-    expect(refreshPayload.success).toBe(true);
-    expect(refreshPayload.data.refreshed).toBe(true);
+    expect(loginResponse.status).toBe(503);
+    expect(payload.success).toBe(false);
+    expect(payload.error.code).toBe("AUTH_UNAVAILABLE");
   });
 
   it("clears auth cookie on logout", async () => {
@@ -180,58 +140,23 @@ describe("auth api integration", () => {
     expect(payload.error.code).toBe("INVALID_SESSION");
   });
 
-  it("locks demo account after repeated failed logins", async () => {
+  it("returns service unavailable when admin MFA step-up verifier is missing", async () => {
     process.env.NEXT_PUBLIC_BACKEND_MODE = "internal";
     process.env.NEXT_PUBLIC_AUTH_PROVIDER = "better-auth";
-    delete process.env.DATABASE_URL;
-    process.env.ALLOW_DEMO_AUTH = "true";
-    process.env.ALLOW_INSECURE_DEV_AUTH = "true";
-    process.env.AUTH_SESSION_SECRET = "integration-secret";
-    const { POST: loginPost } = await import("@/app/api/v1/auth/login/route");
-
-    for (let attempt = 0; attempt < 5; attempt += 1) {
-      const failed = await loginPost(
-        buildJsonRequest("http://localhost/api/v1/auth/login", {
-          email: "nextjs.boilerplate@azmarif.dev",
-          password: "wrong-password"
-        })
-      );
-      expect(failed.status).toBe(401);
-    }
-
-    const locked = await loginPost(
-      buildJsonRequest("http://localhost/api/v1/auth/login", {
-        email: "nextjs.boilerplate@azmarif.dev",
-        password: "azmarifdev"
-      })
-    );
-    const payload = await locked.json();
-    expect(locked.status).toBe(429);
-    expect(payload.error.code).toBe("LOGIN_LOCKED");
-  });
-
-  it("verifies admin MFA step-up and returns upgraded session cookie", async () => {
-    process.env.NEXT_PUBLIC_BACKEND_MODE = "internal";
-    process.env.NEXT_PUBLIC_AUTH_PROVIDER = "better-auth";
-    delete process.env.DATABASE_URL;
-    process.env.ALLOW_DEMO_AUTH = "true";
-    process.env.ALLOW_INSECURE_DEV_AUTH = "true";
     process.env.REQUIRE_ADMIN_STEP_UP_AUTH = "true";
-    process.env.AUTH_MFA_STATIC_CODE = "123456";
     process.env.AUTH_SESSION_SECRET = "integration-secret";
 
-    const { POST: loginPost } = await import("@/app/api/v1/auth/login/route");
     const { POST: mfaVerifyPost } = await import("@/app/api/v1/auth/mfa/verify/route");
-
-    const loginResponse = await loginPost(
-      buildJsonRequest("http://localhost/api/v1/auth/login", {
-        email: "nextjs.boilerplate@azmarif.dev",
-        password: "azmarifdev"
-      })
+    const adminToken = await createSessionToken(
+      {
+        sub: "u_admin",
+        name: "Admin",
+        email: "admin@example.com",
+        role: "admin",
+        mfaVerified: false
+      },
+      60
     );
-    const loginCookie = loginResponse.headers.get("set-cookie") ?? "";
-    expect(loginResponse.status).toBe(200);
-    expect(loginCookie).toContain(`${AUTH_COOKIE_NAME}=`);
 
     const mfaResponse = await mfaVerifyPost(
       new NextRequest("http://localhost/api/v1/auth/mfa/verify", {
@@ -239,16 +164,15 @@ describe("auth api integration", () => {
         headers: {
           origin: "http://localhost",
           "content-type": "application/json",
-          cookie: loginCookie
+          cookie: `${AUTH_COOKIE_NAME}=${adminToken}`
         },
         body: JSON.stringify({ code: "123456" })
       })
     );
     const mfaPayload = await mfaResponse.json();
 
-    expect(mfaResponse.status).toBe(200);
-    expect(mfaPayload.success).toBe(true);
-    expect(mfaPayload.data.verified).toBe(true);
-    expect(mfaResponse.headers.get("set-cookie")).toContain(`${AUTH_COOKIE_NAME}=`);
+    expect(mfaResponse.status).toBe(503);
+    expect(mfaPayload.success).toBe(false);
+    expect(mfaPayload.error.code).toBe("MFA_NOT_CONFIGURED");
   });
 });
