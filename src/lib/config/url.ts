@@ -10,10 +10,6 @@ function normalizeOrigin(value: string): string {
   return new URL(value).origin;
 }
 
-function trimTrailingSlash(value: string): string {
-  return value.endsWith("/") ? value.slice(0, -1) : value;
-}
-
 function withProtocol(value: string): string {
   return value.startsWith("http://") || value.startsWith("https://") ? value : `https://${value}`;
 }

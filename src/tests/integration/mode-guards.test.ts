@@ -2,7 +2,7 @@
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { TEST_LOCAL_ORIGIN, testUrl } from "@/tests/shared";
+import { testUrl } from "@/tests/shared";
 
 describe("mode guards", () => {
   const originalEnv = {
