@@ -7,7 +7,20 @@ import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 
 import { useAuth } from "@/hooks/useAuth";
+import { locales } from "@/i18n/routing";
 import { useAppTheme } from "@/providers/theme.provider";
+
+/** Map of locale codes → display label + flag emoji. */
+const LOCALE_META: Record<string, { label: string; flag: string }> = {
+  en: { label: "English", flag: "🇬🇧" },
+  bn: { label: "বাংলা", flag: "🇧🇩" },
+  es: { label: "Español", flag: "🇪🇸" },
+  fr: { label: "Français", flag: "🇫🇷" },
+  de: { label: "Deutsch", flag: "🇩🇪" },
+  hi: { label: "हिन्दी", flag: "🇮🇳" },
+  ja: { label: "日本語", flag: "🇯🇵" },
+  ar: { label: "العربية", flag: "🇸🇦" }
+};
 
 const navItems = [
   { key: "features", href: "/features" },
@@ -21,9 +34,11 @@ export function Navbar() {
   const { theme, setTheme } = useAppTheme();
   const { isAuthenticated, logout, isLoggingOut } = useAuth();
   const [isLangAnimating, setIsLangAnimating] = useState(false);
+  const [isLangOpen, setIsLangOpen] = useState(false);
   const [isThemeAnimating, setIsThemeAnimating] = useState(false);
   const langAnimationTimeoutRef = useRef<number | null>(null);
   const themeAnimationTimeoutRef = useRef<number | null>(null);
+  const langDropdownRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     return () => {
@@ -36,20 +51,28 @@ export function Navbar() {
     };
   }, []);
 
-  const handleLanguageToggle = (): void => {
-    if (isLangAnimating) {
-      return;
-    }
+  // Close language dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (langDropdownRef.current && !langDropdownRef.current.contains(e.target as Node)) {
+        setIsLangOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
+  const switchLocale = (nextLocale: string): void => {
     setIsLangAnimating(true);
-    const nextLocale = locale === "en" ? "bn" : "en";
     const secureFlag = window.location.protocol === "https:" ? "; Secure" : "";
+    // eslint-disable-next-line react-hooks/immutability
     document.cookie = `NEXT_LOCALE=${nextLocale}; Path=/; Max-Age=31536000; SameSite=Lax${secureFlag}`;
 
     if (langAnimationTimeoutRef.current) {
       window.clearTimeout(langAnimationTimeoutRef.current);
     }
     langAnimationTimeoutRef.current = window.setTimeout(() => setIsLangAnimating(false), 240);
+    setIsLangOpen(false);
     router.refresh();
   };
 
@@ -93,35 +116,43 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            onClick={handleLanguageToggle}
-            className="relative inline-flex h-8 w-[58px] items-center rounded-full bg-[linear-gradient(135deg,#6d5cff_0%,#4f74df_100%)] p-1 shadow-[0_10px_24px_rgba(79,116,223,0.28)] transition duration-200 hover:brightness-105"
-            aria-label={locale === "en" ? "Switch to Bangla" : "Switch to English"}
-            title={locale === "en" ? "Switch to Bangla" : "Switch to English"}
-            aria-pressed={locale === "bn"}
-          >
-            <span
-              className={`absolute left-2 text-[12px] leading-none transition-opacity duration-200 ${locale === "en" ? "opacity-0" : "opacity-90"}`}
-              aria-hidden
+          <div className="relative" ref={langDropdownRef}>
+            <button
+              type="button"
+              onClick={() => setIsLangOpen((v) => !v)}
+              className="inline-flex h-8 w-[58px] items-center justify-center rounded-full bg-[linear-gradient(135deg,#6d5cff_0%,#4f74df_100%)] p-1 shadow-[0_10px_24px_rgba(79,116,223,0.28)] transition duration-200 hover:brightness-105"
+              aria-label="Switch language"
+              title={LOCALE_META[locale]?.label ?? locale}
             >
-              🇬🇧
-            </span>
-            <span
-              className={`absolute right-2 text-[12px] leading-none transition-opacity duration-200 ${locale === "bn" ? "opacity-0" : "opacity-90"}`}
-              aria-hidden
-            >
-              🇧🇩
-            </span>
-            <span
-              className={`absolute top-1 inline-flex h-6 w-6 items-center justify-center rounded-full bg-white text-[13px] shadow-sm transition-all duration-200 ${
-                locale === "en" ? "left-1" : "left-[30px]"
-              } ${isLangAnimating ? "scale-110" : ""}`}
-              aria-hidden
-            >
-              {locale === "en" ? "🇬🇧" : "🇧🇩"}
-            </span>
-          </button>
+              <span className="text-[14px] leading-none">{LOCALE_META[locale]?.flag ?? "🌐"}</span>
+            </button>
+
+            {isLangOpen && (
+              <div className="absolute top-full right-0 z-50 mt-1.5 min-w-[150px] overflow-hidden rounded-xl border border-[var(--landing-border)] bg-[var(--landing-surface)] shadow-[0_14px_45px_rgba(15,23,42,0.18)]">
+                {locales.map((code) => {
+                  const meta = LOCALE_META[code] ?? { label: code, flag: "🌐" };
+                  const isActive = code === locale;
+                  return (
+                    <button
+                      key={code}
+                      type="button"
+                      onClick={() => switchLocale(code)}
+                      disabled={isLangAnimating || isActive}
+                      className={`flex w-full items-center gap-2.5 px-3.5 py-2 text-left text-sm transition ${
+                        isActive
+                          ? "bg-[var(--landing-surface-soft)] font-semibold text-[var(--landing-text-strong)]"
+                          : "text-[var(--landing-muted)] hover:bg-[var(--landing-surface-soft)] hover:text-[var(--landing-text-strong)]"
+                      }`}
+                    >
+                      <span className="text-[14px]">{meta.flag}</span>
+                      <span>{meta.label}</span>
+                      {isActive && <span className="ml-auto text-[10px] opacity-50">✓</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
 
           <button
             type="button"

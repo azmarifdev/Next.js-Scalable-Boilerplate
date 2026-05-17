@@ -154,6 +154,16 @@ Since PRs are typically **squash-merged**, your PR title becomes the final commi
 | Integration tests | Vitest     | For API routes, auth flows, database operations          |
 | E2E tests         | Playwright | For critical user journeys (login, register, navigation) |
 
+**Shared test helper:** Use `TEST_LOCAL_ORIGIN` and `testUrl()` from `src/tests/shared.ts` when creating mock `NextRequest` objects in integration tests — keeps them in sync with the centralized URL config (`APP_PROTOCOL`/`APP_HOST`/`PORT`).
+
+**Current test coverage (63+ tests across 14 files):**
+
+| Layer       | Files                                                                                                                                                                                                                                                                         | What's covered                                                                                                                                                  |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Unit        | `url.vitest.ts`, `rate-limit.vitest.ts`, `logger.vitest.ts`, `feature-flags.vitest.ts`, `api-response.vitest.ts`, `redirect.vitest.ts`, `request-origin.vitest.ts`, `runtime.vitest.ts`, `session.vitest.ts`, `auth.validation.test.ts`, `utils.vitest.ts`, `button.test.tsx` | URL derivation, rate-limit in-memory fallback, logger JSON output, feature flag resolution, redirect safety, origin validation, runtime config, auth validation |
+| Integration | `auth-api.test.ts`, `mode-guards.test.ts`                                                                                                                                                                                                                                     | Auth API routes (register/login/logout/me/MFA), mode guards (external mode blocking)                                                                            |
+| E2E         | `home.spec.ts`, `i18n.spec.ts`, `sanity.check.spec.ts`, `docs.spec.ts`, `navigation.spec.ts`, `i18n-multi-locale.spec.ts`                                                                                                                                                     | Login flow, locale switch, robots/sitemap, docs articles & tables, theme toggle, 404, multi-locale rendering                                                    |
+
 - ✅ Write tests for new features and bug fixes
 - ✅ Update existing tests if your change affects their behavior
 - ✅ Run the full test suite before pushing

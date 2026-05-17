@@ -1,0 +1,197 @@
+{
+  "common": {
+    "welcome": "أهلاً بك",
+    "logout": "تسجيل الخروج",
+    "login": "تسجيل الدخول",
+    "lightMode": "فاتح",
+    "darkMode": "داكن"
+  },
+  "home": {
+    "title": "Next.js-Boilerplate-PostgresQL-Drizzle",
+    "titleSuffix": "قالب البداية",
+    "subtitle": "نموذج Next.js جاهز للإنتاج مع PostgreSQL و Drizzle ORM. مصمم لتطبيقات الويب الحديثة والتجارة الإلكترونية والأدوات الداخلية. أطلق أسرع بكود نظيف وهندسة قابلة للتوسع وأدوات صديقة للمطورين.",
+    "signIn": "تسجيل الدخول",
+    "signOut": "تسجيل الخروج",
+    "getStarted": "ابدأ",
+    "badge": "بواسطة أ. ز. م. عارف • مطور Full Stack",
+    "meta": "azmarif.dev · @azmarifdev",
+    "viewOnGitHub": "عرض على GitHub",
+    "heroTitleMiddle": "النموذج",
+    "nav": {
+      "features": "المميزات",
+      "stack": "التقنيات",
+      "examples": "أمثلة",
+      "docs": "المستندات",
+      "pricing": "الأسعار"
+    },
+    "features": [
+      {
+        "title": "Next.js + TypeScript",
+        "description": "App Router، مسارات مقيدة وأساس TypeScript صارم."
+      },
+      {
+        "title": "PostgreSQL + Drizzle",
+        "description": "ترحيل SQL، مخططات مقيدة ودعم Neon serverless."
+      },
+      {
+        "title": "المصادقة مدمجة",
+        "description": "جلسات قائمة على الكوكيز مع Better Auth. انتقل إلى IdP مخصص عندما تريد."
+      },
+      {
+        "title": "i18n جاهز",
+        "description": "الإنجليزية، البنغالية، العربية والمزيد. أضف لغات أخرى باستخدام next-intl."
+      }
+    ],
+    "featuresPage": {
+      "eyebrow": "مميزات القالب",
+      "title": "كل ما تحتاجه للإطلاق بشكل أسرع",
+      "description": "أساس جاهز للإنتاج مع Next.js و PostgreSQL و Drizzle ORM وهندسة معيارية نظيفة. لا فوضى ولا زوائد — فقط ما تحتاجه لبدء البناء.",
+      "cta": "استكشاف المستندات",
+      "items": [
+        {
+          "title": "App Router + TypeScript",
+          "description": "App Router حديث من Next.js مع TypeScript صارم ومسارات مقيدة وهيكل مجلدات قابل للتوسع."
+        },
+        {
+          "title": "PostgreSQL + Drizzle ORM",
+          "description": "طبقة بيانات علائقية جاهزة للإنتاج مع ترحيل SQL ومخططات مقيدة ودعم Neon serverless."
+        },
+        {
+          "title": "المصادقة مدمجة",
+          "description": "مصادقة جلسة قائمة على الكوكيز مع Better Auth افتراضياً. انتقل اختيارياً إلى IdP خارجي عند الحاجة."
+        },
+        {
+          "title": "React Query + Axios",
+          "description": "تخزين مؤقت لبيانات الخادم وAPI مدعوم من TanStack React Query مع طبقة عميل Axios مقيدة."
+        },
+        {
+          "title": "i18n جاهز (8 لغات)",
+          "description": "تدويل كامل مع next-intl. الإنجليزية والبنغالية والإسبانية والفرنسية والألمانية والهندية واليابانية والعربية متضمنة."
+        },
+        {
+          "title": "مركز التوثيق",
+          "description": "مركز توثيق على نمط المدونات مع مقالات مصنفة وتقديرات وقت القراءة وروابط مصدر GitHub."
+        },
+        {
+          "title": "مجموعة الاختبارات",
+          "description": "Vitest لاختبارات الوحدة/التكامل و Playwright لاختبارات端 إلى طرف و React Testing Library للمكونات."
+        },
+        {
+          "title": "Docker + CI/CD",
+          "description": "محوسب عبر Docker و docker-compose. GitHub Actions مع مهام lint و typecheck و test و e2e."
+        },
+        {
+          "title": "الأمان أولاً",
+          "description": "رؤوس CSP ورموز جلسة موقعة وتحديد معدل وفحوصات نفس المصدر وتسجيل تدقيق جاهزة فوراً."
+        }
+      ]
+    },
+    "docsPage": {
+      "eyebrow": "التوثيق",
+      "title": "توثيق يمكنك الغوص فيه فوراً",
+      "description": "هذه الصفحات تشرح الإعداد والهندسة وسير العمل حتى يتمكن فريقك من البدء بسرعة والبقاء متسقاً.",
+      "cta": "عرض المميزات",
+      "items": [
+        {
+          "title": "كيفية الاستخدام",
+          "description": "سير العمل للبدء والاستخدام اليومي."
+        },
+        {
+          "title": "الهندسة",
+          "description": "تصميم النظام الأساسي وحدود الوحدات."
+        },
+        {
+          "title": "هيكل المجلدات",
+          "description": "تخطيط المشروع واتفاقيات الدليل."
+        },
+        {
+          "title": "تدفق المصادقة",
+          "description": "دورة حياة المصادقة ومسار الطلب."
+        },
+        {
+          "title": "سير العمل",
+          "description": "عمليات التطوير والإصدار والتسليم."
+        },
+        {
+          "title": "الأدلة",
+          "description": "أدلة النشر والصيانة وإعداد المشروع."
+        }
+      ]
+    }
+  },
+  "auth": {
+    "loginTitle": "Welcome back",
+    "registerTitle": "Create account",
+    "loginSubtitle": "Log in to continue.",
+    "registerSubtitle": "Start with your new account.",
+    "loading": "Please wait...",
+    "actions": {
+      "login": "Login",
+      "register": "Register"
+    },
+    "fields": {
+      "fullName": "Full name",
+      "email": "Email",
+      "password": "Password"
+    },
+    "loginSwitchText": "No account yet?",
+    "registerSwitchText": "Already have an account?"
+  },
+  "dashboard": {
+    "overviewTitle": "Dashboard Overview",
+    "overviewSubtitle": "A domain-neutral Next.js Boilerplate with PostgreSQL & Drizzle ORM for modern web applications.",
+    "projectsTitle": "Projects at a glance",
+    "projectsSubtitle": "Track project progress, ownership, and status in one place.",
+    "tasksTitle": "Task workflow",
+    "tasksSubtitle": "Use tasks to model work queues for any product or operations team.",
+    "ecommerceTitle": "Ecommerce performance",
+    "ecommerceSubtitle": "Monitor orders and revenue signals.",
+    "billingTitle": "Billing insights",
+    "billingSubtitle": "Track subscription and recurring revenue metrics.",
+    "overviewNav": "Overview",
+    "usersNav": "Users",
+    "projectsNav": "Projects",
+    "tasksNav": "Tasks",
+    "ecommerceNav": "Ecommerce",
+    "billingNav": "Billing"
+  },
+  "users": {
+    "loading": "Loading users",
+    "emptyTitle": "No users found",
+    "emptyDescription": "Users will appear here when available.",
+    "errorTitle": "Unable to load users",
+    "errorDescription": "Please retry in a moment.",
+    "columns": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role"
+    }
+  },
+  "projects": {
+    "owner": "Owner",
+    "emptyTitle": "No projects yet",
+    "emptyDescription": "Projects will appear here when data is available.",
+    "errorTitle": "Unable to load projects",
+    "errorDescription": "Please retry in a moment."
+  },
+  "tasks": {
+    "assignee": "Assignee",
+    "priority": "Priority",
+    "emptyTitle": "No tasks yet",
+    "emptyDescription": "Tasks will appear here when data is available.",
+    "errorTitle": "Unable to load tasks",
+    "errorDescription": "Please retry in a moment."
+  },
+  "ecommerce": {
+    "orders": "Orders",
+    "revenue": "Revenue",
+    "errorTitle": "Unable to load ecommerce summary",
+    "errorDescription": "Please retry in a moment."
+  },
+  "billing": {
+    "activePlans": "Active plans",
+    "mrr": "MRR",
+    "errorTitle": "Unable to load billing summary",
+    "errorDescription": "Please retry in a moment."
+  }
+}

@@ -107,12 +107,13 @@ Your app is now running at the local origin from `.env.local`. With defaults: **
 
 ### 🌐 Internationalization
 
-| Feature               | Details                                                        |
-| --------------------- | -------------------------------------------------------------- |
-| **English & Bangla**  | Full translations included for both locales                    |
-| **next-intl**         | Server-side internationalization with minimal overhead         |
-| **Language Switcher** | Toggle between languages in the navbar                         |
-| **Extensible**        | Add more locales by adding JSON files — no code changes needed |
+| Feature               | Details                                                           |
+| --------------------- | ----------------------------------------------------------------- |
+| **8 Languages**       | English, Bangla, Spanish, French, German, Hindi, Japanese, Arabic |
+| **next-intl**         | Server-side internationalization with minimal overhead            |
+| **Language Dropdown** | Switch between all 8 locales from the navbar                      |
+| **Full Translations** | Nav, buttons, features, docs descriptions — all localized         |
+| **Extensible**        | Add more locales by adding JSON files — no code changes needed    |
 
 ### 📚 Documentation Hub
 
@@ -125,11 +126,12 @@ Your app is now running at the local origin from `.env.local`. With defaults: **
 
 ### 🧪 Testing Infrastructure
 
-| Layer             | Tool       | Location                 |
-| ----------------- | ---------- | ------------------------ |
-| Unit Tests        | Vitest     | `src/tests/unit/`        |
-| Integration Tests | Vitest     | `src/tests/integration/` |
-| End-to-End Tests  | Playwright | `src/tests/e2e/`         |
+| Layer             | Tool          | Location                 |
+| ----------------- | ------------- | ------------------------ |
+| Unit Tests        | Vitest        | `src/tests/unit/`        |
+| Integration Tests | Vitest        | `src/tests/integration/` |
+| End-to-End Tests  | Playwright    | `src/tests/e2e/`         |
+| **Total**         | **63+ tests** | **14 test files**        |
 
 ### ⚙️ Developer Experience
 
@@ -161,9 +163,9 @@ Your app is now running at the local origin from `.env.local`. With defaults: **
 │   │   └── 📄 global-error.tsx    #   Global error boundary
 │   │
 │   ├── 📂 components/             # Reusable UI components
-│   │   ├── 📂 landing/            #   Navbar, Hero, Features sections
-│   │   ├── 📂 docs/               #   Documentation markdown renderer
-│   │   ├── 📂 common/             #   Shared UI primitives
+│   │   ├── 📂 landing/            #   Navbar (8-locale dropdown), Hero, Features sections
+│   │   ├── 📂 docs/               #   Documentation markdown renderer (marked-based, table support)
+│   │   ├── 📂 common/             #   Shared UI primitives + ScrollRestoration
 │   │   └── 📂 ui/                 #   shadcn/ui-style base components
 │   │
 │   ├── 📂 modules/                # Domain-level logic

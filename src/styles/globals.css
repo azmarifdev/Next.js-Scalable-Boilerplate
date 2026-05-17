@@ -12,8 +12,18 @@ body {
   font-family: var(--font-sans), var(--font-bn), "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background: #f8fafc;
   color: #0f172a;
-  overflow-x: clip;
-  overflow-y: auto;
+}
+
+html {
+  overflow: hidden;
+}
+
+body {
+  overflow: hidden;
+}
+
+#__next {
+  height: 100%;
 }
 
 html[data-theme="dark"],

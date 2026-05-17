@@ -7,6 +7,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import type { ReactNode } from "react";
 
+import { ScrollRestoration } from "@/components/common/ScrollRestoration";
 import { validateRuntimeConfig } from "@/lib/config/validate";
 import { AppProviders } from "@/providers";
 import { THEME_STORAGE_KEY } from "@/providers/theme.provider";
@@ -47,7 +48,10 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         suppressHydrationWarning
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <AppProviders initialTheme={initialTheme}>{children}</AppProviders>
+          <AppProviders initialTheme={initialTheme}>
+            <ScrollRestoration />
+            {children}
+          </AppProviders>
         </NextIntlClientProvider>
       </body>
     </html>

@@ -1,0 +1,197 @@
+{
+  "common": {
+    "welcome": "ようこそ",
+    "logout": "ログアウト",
+    "login": "ログイン",
+    "lightMode": "ライト",
+    "darkMode": "ダーク"
+  },
+  "home": {
+    "title": "Next.js-Boilerplate-PostgresQL-Drizzle",
+    "titleSuffix": "スターターテンプレート",
+    "subtitle": "PostgreSQLとDrizzle ORMを備えたプロダクション対応のNext.jsボイラープレート。モダンなウェブアプリ、Eコマース、社内ツール向けに構築。クリーンなコード、スケーラブルなアーキテクチャ、開発者に優しいツールで迅速にローンチ。",
+    "signIn": "サインイン",
+    "signOut": "サインアウト",
+    "getStarted": "始める",
+    "badge": "A. Z. M. Arif著 • フルスタック開発者",
+    "meta": "azmarif.dev · @azmarifdev",
+    "viewOnGitHub": "GitHubで見る",
+    "heroTitleMiddle": "ボイラープレート",
+    "nav": {
+      "features": "機能",
+      "stack": "スタック",
+      "examples": "例",
+      "docs": "ドキュメント",
+      "pricing": "料金"
+    },
+    "features": [
+      {
+        "title": "Next.js + TypeScript",
+        "description": "App Router、型付きルート、厳格なTypeScript基盤。"
+      },
+      {
+        "title": "PostgreSQL + Drizzle",
+        "description": "SQLマイグレーション、型付きスキーマ、Neonサーバーレスサポート。"
+      },
+      {
+        "title": "Auth組み込み",
+        "description": "Better Authによるクッキーベースのセッション。必要に応じてカスタムIdPに切り替え可能。"
+      },
+      {
+        "title": "i18n対応",
+        "description": "英語、ベンガル語、日本語など対応。next-intlで言語を追加可能。"
+      }
+    ],
+    "featuresPage": {
+      "eyebrow": "テンプレートの機能",
+      "title": "より速くリリースするために必要なすべて",
+      "description": "Next.js、PostgreSQL、Drizzle ORM、クリーンなモジュラーアーキテクチャを備えたプロダクション対応の基盤。無駄なものは一切なし — 構築を始めるために必要なものだけ。",
+      "cta": "ドキュメントを見る",
+      "items": [
+        {
+          "title": "App Router + TypeScript",
+          "description": "厳格なTypeScript、型付きルート、スケーラブルなフォルダ構造を備えたモダンなNext.js App Router。"
+        },
+        {
+          "title": "PostgreSQL + Drizzle ORM",
+          "description": "SQLマイグレーション、型付きスキーマ、Neonサーバーレスサポートを備えたプロダクション対応のリレーショナルデータレイヤー。"
+        },
+        {
+          "title": "Auth組み込み",
+          "description": "デフォルトでBetter Authを使用したクッキーベースのセッション認証。必要に応じて外部IdPに切り替え可能。"
+        },
+        {
+          "title": "React Query + Axios",
+          "description": "TanStack React Queryを搭載したサーバーステートとAPIデータキャッシング、型付きAxiosクライアントレイヤー。"
+        },
+        {
+          "title": "i18n対応（8言語）",
+          "description": "next-intlによる完全な国際化。英語、ベンガル語、スペイン語、フランス語、ドイツ語、ヒンディー語、日本語、アラビア語対応。"
+        },
+        {
+          "title": "ドキュメントハブ",
+          "description": "カテゴリ別記事、読了時間の推定、GitHubソースリンクを備えたブログ形式のドキュメントセンター。"
+        },
+        {
+          "title": "テストスイート",
+          "description": "ユニット/統合テスト用Vitest、エンドツーエンドテスト用Playwright、コンポーネント用React Testing Library。"
+        },
+        {
+          "title": "Docker + CI/CD",
+          "description": "Dockerとdocker-composeでコンテナ化。リント、タイプチェック、テスト、E2Eワークフローを備えたGitHub Actions。"
+        },
+        {
+          "title": "セキュリティ第一",
+          "description": "CSPヘッダー、署名付きセッショントークン、レート制限、同一オリジンチェック、監査ログを標準装備。"
+        }
+      ]
+    },
+    "docsPage": {
+      "eyebrow": "ドキュメント",
+      "title": "すぐに読み始められるドキュメント",
+      "description": "これらのページはセットアップ、アーキテクチャ、ワークフローを説明しているので、チームは迅速にオンボーディングでき、一貫性を保つことができます。",
+      "cta": "機能を見る",
+      "items": [
+        {
+          "title": "使用方法",
+          "description": "開始ワークフローと日常的な使い方。"
+        },
+        {
+          "title": "アーキテクチャ",
+          "description": "コアシステム設計とモジュール境界。"
+        },
+        {
+          "title": "フォルダ構造",
+          "description": "プロジェクトレイアウトとディレクトリ規則。"
+        },
+        {
+          "title": "認証フロー",
+          "description": "認証ライフサイクルとリクエストパス。"
+        },
+        {
+          "title": "ワークフロー",
+          "description": "開発、リリース、配信業務。"
+        },
+        {
+          "title": "ガイド",
+          "description": "デプロイ、メンテナンス、プロジェクトセットアップガイド。"
+        }
+      ]
+    }
+  },
+  "auth": {
+    "loginTitle": "Welcome back",
+    "registerTitle": "Create account",
+    "loginSubtitle": "Log in to continue.",
+    "registerSubtitle": "Start with your new account.",
+    "loading": "Please wait...",
+    "actions": {
+      "login": "Login",
+      "register": "Register"
+    },
+    "fields": {
+      "fullName": "Full name",
+      "email": "Email",
+      "password": "Password"
+    },
+    "loginSwitchText": "No account yet?",
+    "registerSwitchText": "Already have an account?"
+  },
+  "dashboard": {
+    "overviewTitle": "Dashboard Overview",
+    "overviewSubtitle": "A domain-neutral Next.js Boilerplate with PostgreSQL & Drizzle ORM for modern web applications.",
+    "projectsTitle": "Projects at a glance",
+    "projectsSubtitle": "Track project progress, ownership, and status in one place.",
+    "tasksTitle": "Task workflow",
+    "tasksSubtitle": "Use tasks to model work queues for any product or operations team.",
+    "ecommerceTitle": "Ecommerce performance",
+    "ecommerceSubtitle": "Monitor orders and revenue signals.",
+    "billingTitle": "Billing insights",
+    "billingSubtitle": "Track subscription and recurring revenue metrics.",
+    "overviewNav": "Overview",
+    "usersNav": "Users",
+    "projectsNav": "Projects",
+    "tasksNav": "Tasks",
+    "ecommerceNav": "Ecommerce",
+    "billingNav": "Billing"
+  },
+  "users": {
+    "loading": "Loading users",
+    "emptyTitle": "No users found",
+    "emptyDescription": "Users will appear here when available.",
+    "errorTitle": "Unable to load users",
+    "errorDescription": "Please retry in a moment.",
+    "columns": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role"
+    }
+  },
+  "projects": {
+    "owner": "Owner",
+    "emptyTitle": "No projects yet",
+    "emptyDescription": "Projects will appear here when data is available.",
+    "errorTitle": "Unable to load projects",
+    "errorDescription": "Please retry in a moment."
+  },
+  "tasks": {
+    "assignee": "Assignee",
+    "priority": "Priority",
+    "emptyTitle": "No tasks yet",
+    "emptyDescription": "Tasks will appear here when data is available.",
+    "errorTitle": "Unable to load tasks",
+    "errorDescription": "Please retry in a moment."
+  },
+  "ecommerce": {
+    "orders": "Orders",
+    "revenue": "Revenue",
+    "errorTitle": "Unable to load ecommerce summary",
+    "errorDescription": "Please retry in a moment."
+  },
+  "billing": {
+    "activePlans": "Active plans",
+    "mrr": "MRR",
+    "errorTitle": "Unable to load billing summary",
+    "errorDescription": "Please retry in a moment."
+  }
+}

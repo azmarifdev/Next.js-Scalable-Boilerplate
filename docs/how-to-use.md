@@ -81,7 +81,7 @@ Rule of thumb:
 
 ### 3.0.1 Local URLs and Ports
 
-Local URLs are derived from these values:
+Local URLs are centrally derived by `src/lib/config/url.ts`:
 
 ```env
 APP_PROTOCOL=http
@@ -89,11 +89,14 @@ APP_HOST=localhost
 PORT=3000
 ```
 
-If `NEXT_PUBLIC_SITE_URL` is blank, server-side metadata, sitemap, robots, and E2E defaults use:
+**How it works:**
 
-```txt
-APP_PROTOCOL://APP_HOST:PORT
-```
+- `getLocalAppOrigin()` → `APP_PROTOCOL://APP_HOST:PORT` (e.g. `http://localhost:3000`)
+- If `NEXT_PUBLIC_SITE_URL` is blank → `getSiteOrigin()` falls back to the local origin
+- On Vercel → automatically picks up `VERCEL_PROJECT_PRODUCTION_URL` or `VERCEL_URL`
+- Docker: `PORT=4000 pnpm run docker:run` overrides the port everywhere
+
+Server-side metadata, sitemap, robots, cookie security, and E2E defaults **all use this centralized origin** — change one env var, everything moves together.
 
 To run the app on another port, change one value:
 
@@ -387,6 +390,16 @@ E2E behavior:
 - Without `E2E_DATABASE_URL`, Playwright runs smoke tests and skips auth DB flows.
 - With `E2E_DATABASE_URL`, Playwright migrates/seeds that database and runs auth flows.
 - Use a disposable test database. Do not point E2E at production.
+
+**Test suite overview (63+ tests across 6 E2E specs & 11 unit/integration files):**
+
+| Layer             | Tool       | Location                 | Test count |
+| ----------------- | ---------- | ------------------------ | ---------- |
+| Unit tests        | Vitest     | `src/tests/unit/`        | 40+        |
+| Integration tests | Vitest     | `src/tests/integration/` | 9          |
+| E2E (Playwright)  | Playwright | `src/tests/e2e/`         | 6 specs    |
+
+**Shared test helper:** `src/tests/shared.ts` provides `TEST_LOCAL_ORIGIN` and `testUrl()` so integration tests stay consistent with the centralized URL config.
 
 GitHub path:
 

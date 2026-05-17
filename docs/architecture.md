@@ -108,6 +108,47 @@ Browser
 
 ---
 
+## Configuration Architecture
+
+### Centralized URL / Origin (`src/lib/config/url.ts`)
+
+A single source of truth for all URLs instead of scattered `http://localhost:3000` strings.
+
+| Function                    | Purpose                                                          |
+| --------------------------- | ---------------------------------------------------------------- |
+| `getLocalAppOrigin()`       | Derives local origin from `APP_PROTOCOL://APP_HOST:PORT`         |
+| `getConfiguredSiteOrigin()` | Returns `NEXT_PUBLIC_SITE_URL` or Vercel fallback (`VERCEL_URL`) |
+| `getSiteOrigin()`           | Configured origin → local origin fallback                        |
+
+All consumers (`site-config.ts`, `cookie-security.ts`, `redirect.ts`, Playwright config, sitemap, robots) use these functions — never raw strings.
+
+### Runtime Validation (`src/lib/config/validate.ts`)
+
+Runs at app startup to catch missing env vars before they cause runtime errors. Checks `DATABASE_URL`, `AUTH_SESSION_SECRET`, and custom auth configuration.
+
+### i18n Architecture
+
+```
+src/i18n/
+├── routing.ts   → Locale list (8 locales), default locale, routing config
+├── config.ts    → i18n config object
+├── request.ts   → Reads NEXT_LOCALE cookie, loads messages
+├── navigation.ts → next-intl navigation helpers
+└── messages/    → JSON translation files
+    ├── en.json  → English
+    ├── bn.json  → Bangla
+    ├── es.json  → Spanish
+    ├── fr.json  → French
+    ├── de.json  → German
+    ├── hi.json  → Hindi
+    ├── ja.json  → Japanese
+    └── ar.json  → Arabic
+```
+
+The language switcher in the Navbar is a dropdown that cycles through all 8 locales, sets a `NEXT_LOCALE` cookie, and refreshes the page. Each locale has full translations for nav, buttons, features, and docs descriptions.
+
+---
+
 ## Auth & Security Design
 
 ### Session Tokens

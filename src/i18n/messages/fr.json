@@ -1,0 +1,197 @@
+{
+  "common": {
+    "welcome": "Bienvenue",
+    "logout": "Déconnexion",
+    "login": "Connexion",
+    "lightMode": "Clair",
+    "darkMode": "Sombre"
+  },
+  "home": {
+    "title": "Next.js-Boilerplate-PostgresQL-Drizzle",
+    "titleSuffix": "Modèle de Démarrage",
+    "subtitle": "Un boilerplate Next.js prêt pour la production avec PostgreSQL et Drizzle ORM. Conçu pour les applications web modernes, le e-commerce et les outils internes. Lancez plus vite avec un code propre, une architecture évolutive et des outils adaptés aux développeurs.",
+    "signIn": "Se connecter",
+    "signOut": "Se déconnecter",
+    "getStarted": "Commencer",
+    "badge": "Par A. Z. M. Arif • Développeur Full Stack",
+    "meta": "azmarif.dev · @azmarifdev",
+    "viewOnGitHub": "Voir sur GitHub",
+    "heroTitleMiddle": "Boilerplate",
+    "nav": {
+      "features": "Fonctionnalités",
+      "stack": "Stack",
+      "examples": "Exemples",
+      "docs": "Docs",
+      "pricing": "Tarifs"
+    },
+    "features": [
+      {
+        "title": "Next.js + TypeScript",
+        "description": "App Router, routes typées et une base TypeScript stricte."
+      },
+      {
+        "title": "PostgreSQL + Drizzle",
+        "description": "Migrations SQL, schémas typés et support Neon serverless."
+      },
+      {
+        "title": "Auth Intégrée",
+        "description": "Sessions basées sur les cookies avec Better Auth. Passez à un IdP personnalisé quand vous voulez."
+      },
+      {
+        "title": "i18n Prêt",
+        "description": "Anglais, bengali, français et plus inclus. Ajoutez d'autres langues avec next-intl."
+      }
+    ],
+    "featuresPage": {
+      "eyebrow": "Fonctionnalités du Modèle",
+      "title": "Tout ce dont vous avez besoin pour livrer plus rapidement",
+      "description": "Une base prête pour la production avec Next.js, PostgreSQL, Drizzle ORM et une architecture modulaire propre. Sans fouillis, sans superflu — juste ce qu'il vous faut pour commencer à construire.",
+      "cta": "Explorer la Docs",
+      "items": [
+        {
+          "title": "App Router + TypeScript",
+          "description": "App Router Next.js moderne avec TypeScript strict, routes typées et une structure de dossiers évolutive."
+        },
+        {
+          "title": "PostgreSQL + Drizzle ORM",
+          "description": "Couche de données relationnelle prête pour la production avec migrations SQL, schémas typés et support Neon serverless."
+        },
+        {
+          "title": "Auth Intégrée",
+          "description": "Authentification de session basée sur les cookies avec Better Auth par défaut. Passez optionnellement à un IdP externe quand nécessaire."
+        },
+        {
+          "title": "React Query + Axios",
+          "description": "Cache des données serveur et API propulsé par TanStack React Query avec une couche cliente Axios typée."
+        },
+        {
+          "title": "i18n Prêt (8 langues)",
+          "description": "Internationalisation complète avec next-intl. Anglais, bengali, espagnol, français, allemand, hindi, japonais et arabe inclus."
+        },
+        {
+          "title": "Centre de Documentation",
+          "description": "Centre de documentation style blog avec articles catégorisés, estimations de temps de lecture et liens GitHub."
+        },
+        {
+          "title": "Suite de Tests",
+          "description": "Vitest pour les tests unitaires/intégration, Playwright pour la confiance de bout en bout, React Testing Library pour les composants."
+        },
+        {
+          "title": "Docker + CI/CD",
+          "description": "Containerisé via Docker et docker-compose. GitHub Actions avec lint, typecheck, test et workflows e2e."
+        },
+        {
+          "title": "Sécurité Avant Tout",
+          "description": "En-têtes CSP, tokens de session signés, limitation de débit, vérifications de même origine et journalisation d'audit prêts à l'emploi."
+        }
+      ]
+    },
+    "docsPage": {
+      "eyebrow": "Documentation",
+      "title": "Une Documentation dans laquelle Plonger Immédiatement",
+      "description": "Ces pages expliquent la configuration, l'architecture et les flux de travail pour que votre équipe puisse s'intégrer rapidement et rester cohérente.",
+      "cta": "Voir les Fonctionnalités",
+      "items": [
+        {
+          "title": "Comment Utiliser",
+          "description": "Flux de travail de démarrage et utilisation quotidienne."
+        },
+        {
+          "title": "Architecture",
+          "description": "Conception centrale du système et limites des modules."
+        },
+        {
+          "title": "Structure des Dossiers",
+          "description": "Organisation du projet et conventions de répertoires."
+        },
+        {
+          "title": "Flux d'Authentification",
+          "description": "Cycle de vie de l'authentification et chemin de requête."
+        },
+        {
+          "title": "Flux de Travail",
+          "description": "Opérations de développement, de livraison et de déploiement."
+        },
+        {
+          "title": "Guides",
+          "description": "Guides de déploiement, de maintenance et de configuration du projet."
+        }
+      ]
+    }
+  },
+  "auth": {
+    "loginTitle": "Welcome back",
+    "registerTitle": "Create account",
+    "loginSubtitle": "Log in to continue.",
+    "registerSubtitle": "Start with your new account.",
+    "loading": "Please wait...",
+    "actions": {
+      "login": "Login",
+      "register": "Register"
+    },
+    "fields": {
+      "fullName": "Full name",
+      "email": "Email",
+      "password": "Password"
+    },
+    "loginSwitchText": "No account yet?",
+    "registerSwitchText": "Already have an account?"
+  },
+  "dashboard": {
+    "overviewTitle": "Dashboard Overview",
+    "overviewSubtitle": "A domain-neutral Next.js Boilerplate with PostgreSQL & Drizzle ORM for modern web applications.",
+    "projectsTitle": "Projects at a glance",
+    "projectsSubtitle": "Track project progress, ownership, and status in one place.",
+    "tasksTitle": "Task workflow",
+    "tasksSubtitle": "Use tasks to model work queues for any product or operations team.",
+    "ecommerceTitle": "Ecommerce performance",
+    "ecommerceSubtitle": "Monitor orders and revenue signals.",
+    "billingTitle": "Billing insights",
+    "billingSubtitle": "Track subscription and recurring revenue metrics.",
+    "overviewNav": "Overview",
+    "usersNav": "Users",
+    "projectsNav": "Projects",
+    "tasksNav": "Tasks",
+    "ecommerceNav": "Ecommerce",
+    "billingNav": "Billing"
+  },
+  "users": {
+    "loading": "Loading users",
+    "emptyTitle": "No users found",
+    "emptyDescription": "Users will appear here when available.",
+    "errorTitle": "Unable to load users",
+    "errorDescription": "Please retry in a moment.",
+    "columns": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role"
+    }
+  },
+  "projects": {
+    "owner": "Owner",
+    "emptyTitle": "No projects yet",
+    "emptyDescription": "Projects will appear here when data is available.",
+    "errorTitle": "Unable to load projects",
+    "errorDescription": "Please retry in a moment."
+  },
+  "tasks": {
+    "assignee": "Assignee",
+    "priority": "Priority",
+    "emptyTitle": "No tasks yet",
+    "emptyDescription": "Tasks will appear here when data is available.",
+    "errorTitle": "Unable to load tasks",
+    "errorDescription": "Please retry in a moment."
+  },
+  "ecommerce": {
+    "orders": "Orders",
+    "revenue": "Revenue",
+    "errorTitle": "Unable to load ecommerce summary",
+    "errorDescription": "Please retry in a moment."
+  },
+  "billing": {
+    "activePlans": "Active plans",
+    "mrr": "MRR",
+    "errorTitle": "Unable to load billing summary",
+    "errorDescription": "Please retry in a moment."
+  }
+}
