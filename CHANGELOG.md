@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.40](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.39...v0.1.40) (2026-05-17)
+
+
+### Bug Fixes
+
+* **deps:** bump @babel/plugin-transform-modules-systemjs from 7.29.0 to 7.29.4 ([a78a650](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/a78a650ef4c8bfd0590f5a0092e1709f9f3ef0d6))
+* **deps:** bump next from 16.2.4 to 16.2.6 ([d24110b](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/d24110b15008d7a542c5f86fcd488991f1ebcce7))
+* **deps:** bump next from 16.2.4 to 16.2.6 ([897673d](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/897673d445156b2fd5924f9172c293a732d9b9aa))
+
 ## [0.1.39](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.38...v0.1.39) (2026-05-17)
 
 
