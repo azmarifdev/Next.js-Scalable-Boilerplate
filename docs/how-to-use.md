@@ -360,14 +360,71 @@ migrate-production
 
 ## 6. Daily Development Workflow
 
-Recommended flow before each push:
+### 🚀 Professional Pre-Push Pipeline
+
+Run this single command before every push:
 
 ```bash
-pnpm run lint
-pnpm run typecheck
-pnpm run test
+pnpm run check:all
+```
+
+Or run all stages individually:
+
+```bash
+pnpm run format:write &&
+pnpm run lint &&
+pnpm run typecheck &&
+pnpm run test &&
+pnpm run build &&
+pnpm run e2e &&
+pnpm run knip &&
+pnpm audit &&
+pnpm run docs:check &&
 pnpm run format:check
-pnpm run build
+```
+
+> **Note:** `gitleaks detect` (secret scanning) is also included in `check:all` but requires the `gitleaks` CLI to be installed separately.
+
+**Pipeline breakdown (11 stages):**
+
+| Step | Command        | Time  | What it guards against                                              |
+| ---- | -------------- | ----- | ------------------------------------------------------------------- |
+| 1    | `format:write` | ~1s   | Inconsistent code style, trailing whitespace, bad quotes            |
+| 2    | `lint`         | ~3s   | Unused imports, type misuse, logical errors                         |
+| 3    | `typecheck`    | ~3s   | Type mismatches, missing exports, broken generics                   |
+| 4    | `test`         | ~1s   | Regressions — 63 tests across 14 files                              |
+| 5    | `build`        | ~10s  | Bundling errors, broken routes, standalone failure                  |
+| 6    | `e2e`          | ~40s  | Playwright end-to-end tests — login, docs, navigation, multi-locale |
+| 7    | `knip`         | ~2s   | Dead file & unused dependency analysis                              |
+| 8    | `audit`        | ~5s   | Known vulnerabilities in dependencies                               |
+| 9    | `gitleaks`     | ~3s   | Secret leak detection (requires `gitleaks` CLI)                     |
+| 10   | `docs:check`   | ~0.5s | Broken doc references, missing files                                |
+| 11   | `format:check` | ~1s   | Final formatting gate (matches CI exactly)                          |
+| 5    | `build`        | ~10s  | Bundling errors, broken routes, standalone failure                  |
+| 6    | `docs:check`   | ~0.5s | Broken doc references, missing files                                |
+| 7    | `format:check` | ~1s   | Final formatting gate (matches CI exactly)                          |
+
+**Fast-fail principle:** Steps 1–3 fail in seconds. You never wait minutes for a build only to discover a missing semicolon.
+
+### E2E Behavior
+
+- Without `E2E_DATABASE_URL`, Playwright runs smoke tests and skips auth DB flows.
+- With `E2E_DATABASE_URL`, Playwright migrates/seeds that database and runs auth flows.
+- Use a disposable test database. Do not point E2E at production.
+- The `e2e` command starts the production build via the Playwright webServer, so `pnpm run build` must run first.
+
+### Individual Commands (for quick checks)
+
+If you only need a subset:
+
+```bash
+pnpm run lint           # Quick lint scan
+pnpm run typecheck      # TypeScript errors only
+pnpm run test           # Run all unit + integration tests
+pnpm run format:check   # Check formatting (read-only)
+pnpm run build          # Full production build
+pnpm run e2e            # Playwright end-to-end tests
+pnpm run docs:check     # Documentation consistency
 ```
 
 If you changed the database schema:

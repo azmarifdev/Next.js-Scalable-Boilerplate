@@ -1,5 +1,5 @@
 {
   "$schema": "https://unpkg.com/knip@latest/schema.json",
   "project": ["src/**/*.{ts,tsx}", "scripts/**/*.{js,mjs,ts}", "*.config.{js,cjs,mjs,ts}"],
-  "ignoreDependencies": ["tailwindcss"]
+  "ignoreDependencies": ["tailwindcss", "nodemailer", "resend", "@types/nodemailer"]
 }

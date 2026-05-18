@@ -33,26 +33,103 @@ The app will be available at the origin derived from `APP_PROTOCOL`, `APP_HOST`,
 
 ## Before Opening a PR
 
-Run these checks **before** pushing your changes. They mirror what CI will run:
+Run these checks **before** pushing your changes. They mirror what CI will run.
+
+### 🔧 Professional CI Flow (One Command)
+
+Copy-paste this single command — it runs all seven stages in order:
 
 ```bash
-# Code quality
-pnpm run lint
-
-# TypeScript compilation
-pnpm run typecheck
-
-# All tests pass
-pnpm run test
-
-# Formatting is consistent
+pnpm run format:write &&
+pnpm run lint &&
+pnpm run typecheck &&
+pnpm run test &&
+pnpm run build &&
+pnpm run e2e &&
+pnpm run docs:check &&
 pnpm run format:check
-
-# Production build succeeds
-pnpm run build
 ```
 
-If any of these fail, fix the issue before pushing. A red CI is a blocker for merging.
+**What each stage does:**
+
+| #   | Command        | Why it matters                                                                                   |
+| --- | -------------- | ------------------------------------------------------------------------------------------------ |
+| 1   | `format:write` | Auto-formats all `js,ts,jsx,tsx,css,json,md,mdx` files with Prettier. Eliminates style debates.  |
+| 2   | `lint`         | ESLint scans `src/` for bugs, unused imports, and anti-patterns. Catches problems **before** CI. |
+| 3   | `typecheck`    | Full `tsc --noEmit` — strict TypeScript 6 check. Finds type mismatches and missing exports.      |
+| 4   | `test`         | Runs all **63 Vitest tests** across **14 files**. Fails if any test breaks.                      |
+| 5   | `build`        | `next build` — verifies all routes compile and standalone output works.                          |
+| 6   | `e2e`          | Playwright end-to-end tests — login, docs, navigation, multi-locale. Uses the production build.  |
+| 7   | `docs:check`   | Custom script that validates doc integrity (cross-references, file existence).                   |
+| 8   | `knip`         | Dead file & unused dependency analysis — keeps the codebase lean.                                |
+| 9   | `audit`        | `pnpm audit` — checks for known vulnerabilities in dependencies.                                 |
+| 10  | `gitleaks`     | Secret leak detection — scans for accidentally committed credentials.                            |
+| 11  | `format:check` | Read-only Prettier check — confirms `format:write` was run. CI uses this as a final gate.        |
+
+**Why this order?** 🧠
+
+```
+format → lint → typecheck → test → build → e2e → docs → knip → audit → gitleaks → format:check
+  (1)       (2)       (3)       (4)     (5)    (6)    (7)    (8)    (9)     (10)        (11)
+```
+
+- **Fast failures first** — format, lint, typecheck take <5s each. Fail fast instead of waiting for a build.
+- **Build uses validated code** — by step 5 the code is formatted, lint-clean, type-safe, and tested. A build failure means a real bundling issue, not a typo.
+- **E2E uses the production build** — Playwright starts the built server via the standalone output, ensuring E2E tests run against deploy-ready code.
+- **Security & quality scanners run last** — knip, audit, and gitleaks are read-only checks that don't affect the build.
+- **Final format check** — acts as a gate: if anything got unformatted during earlier steps, CI catches it.
+
+### 🌐 Run via the Unified Pipeline Script
+
+Instead of typing the long command each time, use the project's built-in script:
+
+```bash
+pnpm run check:all
+```
+
+This runs `scripts/check-all.sh` — a **production-grade bash pipeline** that:
+
+- Executes all 11 checks listed above in the optimal order
+- Continues past failures — tracks pass/fail per step
+- Prints a color-coded summary with passed/failed counts
+- Exits with code `0` (all pass) or `1` (any fail)
+
+**Required external tools:**
+
+| Tool       | Install command                                                                    |
+| ---------- | ---------------------------------------------------------------------------------- |
+| `gitleaks` | `brew install gitleaks` (macOS) / `go install github.com/gitleaks/gitleaks@latest` |
+| `knip`     | Included as devDependency — runs via `pnpm run knip`                               |
+
+> **Note:** `pnpm audit` may report vulnerabilities from upstream packages (`next`, `vite`, etc.). These are common and often resolved by running `pnpm update`. The pipeline reports them but does not block on advisory-only issues.
+
+### Why This Is a Professional CI Flow
+
+This pipeline mirrors **exactly** what GitHub Actions runs when you open a Pull Request:
+
+| CI Job         | Local equivalent        |
+| -------------- | ----------------------- |
+| `lint`         | `pnpm run lint`         |
+| `typecheck`    | `pnpm run typecheck`    |
+| `test`         | `pnpm run test`         |
+| `build`        | `pnpm run build`        |
+| `docs:check`   | `pnpm run docs:check`   |
+| `format:check` | `pnpm run format:check` |
+
+When you run the full flow locally **before pushing**, you:
+
+1. **Eliminate CI surprises** — what passes locally also passes in CI. No wasted commits fixing "CI failed" for a missing semicolon.
+2. **Save CI minutes** — GitHub Actions has a limited monthly quota. Fixing issues locally saves credits for real production workflows.
+3. **Speed up reviews** — reviewers see a green PR from the first commit. No back-and-forth "please fix lint" comments.
+4. **Build discipline** — running the full pipeline trains muscle memory. After a week, you won't push without it.
+
+> 💡 **Tip:** Create an alias in your shell:
+>
+> ```bash
+> alias pr-ready='pnpm run format:write && pnpm run lint && pnpm run typecheck && pnpm run test && pnpm run build && pnpm run docs:check && pnpm run format:check'
+> ```
+>
+> Then just type `pr-ready` before every push.
 
 ---
 
