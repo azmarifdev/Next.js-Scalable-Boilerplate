@@ -370,9 +370,9 @@ function preloadDoc(sourcePath: string): void {
   if (docCache.has(sourcePath)) return;
   // Try (in order): PROJECT_ROOT, process.cwd(), process.cwd()/../..
   const candidates = [
-    path.join(PROJECT_ROOT, sourcePath),
-    path.join(process.cwd(), sourcePath),
-    path.join(process.cwd(), "..", "..", sourcePath)
+    path.join(/* turbopackIgnore: true */ PROJECT_ROOT, sourcePath),
+    path.join(/* turbopackIgnore: true */ process.cwd(), sourcePath),
+    path.join(/* turbopackIgnore: true */ process.cwd(), "..", "..", sourcePath)
   ];
   for (const candidate of candidates) {
     try {

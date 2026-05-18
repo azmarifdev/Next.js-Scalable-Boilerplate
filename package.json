@@ -37,6 +37,7 @@
     "codehawk": "cd docs/tools && codehawk ../../src",
     "docs:check": "node scripts/check-docs.mjs",
     "setup": "node scripts/setup.mjs",
+    "check:all": "./scripts/check-all.sh",
     "clean": "node scripts/clean.mjs",
     "docker:build": "docker build -t next-js-boilerplate-postgresql-drizzle .",
     "docker:run": "docker run --env-file .env.local -p ${PORT:-3000}:${PORT:-3000} next-js-boilerplate-postgresql-drizzle",
