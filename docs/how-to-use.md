@@ -368,43 +368,46 @@ Run this single command before every push:
 pnpm run check:all
 ```
 
+If you want the pipeline to format files first and then validate everything:
+
+```bash
+pnpm run check:fix
+```
+
 Or run all stages individually:
 
 ```bash
-pnpm run format:write &&
+pnpm run format:check &&
 pnpm run lint &&
 pnpm run typecheck &&
 pnpm run test &&
 pnpm run build &&
 pnpm run e2e &&
-pnpm run knip &&
-pnpm audit &&
 pnpm run docs:check &&
-pnpm run format:check
+pnpm run knip &&
+pnpm audit
 ```
 
 > **Note:** `gitleaks detect` (secret scanning) is also included in `check:all` but requires the `gitleaks` CLI to be installed separately.
 
-**Pipeline breakdown (11 stages):**
+**Pipeline breakdown (10 stages):**
 
 | Step | Command        | Time  | What it guards against                                              |
 | ---- | -------------- | ----- | ------------------------------------------------------------------- |
-| 1    | `format:write` | ~1s   | Inconsistent code style, trailing whitespace, bad quotes            |
+| 1    | `format:check` | ~1s   | Inconsistent code style, trailing whitespace, bad quotes            |
 | 2    | `lint`         | ~3s   | Unused imports, type misuse, logical errors                         |
 | 3    | `typecheck`    | ~3s   | Type mismatches, missing exports, broken generics                   |
 | 4    | `test`         | ~1s   | Regressions — 63 tests across 14 files                              |
 | 5    | `build`        | ~10s  | Bundling errors, broken routes, standalone failure                  |
 | 6    | `e2e`          | ~40s  | Playwright end-to-end tests — login, docs, navigation, multi-locale |
-| 7    | `knip`         | ~2s   | Dead file & unused dependency analysis                              |
-| 8    | `audit`        | ~5s   | Known vulnerabilities in dependencies                               |
-| 9    | `gitleaks`     | ~3s   | Secret leak detection (requires `gitleaks` CLI)                     |
-| 10   | `docs:check`   | ~0.5s | Broken doc references, missing files                                |
-| 11   | `format:check` | ~1s   | Final formatting gate (matches CI exactly)                          |
-| 5    | `build`        | ~10s  | Bundling errors, broken routes, standalone failure                  |
-| 6    | `docs:check`   | ~0.5s | Broken doc references, missing files                                |
-| 7    | `format:check` | ~1s   | Final formatting gate (matches CI exactly)                          |
+| 7    | `docs:check`   | ~0.5s | Broken doc references, missing files                                |
+| 8    | `knip`         | ~2s   | Dead file & unused dependency analysis                              |
+| 9    | `audit`        | ~5s   | Known vulnerabilities in dependencies                               |
+| 10   | `gitleaks`     | ~3s   | Secret leak detection (requires `gitleaks` CLI)                     |
 
 **Fast-fail principle:** Steps 1–3 fail in seconds. You never wait minutes for a build only to discover a missing semicolon.
+
+`check:all` is read-only by default. Use `check:fix` when you want Prettier to rewrite files before the rest of the validation pipeline runs.
 
 ### E2E Behavior
 
