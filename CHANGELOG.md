@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.44](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.43...v0.1.44) (2026-05-18)
+
+
+### Bug Fixes
+
+* **deps:** bump the dev-dependencies group across 1 directory with 8 updates ([17057e5](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/17057e5af8e3253f285ed093cc443b2400ddeb65))
+* **deps:** bump the dev-dependencies group across 1 directory with 8 updates ([2f986f5](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/2f986f5d6811a5d408f81af823468995753a8b5e))
+* **dx:** improve validation pipeline and audit handling ([48ee97a](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/48ee97ac41efdaf35abca76661be096619e39d6a))
+* **dx:** improve validation pipeline and audit handling ([a8d3644](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/a8d36444424cc77f7096eae239c1732902869421))
+
 ## [0.1.43](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.42...v0.1.43) (2026-05-18)
 
 
