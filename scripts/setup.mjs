@@ -11,8 +11,6 @@ function log(step, message) {
   console.log(`[setup] ${step} ${message}`);
 }
 
-
-
 async function fileExists(filePath) {
   try {
     await access(filePath, constants.F_OK);

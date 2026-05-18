@@ -20,6 +20,7 @@ NC='\033[0m' # No Color
 # ── Counters ──────────────────────────────────────────────────────────────
 PASSED=0
 FAILED=0
+SKIPPED=0
 FAILED_NAMES=()
 
 # ── Helpers ───────────────────────────────────────────────────────────────
@@ -49,6 +50,14 @@ run_check() {
   fi
 }
 
+skip_check() {
+  local name="$1"
+  local reason="$2"
+  section "⏭ ${name}"
+  echo -e "${YELLOW}  ${reason}${NC}"
+  SKIPPED=$((SKIPPED + 1))
+}
+
 check_command() {
   local cmd="$1"
   if ! command -v "$cmd" &>/dev/null; then
@@ -62,6 +71,14 @@ check_command() {
   return 0
 }
 
+run_gitleaks() {
+  if gitleaks detect --no-git -s .; then
+    return 0
+  fi
+
+  gitleaks detect
+}
+
 # ── Start ─────────────────────────────────────────────────────────────────
 echo ""
 echo -e "${BOLD}╔══════════════════════════════════════════════════════════════╗${NC}"
@@ -73,8 +90,12 @@ echo -e "  Started at: $(date '+%Y-%m-%d %H:%M:%S')"
 echo -e "  Project:    ${PWD##*/}"
 echo ""
 
-# ── 1. Format Write ───────────────────────────────────────────────────────
-run_check "format:write" pnpm run format:write
+# ── 1. Formatting ─────────────────────────────────────────────────────────
+if [[ "${CHECK_ALL_FIX:-0}" == "1" || "${CHECK_ALL_FIX:-}" == "true" ]]; then
+  run_check "format:write" pnpm run format:write
+else
+  run_check "format:check" pnpm run format:check
+fi
 
 # ── 2. Lint ───────────────────────────────────────────────────────────────
 run_check "lint" pnpm run lint
@@ -89,37 +110,27 @@ run_check "test" pnpm run test
 run_check "build" pnpm run build
 
 # ── 6. E2E Tests (Playwright) ─────────────────────────────────────────────
-run_check "e2e" pnpm run e2e
+if [[ "${CHECK_ALL_SKIP_E2E:-0}" == "1" || "${CHECK_ALL_SKIP_E2E:-}" == "true" ]]; then
+  skip_check "e2e" "Skipped because CHECK_ALL_SKIP_E2E is enabled."
+else
+  run_check "e2e" pnpm run e2e
+fi
 
 # ── 7. Docs Check ─────────────────────────────────────────────────────────
 run_check "docs:check" pnpm run docs:check
 
 # ── 8. Knip (Dead File / Unused Dependency Analysis) ──────────────────────
-if pnpm run knip &>/dev/null; then
-  run_check "knip" pnpm run knip
-else
-  # knip config may not exist — try dlx as fallback
-  run_check "knip" pnpm dlx knip --dependencies -c docs/tools/knip.json
-fi
+run_check "knip" pnpm run knip
 
 # ── 9. pnpm Audit ─────────────────────────────────────────────────────────
 run_check "pnpm audit" pnpm audit --audit-level=low
 
 # ── 10. Gitleaks (Secret Leak Detection) ──────────────────────────────────
 if check_command gitleaks; then
-  run_check "gitleaks detect" gitleaks detect --no-git -s . 2>/dev/null || \
-  run_check "gitleaks detect (with git)" gitleaks detect 2>/dev/null || true
+  run_check "gitleaks detect" run_gitleaks
 else
-  echo -e "${YELLOW}  ⚠  gitleaks is not installed — skipping secret scan.${NC}"
-  echo -e "${YELLOW}     Install it to prevent secret leaks in CI:${NC}"
-  echo -e "${YELLOW}     https://github.com/gitleaks/gitleaks#installing${NC}"
-  echo ""
-  # Count as warning, not failure
-  echo -e "${GREEN}  ⏭  gitleaks detect — SKIPPED (not installed)${NC}"
+  skip_check "gitleaks detect" "gitleaks is not installed; install it to enable local secret scanning."
 fi
-
-# ── 11. Format Check ──────────────────────────────────────────────────────
-run_check "format:check" pnpm run format:check
 
 # ── Summary ───────────────────────────────────────────────────────────────
 echo ""
@@ -130,6 +141,10 @@ echo ""
 
 if [ "$PASSED" -gt 0 ]; then
   echo -e "${GREEN}  ✅ Passed checks: ${PASSED}${NC}"
+fi
+
+if [ "$SKIPPED" -gt 0 ]; then
+  echo -e "${YELLOW}  ⏭ Skipped checks: ${SKIPPED}${NC}"
 fi
 
 if [ "$FAILED" -gt 0 ]; then
