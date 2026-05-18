@@ -1,5 +1,43 @@
 # Changelog
 
+## [0.1.42](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.41...v0.1.42) (2026-05-17)
+
+
+### Features
+
+* **boilerplate:** added more lang and improved code quality ([ee9d09f](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/ee9d09f3adc5abbb2599446cfdb251c75a140f71))
+* **boilerplate:** added more lang and improved code quality ([7684ea0](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/7684ea0c4390b7bd7fa0d0b2c5de1769f7197ac9))
+
+## [0.1.41](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.40...v0.1.41) (2026-05-17)
+
+
+### Bug Fixes
+
+* **markdown:** fixed standalone issues ([1037f90](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/1037f9095e2b89267d9bbb920ef525378a11c110))
+* **markdown:** fixed standalone issues ([bbd7216](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/bbd721681b8dc4a4c036c347e7f3c8f250a8be32))
+
+## [0.1.40](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.39...v0.1.40) (2026-05-17)
+
+
+### Bug Fixes
+
+* **deps:** bump @babel/plugin-transform-modules-systemjs from 7.29.0 to 7.29.4 ([a78a650](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/a78a650ef4c8bfd0590f5a0092e1709f9f3ef0d6))
+* **deps:** bump next from 16.2.4 to 16.2.6 ([d24110b](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/d24110b15008d7a542c5f86fcd488991f1ebcce7))
+* **deps:** bump next from 16.2.4 to 16.2.6 ([897673d](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/897673d445156b2fd5924f9172c293a732d9b9aa))
+
+## [0.1.39](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.38...v0.1.39) (2026-05-17)
+
+
+### Features
+
+* **boilerplate:** updated docs and fix CSP issues ([96955dd](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/96955dd26492a2a01af7bef248eda725cd11eb81))
+* **boilerplate:** updated docs and fix CSP issues ([031cb38](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/031cb387904a518ad10f4cb379f75ea11ca2d832))
+
+
+### Bug Fixes
+
+* **boilerplate:** fixed markdown issue and centralized url ([6d0049f](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/6d0049f20d1261a2b176dd2da5e0d231de2fbeb0))
+
 ## [0.1.38](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.37...v0.1.38) (2026-05-13)
 
 
