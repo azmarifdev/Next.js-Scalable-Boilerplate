@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.1.43](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.42...v0.1.43) (2026-05-18)
+
+
+### Features
+
+* **boilerplate:** added more lang and improved code quality ([5e24774](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/5e24774a919f9a3bce153487a0b5ef59fcd783ad))
+
+
+### Bug Fixes
+
+* **deps:** bump brace-expansion from 1.1.13 to 5.0.6 ([5f6935a](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/5f6935a0311314f6708a7c20f6400cf33e0bdfb9))
+* **deps:** bump brace-expansion from 1.1.13 to 5.0.6 ([d62c89f](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/d62c89f71edcfe3a89398aeffa6f14ea39578efd))
+
+
+### Documentation
+
+* add unified project check workflow ([ab817bf](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/ab817bf2ea472920395ec963d36b6fa209868440))
+
 ## [0.1.42](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.41...v0.1.42) (2026-05-17)
 
 
