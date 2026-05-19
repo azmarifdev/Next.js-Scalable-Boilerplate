@@ -305,3 +305,5 @@ scripts/
 
 - [Architecture](architecture.md) — System layers and design decisions
 - [How to Use](how-to-use.md) — Setup and daily workflow
+- [Auth Flow](auth-flow.md) — Auth-related folders and routes
+- [Guides Index](guides/README.md) — Operational deep dives

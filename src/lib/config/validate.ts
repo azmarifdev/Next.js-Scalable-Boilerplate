@@ -5,9 +5,6 @@ let validated = false;
 
 function collectErrors(): string[] {
   const errors: string[] = [];
-  const isCustomAuthEnabled =
-    process.env.NEXT_PUBLIC_ENABLE_CUSTOM_AUTH === "true" ||
-    process.env.ENABLE_CUSTOM_AUTH === "true";
 
   if (appConfig.backendMode === "internal") {
     const hasSessionSecret = Boolean(
@@ -23,11 +20,11 @@ function collectErrors(): string[] {
     }
   }
 
-  if (appConfig.authProvider === "custom-auth" && isCustomAuthEnabled) {
+  if (appConfig.authProvider === "custom-auth") {
     const customBaseUrl = env.NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL?.trim();
     if (!customBaseUrl) {
       errors.push(
-        "NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL is required when NEXT_PUBLIC_AUTH_PROVIDER=custom-auth and custom auth is enabled."
+        "NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL is required when NEXT_PUBLIC_AUTH_PROVIDER=custom-auth."
       );
     } else if (process.env.NODE_ENV === "production" && !customBaseUrl.startsWith("https://")) {
       errors.push("NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL must use https:// in production.");

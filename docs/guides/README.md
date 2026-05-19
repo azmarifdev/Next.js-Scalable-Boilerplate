@@ -45,6 +45,8 @@ If you're new to this boilerplate, follow this order:
 - [Security Policy](../security.md) — Supported versions and vulnerability reporting
 - [Architecture](../architecture.md) — System layers and design decisions
 - [Auth Flow](../auth-flow.md) — Authentication lifecycle and security controls
+- [How to Use](../how-to-use.md) — First-time setup and daily workflow
+- [Workflows](../workflows.md) — CI/CD automation overview
 
 ---
 

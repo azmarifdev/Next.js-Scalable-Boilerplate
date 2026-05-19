@@ -2,10 +2,9 @@ import { expect, test } from "@playwright/test";
 
 const authEmail = process.env.E2E_AUTH_EMAIL;
 const authPassword = process.env.E2E_AUTH_PASSWORD;
-
-if (!authEmail || !authPassword) {
-  throw new Error("Missing E2E_AUTH_EMAIL or E2E_AUTH_PASSWORD for Playwright tests.");
-}
+const authTest = process.env.E2E_SKIP_AUTH_TESTS === "true" ? test.skip : test;
+const appCookieAuthTest =
+  process.env.NEXT_PUBLIC_AUTH_PROVIDER === "custom-auth" ? test.skip : authTest;
 
 test("home page loads", async ({ page }) => {
   await page.goto("/");
@@ -19,9 +18,11 @@ test("home page loads", async ({ page }) => {
   ).toBeVisible();
 });
 
-const authTest = process.env.E2E_SKIP_DB_SETUP === "true" ? test.skip : test;
-
 authTest("authenticated user can access docs after login", async ({ page }) => {
+  if (!authEmail || !authPassword) {
+    throw new Error("Missing E2E_AUTH_EMAIL or E2E_AUTH_PASSWORD for Playwright auth tests.");
+  }
+
   await page.goto("/login");
   await page.locator("input[type='email']").fill(authEmail);
   await page.locator("input[type='password']").fill(authPassword);
@@ -31,7 +32,11 @@ authTest("authenticated user can access docs after login", async ({ page }) => {
   await expect(page.getByText(/docs journal|ডকস জার্নাল/i)).toBeVisible();
 });
 
-authTest("signed-in users get redirected from login to docs", async ({ page }) => {
+appCookieAuthTest("signed-in users get redirected from login to docs", async ({ page }) => {
+  if (!authEmail || !authPassword) {
+    throw new Error("Missing E2E_AUTH_EMAIL or E2E_AUTH_PASSWORD for Playwright auth tests.");
+  }
+
   // First login
   await page.goto("/login");
   await page.locator("input[type='email']").fill(authEmail);

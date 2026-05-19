@@ -24,7 +24,7 @@ It does not require every feature to come from a third-party package at runtime.
 | Mode          | Where Auth Runs   | Use When                      | Required Base Config                                            |
 | ------------- | ----------------- | ----------------------------- | --------------------------------------------------------------- |
 | `better-auth` | Inside this app   | You want a self-contained app | `DATABASE_URL`, `AUTH_SESSION_SECRET` or `AUTH_SESSION_SECRETS` |
-| `custom-auth` | External auth/IdP | You already have auth/SSO/IdP | `NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL`, custom auth flags           |
+| `custom-auth` | External auth/IdP | You already have auth/SSO/IdP | `NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL`                              |
 
 Both modes use the same app-facing interface:
 
@@ -65,11 +65,10 @@ Local/staging/production:
 ```env
 NEXT_PUBLIC_BACKEND_MODE=internal
 NEXT_PUBLIC_AUTH_PROVIDER=better-auth
-NEXT_PUBLIC_ENABLE_CUSTOM_AUTH=false
-ENABLE_CUSTOM_AUTH=false
 
 DATABASE_URL=postgresql://user:pass@host:5432/db
 AUTH_SESSION_SECRET=<strong-random-secret>
+AUTH_SESSION_TTL_SECONDS=86400
 ```
 
 Generate a strong secret:
@@ -85,6 +84,8 @@ AUTH_SESSION_SECRETS=new-secret,previous-secret
 ```
 
 Put the newest secret first. Existing cookies signed with older secrets can still verify while new sessions use the first secret.
+
+Set `AUTH_SESSION_TTL_SECONDS` to change session lifetime. The default is `86400` seconds, which is 24 hours.
 
 ### 2. Prepare the Database
 
@@ -160,8 +161,6 @@ Minimal custom-auth mode:
 
 ```env
 NEXT_PUBLIC_AUTH_PROVIDER=custom-auth
-NEXT_PUBLIC_ENABLE_CUSTOM_AUTH=true
-ENABLE_CUSTOM_AUTH=true
 NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL=https://auth.your-company.com
 ```
 
@@ -307,8 +306,6 @@ Important: do not delete internal auth files first. Switch env, adapt `custom-au
 
 ```env
 NEXT_PUBLIC_AUTH_PROVIDER=better-auth
-NEXT_PUBLIC_ENABLE_CUSTOM_AUTH=false
-ENABLE_CUSTOM_AUTH=false
 NEXT_PUBLIC_BACKEND_MODE=internal
 DATABASE_URL=postgresql://...
 AUTH_SESSION_SECRET=<strong-random-secret>
@@ -379,17 +376,6 @@ Fix:
 - switch to external backend mode, or
 - deliberately update runtime validation if your architecture no longer needs a database.
 
-### `NEXT_PUBLIC_AUTH_PROVIDER=custom-auth` falls back to better-auth
-
-Custom auth is gated by feature flags.
-
-Set both:
-
-```env
-NEXT_PUBLIC_ENABLE_CUSTOM_AUTH=true
-ENABLE_CUSTOM_AUTH=true
-```
-
 ### Custom auth login works in Postman but fails in browser
 
 Check browser-specific requirements:
@@ -425,3 +411,5 @@ Check browser-specific requirements:
 - [Deployment Guide](deployment.md)
 - [Database Setup](database-setup.md)
 - [Production Services](production-services.md)
+- [Workflows](../workflows.md)
+- [Security Policy](../security.md)

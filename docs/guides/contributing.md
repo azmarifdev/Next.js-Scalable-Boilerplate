@@ -303,3 +303,6 @@ For CI, auto-merge policy, dependency safety, and long-term maintenance incident
 - [Project Maintenance](project-maintenance.md) — Keeping the project healthy
 - [GitHub Setup Checklist](github-setup-checklist.md) — Repository hardening for maintainers
 - [Release Automation](release-automation.md) — How releases work
+- [How to Use](../how-to-use.md) — Setup and daily workflow
+- [Workflows](../workflows.md) — CI/CD automation overview
+- [Security Policy](../security.md) — Vulnerability reporting

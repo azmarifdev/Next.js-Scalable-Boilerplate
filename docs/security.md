@@ -67,3 +67,7 @@ These parts of the codebase require extra attention during changes:
 
 - [Auth Flow](auth-flow.md) — Authentication lifecycle and security controls
 - [Cloud Providers](deployment/cloud-providers.md) — Production deployment security notes
+- [Architecture](architecture.md) — System layers and security boundaries
+- [How to Use](how-to-use.md) — Setup and environment validation
+- [Production Services](guides/production-services.md) — Production service configuration
+- [Workflows](workflows.md) — CI security and automation checks

@@ -18,19 +18,6 @@ const providerRegistry: Record<"better-auth" | "custom-auth", AuthProvider> = {
 };
 
 function resolveAuthProvider(): AuthProvider {
-  if (appConfig.authProvider === "custom-auth") {
-    const isCustomAuthEnabled =
-      process.env.NEXT_PUBLIC_ENABLE_CUSTOM_AUTH === "true" ||
-      process.env.ENABLE_CUSTOM_AUTH === "true";
-
-    if (!isCustomAuthEnabled) {
-      console.warn(
-        "NEXT_PUBLIC_AUTH_PROVIDER=custom-auth but custom auth flag is disabled. Falling back to better-auth."
-      );
-      return providerRegistry["better-auth"];
-    }
-  }
-
   return providerRegistry[appConfig.authProvider];
 }
 

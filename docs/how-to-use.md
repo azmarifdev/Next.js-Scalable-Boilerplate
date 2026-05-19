@@ -147,6 +147,56 @@ AUTH_SESSION_SECRET=your-local-secret
 
 Do not store real credentials in `.env` unless that file is gitignored and your team has intentionally chosen that workflow.
 
+### 3.0.2 Env variable reference (what, where, why)
+
+Use this table with `.env.example` to decide what to set for **development** and **production**.
+
+| Variable                                | Required (Dev/Prod)                       | Where to get it                                 | Why it matters (1 line)                                         |
+| --------------------------------------- | ----------------------------------------- | ----------------------------------------------- | --------------------------------------------------------------- |
+| `NEXT_PUBLIC_APP_NAME`                  | Recommended / Required                    | Your product name                               | Sets app display name and defaults in UI/metadata.              |
+| `APP_PROTOCOL`                          | Required / Optional                       | Local dev choice (`http`/`https`)               | Builds the local origin used by sitemap, cookies, and previews. |
+| `APP_HOST`                              | Required / Optional                       | Local dev host (usually `localhost`)            | Completes the local origin for routing and URLs.                |
+| `PORT`                                  | Required / Optional                       | Local dev port (default `3000`)                 | Controls the local app origin for dev, preview, and E2E.        |
+| `NEXT_PUBLIC_SITE_URL`                  | Optional / Required                       | Your production domain                          | Used for canonical URLs, SEO, robots, and redirects.            |
+| `NEXT_PUBLIC_API_BASE_URL`              | Optional / Required (external mode)       | Your external API base URL                      | Needed only when `NEXT_PUBLIC_BACKEND_MODE=external`.           |
+| `NEXT_PUBLIC_BACKEND_MODE`              | Required / Required                       | `internal` or `external`                        | Chooses whether APIs run inside this app or outside.            |
+| `NEXT_PUBLIC_AUTH_PROVIDER`             | Required / Required                       | `better-auth` or `custom-auth`                  | Selects internal vs external auth provider path.                |
+| `NEXT_PUBLIC_ENABLE_CUSTOM_AUTH`        | Optional / Optional                       | `true` or `false`                               | Frontend flag for custom auth UX toggles.                       |
+| `ENABLE_CUSTOM_AUTH`                    | Optional / Optional                       | `true` or `false`                               | Server-side flag for custom auth checks.                        |
+| `NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL`      | Optional / Required (custom auth)         | Your auth provider base URL                     | Required to call external auth endpoints.                       |
+| `NEXT_PUBLIC_FEATURE_ADMIN`             | Optional / Optional                       | `true` or `false`                               | Toggles admin-only UI and routes.                               |
+| `DATABASE_URL`                          | Required (internal) / Required (internal) | Postgres provider (Neon/Supabase/Railway/Local) | App runtime DB connection for auth and data.                    |
+| `MIGRATION_DATABASE_URL`                | Optional / Optional                       | Direct DB connection string                     | Separate migration URL to avoid pooled runtime limits.          |
+| `ALLOW_DB_SEED`                         | Optional / Optional                       | `true` when seeding                             | Protects against accidental production seeding.                 |
+| `ALLOW_DB_RESET`                        | Optional / Optional                       | `true` when resetting                           | Protects against destructive resets in prod.                    |
+| `AUTH_SESSION_SECRET`                   | Required (internal) / Required (internal) | `openssl rand -hex 32`                          | Signs session cookies securely.                                 |
+| `AUTH_SESSION_SECRETS`                  | Optional / Optional                       | Rotating list of secrets                        | Allows key rotation while keeping old sessions valid.           |
+| `AUTH_SESSION_TTL_SECONDS`              | Optional / Optional                       | Set a number                                    | Controls session lifetime in seconds.                           |
+| `SKIP_RUNTIME_VALIDATION`               | Optional / Optional                       | `true` only for special cases                   | Skips startup env validation (not recommended).                 |
+| `REQUIRE_ADMIN_STEP_UP_AUTH`            | Optional / Optional                       | `true` to enable                                | Enables admin MFA step-up flow.                                 |
+| `AUTH_MFA_VERIFY_URL`                   | Optional / Optional                       | Your MFA verifier endpoint                      | Required when admin step-up MFA is enabled.                     |
+| `AUTH_MFA_VERIFY_BEARER_TOKEN`          | Optional / Optional                       | Your verifier auth token                        | Authenticates requests to the MFA verifier.                     |
+| `SENTRY_DSN`                            | Optional / Recommended                    | Sentry project DSN                              | Captures server-side errors in production.                      |
+| `NEXT_PUBLIC_SENTRY_DSN`                | Optional / Recommended                    | Sentry project DSN                              | Captures client-side errors in production.                      |
+| `SENTRY_AUTH_TOKEN`                     | Optional / Recommended                    | Sentry auth token                               | Uploads source maps during builds.                              |
+| `SENTRY_ORG`                            | Optional / Recommended                    | Sentry org slug                                 | Identifies your Sentry organization.                            |
+| `SENTRY_PROJECT`                        | Optional / Recommended                    | Sentry project slug                             | Routes events to the right Sentry project.                      |
+| `SENTRY_TRACES_SAMPLE_RATE`             | Optional / Optional                       | `0.0` to `1.0`                                  | Controls server tracing sample rate.                            |
+| `NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE` | Optional / Optional                       | `0.0` to `1.0`                                  | Controls client tracing sample rate.                            |
+| `RESEND_API_KEY`                        | Optional / Required (if email)            | Resend dashboard                                | Enables transactional email sending.                            |
+| `EMAIL_FROM`                            | Optional / Required (if email)            | Your verified sender                            | Sets the From address for emails.                               |
+| `UPSTASH_REDIS_REST_URL`                | Optional / Recommended                    | Upstash Redis dashboard                         | Shared rate limiting in serverless environments.                |
+| `UPSTASH_REDIS_REST_TOKEN`              | Optional / Recommended                    | Upstash Redis dashboard                         | Auth token for Upstash rate limiting.                           |
+| `E2E_DATABASE_URL`                      | Optional / Optional                       | Disposable test DB                              | Enables Playwright auth E2E with migrations + seed.             |
+| `TEST_DATABASE_URL`                     | Optional / Optional                       | Disposable test DB                              | Fallback for `E2E_DATABASE_URL`.                                |
+| `E2E_BASE_URL`                          | Optional / Optional                       | Local or CI app URL                             | Overrides Playwright base URL.                                  |
+| `SEED_ADMIN_EMAIL`                      | Optional / Optional                       | Your test email                                 | Seeds admin user for E2E/auth tests.                            |
+| `SEED_ADMIN_PASSWORD`                   | Optional / Optional                       | Your test password                              | Seeds admin password for E2E/auth tests.                        |
+| `SEED_USER_EMAIL`                       | Optional / Optional                       | Your test email                                 | Seeds user account for E2E/auth tests.                          |
+| `SEED_USER_PASSWORD`                    | Optional / Optional                       | Your test password                              | Seeds user password for E2E/auth tests.                         |
+| `E2E_AUTH_EMAIL`                        | Optional / Optional                       | Your test email                                 | Login credential for Playwright auth tests.                     |
+| `E2E_AUTH_PASSWORD`                     | Optional / Optional                       | Your test password                              | Login credential for Playwright auth tests.                     |
+
 ### 3.1 Minimum required for internal mode
 
 ```env
@@ -158,8 +208,6 @@ NEXT_PUBLIC_SITE_URL=
 NEXT_PUBLIC_API_BASE_URL=
 NEXT_PUBLIC_BACKEND_MODE=internal
 NEXT_PUBLIC_AUTH_PROVIDER=better-auth
-NEXT_PUBLIC_ENABLE_CUSTOM_AUTH=false
-ENABLE_CUSTOM_AUTH=false
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/app_db
 AUTH_SESSION_SECRET=<generate-with-openssl-rand-hex-32>
 NEXT_PUBLIC_FEATURE_ADMIN=true
@@ -176,8 +224,6 @@ openssl rand -hex 32
 
 ```env
 NEXT_PUBLIC_AUTH_PROVIDER=custom-auth
-NEXT_PUBLIC_ENABLE_CUSTOM_AUTH=true
-ENABLE_CUSTOM_AUTH=true
 NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL=https://your-auth-service.example.com
 ```
 
@@ -212,8 +258,6 @@ NEXT_PUBLIC_API_BASE_URL=
 
 NEXT_PUBLIC_BACKEND_MODE=internal
 NEXT_PUBLIC_AUTH_PROVIDER=better-auth
-NEXT_PUBLIC_ENABLE_CUSTOM_AUTH=false
-ENABLE_CUSTOM_AUTH=false
 
 DATABASE_URL=postgresql://...
 AUTH_SESSION_SECRET=<separate-production-secret>
@@ -411,8 +455,10 @@ pnpm audit
 
 ### E2E Behavior
 
-- Without `E2E_DATABASE_URL`, Playwright runs smoke tests and skips auth DB flows.
-- With `E2E_DATABASE_URL`, Playwright migrates/seeds that database and runs auth flows.
+- Playwright loads `.env*` before it computes E2E defaults, so `NEXT_PUBLIC_AUTH_PROVIDER=custom-auth` in your env file is respected.
+- Without `E2E_DATABASE_URL`, Playwright runs smoke tests and skips internal auth DB setup.
+- With `E2E_DATABASE_URL`, Playwright migrates/seeds that database and runs internal auth flows.
+- With `custom-auth`, provide `NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL`, `E2E_AUTH_EMAIL`, and `E2E_AUTH_PASSWORD` to run external auth login tests.
 - Use a disposable test database. Do not point E2E at production.
 - The `e2e` command starts the production build via the Playwright webServer, so `pnpm run build` must run first.
 
@@ -447,8 +493,9 @@ pnpm run e2e
 
 E2E behavior:
 
-- Without `E2E_DATABASE_URL`, Playwright runs smoke tests and skips auth DB flows.
-- With `E2E_DATABASE_URL`, Playwright migrates/seeds that database and runs auth flows.
+- Without `E2E_DATABASE_URL`, Playwright runs smoke tests and skips internal auth DB setup.
+- With `E2E_DATABASE_URL`, Playwright migrates/seeds that database and runs internal auth flows.
+- With `custom-auth`, Playwright does not force `better-auth`; set custom auth env and E2E credentials to run external auth login tests.
 - Use a disposable test database. Do not point E2E at production.
 
 **Test suite overview (63+ tests across 6 E2E specs & 11 unit/integration files):**
@@ -578,9 +625,12 @@ Before production deploy:
 
 ---
 
-## Related Guides
+## Related Docs
 
 - [Adopting This Boilerplate](guides/adopting-boilerplate.md)
+- [Architecture](architecture.md)
+- [Folder Structure](folder-structure.md)
+- [Auth Flow](auth-flow.md)
 - [Database Setup](guides/database-setup.md)
 - [GitHub Setup Checklist](guides/github-setup-checklist.md)
 - [Production Services](guides/production-services.md)
@@ -588,3 +638,4 @@ Before production deploy:
 - [Workflows](workflows.md)
 - [Release Automation](guides/release-automation.md)
 - [Contributing Guide](guides/contributing.md)
+- [Security Policy](security.md)

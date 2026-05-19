@@ -1,4 +1,4 @@
-CREATE TABLE "auth_audit_logs" (
+CREATE TABLE IF NOT EXISTS "auth_audit_logs" (
 	"id" text PRIMARY KEY NOT NULL,
 	"event" text NOT NULL,
 	"status" text NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE "auth_audit_logs" (
 	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "auth_users" (
+CREATE TABLE IF NOT EXISTS "auth_users" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"email" text NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE "auth_users" (
 	CONSTRAINT "auth_users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
-CREATE TABLE "users" (
+CREATE TABLE IF NOT EXISTS "users" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"email" text NOT NULL,

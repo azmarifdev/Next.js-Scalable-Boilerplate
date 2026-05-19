@@ -106,8 +106,6 @@ NEXT_PUBLIC_AUTH_PROVIDER=better-auth   # or custom-auth
 If using `custom-auth`, you also need:
 
 ```
-NEXT_PUBLIC_ENABLE_CUSTOM_AUTH=true
-ENABLE_CUSTOM_AUTH=true
 NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL=https://your-auth-provider.example.com
 ```
 
@@ -373,3 +371,14 @@ Fix:
 
 - Verify `NEXT_PUBLIC_SITE_URL` is set to your deployed domain
 - Cookie-based auth depends on domain matching — the cookie domain must match the browser URL
+
+---
+
+## Related Docs
+
+- [Cloud Providers](../deployment/cloud-providers.md)
+- [Database Setup](database-setup.md)
+- [Auth Setup and Migration](auth-setup-and-migration.md)
+- [Production Services](production-services.md)
+- [Workflows](../workflows.md)
+- [Security Policy](../security.md)

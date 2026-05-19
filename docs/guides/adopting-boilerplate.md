@@ -151,8 +151,6 @@ Required:
 
 ```env
 NEXT_PUBLIC_AUTH_PROVIDER=custom-auth
-NEXT_PUBLIC_ENABLE_CUSTOM_AUTH=true
-ENABLE_CUSTOM_AUTH=true
 NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL=https://auth.your-company.com
 ```
 
@@ -363,3 +361,14 @@ Find routes to update after removing pages:
 ```bash
 rg -n "\"/docs|\"/features|\"/login|\"/register|sitemap" src
 ```
+
+---
+
+## Related Docs
+
+- [How to Use](../how-to-use.md)
+- [Architecture](../architecture.md)
+- [Folder Structure](../folder-structure.md)
+- [Auth Setup and Migration](auth-setup-and-migration.md)
+- [Database Setup](database-setup.md)
+- [Deployment Guide](deployment.md)

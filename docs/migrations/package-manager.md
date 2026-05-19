@@ -203,6 +203,6 @@ If something goes wrong after migration:
 
 ## Related Docs
 
-- `docs/guides/deployment.md`
-- `docs/guides/github-setup-checklist.md`
-- `docs/workflows.md`
+- [Deployment Guide](../guides/deployment.md)
+- [GitHub Setup Checklist](../guides/github-setup-checklist.md)
+- [Workflows](../workflows.md)

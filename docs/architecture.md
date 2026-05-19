@@ -253,6 +253,8 @@ Provider switching (PostgreSQL vs Neon vs Supabase Postgres) is handled via `DAT
 
 | Document                                | What It Covers                                    |
 | --------------------------------------- | ------------------------------------------------- |
+| [How to Use](how-to-use.md)             | First-time setup and daily workflow               |
 | [Auth Flow](auth-flow.md)               | Authentication lifecycle, MFA, session management |
 | [Folder Structure](folder-structure.md) | Directory-level responsibilities and conventions  |
 | [Workflows](workflows.md)               | GitHub Actions, CI/CD, automation                 |
+| [Guides Index](guides/README.md)        | Operations playbook and deeper guides             |

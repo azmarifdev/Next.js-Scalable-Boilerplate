@@ -22,10 +22,9 @@ interface UseAuthFormOptions {
 
 function getCustomAuthConfigError(): string | null {
   const authProvider = process.env.NEXT_PUBLIC_AUTH_PROVIDER;
-  const customAuthEnabled = process.env.NEXT_PUBLIC_ENABLE_CUSTOM_AUTH === "true";
   const customAuthBaseUrl = process.env.NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL?.trim();
 
-  if (authProvider === "custom-auth" && customAuthEnabled && !customAuthBaseUrl) {
+  if (authProvider === "custom-auth" && !customAuthBaseUrl) {
     return "Custom auth is enabled but NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL is missing.";
   }
 

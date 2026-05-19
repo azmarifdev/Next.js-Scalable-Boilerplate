@@ -7,7 +7,7 @@
     "darkMode": "داكن"
   },
   "home": {
-    "title": "Next.js-Boilerplate-PostgresQL-Drizzle",
+    "title": "Starter Template",
     "titleSuffix": "قالب البداية",
     "subtitle": "نموذج Next.js جاهز للإنتاج مع PostgreSQL و Drizzle ORM. مصمم لتطبيقات الويب الحديثة والتجارة الإلكترونية والأدوات الداخلية. أطلق أسرع بكود نظيف وهندسة قابلة للتوسع وأدوات صديقة للمطورين.",
     "signIn": "تسجيل الدخول",

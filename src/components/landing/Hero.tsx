@@ -11,6 +11,8 @@ import {
   SiTypescript
 } from "react-icons/si";
 
+import { APP_NAME } from "@/lib/config/constants";
+
 const stackItems = [
   { name: "Next.js 14+", icon: SiNextdotjs, colorClass: "text-[#000000]" },
   { name: "PostgreSQL", icon: SiPostgresql, colorClass: "text-[#4169E1]" },
@@ -58,11 +60,8 @@ export async function Hero({ children }: HeroProps) {
 
         <h1 className="mt-7 max-w-[920px] text-[3rem] leading-[0.96] font-semibold tracking-[-0.055em] text-[var(--landing-text-strong)] sm:text-[4.4rem] lg:text-[5.55rem]">
           <span className="bg-[linear-gradient(135deg,#ff59c7_0%,#d946ef_42%,#8b5cf6_72%,#6d7dff_100%)] bg-clip-text text-transparent">
-            Next.js
-          </span>{" "}
-          {t("heroTitleMiddle")}
-          <br />
-          PostgreSQL-Drizzle
+            {APP_NAME}
+          </span>
         </h1>
 
         <div className="mt-4 h-[3px] w-[240px] rounded-full bg-[linear-gradient(90deg,rgba(255,0,153,0),rgba(234,76,255,0.95),rgba(130,64,255,0))] shadow-[0_0_20px_rgba(217,70,239,0.32)]" />

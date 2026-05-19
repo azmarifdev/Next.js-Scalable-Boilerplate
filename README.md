@@ -237,6 +237,18 @@ Your app is now running at the local origin from `.env.local`. With defaults: **
 
 All documentation is in the `docs/` directory and covers everything from setup to deployment.
 
+### Recommended Reading Order
+
+1. [How to Use](docs/how-to-use.md) — first-time setup and daily workflow
+2. [Architecture](docs/architecture.md) — system layers and request flow
+3. [Folder Structure](docs/folder-structure.md) — where code and docs belong
+4. [Auth Flow](docs/auth-flow.md) — auth lifecycle and security controls
+5. [Guides Index](docs/guides/README.md) — deep-dive operations guides
+6. [Deployment Guide](docs/guides/deployment.md) — production runbook
+7. [Cloud Providers](docs/deployment/cloud-providers.md) — provider specifics
+8. [Workflows](docs/workflows.md) — CI/CD and automation
+9. [Security Policy](docs/security.md) — reporting and supported versions
+
 ### Getting Started
 
 | Guide                                                               | Description                                                           |
