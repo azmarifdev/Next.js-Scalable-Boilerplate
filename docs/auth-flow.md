@@ -17,6 +17,8 @@ This document explains how authentication works in this boilerplate — from log
 
 ## 1. Better Auth Mode (Default)
 
+In this repository, **Better Auth** means the built-in internal auth provider path. The app owns the auth API routes, database-backed users, signed session cookie, RBAC checks, rate limiting, and audit logging.
+
 ### API Endpoints
 
 All auth endpoints are under `/api/v1/auth/`:
@@ -89,7 +91,7 @@ API route handlers also verify via session-guard.ts
 
 ## 2. Custom Auth Mode (External Provider)
 
-When you set `NEXT_PUBLIC_AUTH_PROVIDER=custom-auth`, the app delegates authentication to an external server.
+When you set `NEXT_PUBLIC_AUTH_PROVIDER=custom-auth` and enable the custom auth flags, the frontend auth service delegates authentication to an external server through `src/modules/optional/auth/custom-auth.adapter.ts`.
 
 ### Required Configuration
 
@@ -104,14 +106,15 @@ NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL=https://your-auth-provider.com
 
 Your external provider must expose these endpoints:
 
-| Method | Endpoint           | Expected Response                      |
-| ------ | ------------------ | -------------------------------------- |
-| `POST` | `/auth/login`      | User object with id, name, email, role |
-| `POST` | `/auth/register`   | User object                            |
-| `GET`  | `/auth/me`         | Current user data                      |
-| `POST` | `/auth/logout`     | Success confirmation                   |
-| `POST` | `/auth/refresh`    | Token refresh response                 |
-| `POST` | `/auth/mfa/verify` | MFA verification result                |
+| Method | Endpoint         | Expected Response                      |
+| ------ | ---------------- | -------------------------------------- |
+| `POST` | `/auth/login`    | User object with id, name, email, role |
+| `POST` | `/auth/register` | User object                            |
+| `GET`  | `/auth/me`       | Current user data                      |
+| `POST` | `/auth/logout`   | Success confirmation                   |
+| `POST` | `/auth/refresh`  | Token refresh response                 |
+| `POST` | `/mfa/verify`    | MFA verification result                |
+| `POST` | `/oauth/token`   | OAuth/code exchange result             |
 
 ### Adapter Architecture
 
@@ -126,6 +129,8 @@ src/modules/optional/auth/
   ├── custom-auth.provider.ts    ← Wrapper adapter
   └── custom-auth.types.ts       ← Type definitions
 ```
+
+The default adapter expects a user with `id`, `name`, `email`, and `role`. If your IdP returns another response shape, update the normalizers in `custom-auth.adapter.ts` instead of changing every component.
 
 ---
 
@@ -178,16 +183,18 @@ Logout → Cookie cleared, token invalidated
 
 ## 4. Route Protection
 
-### Browser-Level Protection (`src/proxy.ts`)
+### Browser-Level Auth Redirects (`src/proxy.ts`)
 
-The proxy runs on every request to `/login` and `/register`:
+The proxy currently redirects signed-in users away from public auth routes:
 
-| Scenario                                 | Action              |
-| ---------------------------------------- | ------------------- |
-| User visits `/login` while signed in     | Redirect to `/docs` |
-| User visits `/register` while signed in  | Redirect to `/docs` |
-| User visits `/login` while signed out    | Show login page     |
-| User visits `/register` while signed out | Show register page  |
+| Scenario                                                        | Action              |
+| --------------------------------------------------------------- | ------------------- |
+| User visits `/login` while signed in with a valid app cookie    | Redirect to `/docs` |
+| User visits `/register` while signed in with a valid app cookie | Redirect to `/docs` |
+| User visits `/login` while signed out                           | Show login page     |
+| User visits `/register` while signed out                        | Show register page  |
+
+Protected API access is enforced in route handlers with `session-guard.ts`. If custom auth uses only external cookies that this app cannot verify, update `src/proxy.ts` or rely on client-side auth state for public auth page UI.
 
 ### API-Level Protection (`src/lib/auth/session-guard.ts`)
 
@@ -256,12 +263,12 @@ REQUIRE_ADMIN_STEP_UP_AUTH=true
 
 ### How It Works
 
-1. Admin logs in normally
-2. Admin navigates to `/users`
-3. App checks if MFA is needed (admin role + step-up enabled)
-4. If MFA not yet verified → Redirect to MFA challenge
-5. Admin completes MFA → Session updated with `mfaVerified: true`
-6. Admin can now access the route
+1. Admin logs in normally.
+2. Admin calls an API route that requires an admin-only permission.
+3. `session-guard.ts` checks the role and step-up setting.
+4. If MFA is not verified, the API returns a step-up required error.
+5. The app should show or route to an MFA challenge UI for that workflow.
+6. After MFA verifies, the session can be updated with `mfaVerified: true`.
 
 ### Verifier Options
 
@@ -275,10 +282,10 @@ REQUIRE_ADMIN_STEP_UP_AUTH=true
 
 The navbar dynamically changes based on auth state:
 
-| State             | Shows                                                  |
-| ----------------- | ------------------------------------------------------ |
-| **Not logged in** | Features · Docs · 🌐 Toggle · ☀️ Toggle · **Sign In**  |
-| **Logged in**     | Features · Docs · 🌐 Toggle · ☀️ Toggle · **Sign Out** |
+| State             | Shows                                                   |
+| ----------------- | ------------------------------------------------------- |
+| **Not logged in** | Features, Docs, locale switcher, theme toggle, Sign In  |
+| **Logged in**     | Features, Docs, locale switcher, theme toggle, Sign Out |
 
 The auth state is checked via the `useAuth()` hook which calls `GET /api/v1/auth/me` to verify the session.
 
