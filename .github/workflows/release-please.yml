@@ -337,6 +337,37 @@ jobs:
               return next.trim();
             };
 
+            const normalizeReleaseBullet = (line) => {
+              const match = line.match(/^(\s*[-*]\s+)(.+?)\s+\(\[[0-9a-f]{7,40}\]\([^)]+\)\)\s*$/i);
+              if (!match) return null;
+              return match[2]
+                .replace(/\s+/g, " ")
+                .trim()
+                .toLowerCase();
+            };
+
+            const dedupeReleaseBullets = (body) => {
+              const lines = body.split("\n");
+              const seen = new Set();
+              const kept = [];
+
+              // Keep the last duplicate because GitHub merge commits often
+              // appear before the original PR commit in release-please output.
+              for (let index = lines.length - 1; index >= 0; index -= 1) {
+                const line = lines[index];
+                const key = normalizeReleaseBullet(line);
+                if (key && seen.has(key)) {
+                  continue;
+                }
+                if (key) {
+                  seen.add(key);
+                }
+                kept.push(line);
+              }
+
+              return kept.reverse().join("\n").replace(/\n{3,}/g, "\n\n").trim();
+            };
+
             const creditsSection = [
               "---",
               "",
@@ -394,7 +425,8 @@ jobs:
               managedBlockEnd
             ].join("\n");
 
-            const nextBody = [stripManagedEnhancement(existingBody), managedSection]
+            const releasePleaseBody = dedupeReleaseBullets(stripManagedEnhancement(existingBody));
+            const nextBody = [releasePleaseBody, managedSection]
               .filter(Boolean)
               .join("\n\n");
 

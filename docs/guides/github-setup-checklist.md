@@ -195,6 +195,7 @@ Why:
 - Clean history
 - PR title becomes final commit message
 - Better release note quality with Conventional Commits
+- Prevents duplicate Release Please changelog entries from GitHub merge commits plus original PR commits
 
 ---
 
@@ -289,6 +290,23 @@ Fix:
 1. Verify merge commit message is Conventional Commit.
 2. Re-run `Release Please` from Actions.
 3. Verify Actions permission is read/write.
+
+### Problem: Release notes show the same change twice
+
+Cause:
+
+- PRs were merged with **Create a merge commit** instead of **Squash and merge**.
+- GitHub's merge commit body contains the PR title, while the original PR commit is still in history.
+- Release Please can interpret both as changelog-worthy Conventional Commits.
+
+Fix:
+
+1. Go to `Settings` -> `General` -> `Pull Requests`.
+2. Keep `Allow squash merging` enabled.
+3. Disable `Allow merge commits`.
+4. Prefer the guarded auto-merge workflows, which already use `--squash`.
+
+The release workflow also deduplicates repeated release-note bullets as a safety net, but squash-only merging is the clean source-of-truth fix.
 
 ---
 
