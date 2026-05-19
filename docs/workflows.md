@@ -21,12 +21,13 @@ Checks produced:
 - `Quality (typecheck)`
 - `Quality (test)`
 - `Build`
-- `Playwright E2E Push` (push only; runs auth DB flows only when `E2E_DATABASE_URL` or `TEST_DATABASE_URL` is configured)
-- `Playwright E2E PR` (PR only; secret-free smoke coverage, skips auth DB flows)
+- `Playwright E2E Push` (push only; runs internal auth DB flows only when `E2E_DATABASE_URL` or `TEST_DATABASE_URL` is configured)
+- `Playwright E2E PR` (PR only; secret-free smoke coverage, skips internal auth DB flows)
 
 Notes:
 
 - PR path filter is intentionally removed so required checks always run and do not remain `Expected`.
+- Playwright loads `.env*` before applying E2E defaults. Workflow defaults should not force `NEXT_PUBLIC_AUTH_PROVIDER`; set auth mode in env files or deployment/CI env instead.
 
 ### `package-manager-consistency.yml`
 
@@ -191,3 +192,6 @@ pnpm run build
 - [GitHub Setup Checklist](guides/github-setup-checklist.md)
 - [Release Automation](guides/release-automation.md)
 - [Contributing Guide](guides/contributing.md)
+- [How to Use](how-to-use.md)
+- [Deployment Guide](guides/deployment.md)
+- [Security Policy](security.md)

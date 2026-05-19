@@ -7,7 +7,7 @@
     "darkMode": "ダーク"
   },
   "home": {
-    "title": "Next.js-Boilerplate-PostgresQL-Drizzle",
+    "title": "Starter Template",
     "titleSuffix": "スターターテンプレート",
     "subtitle": "PostgreSQLとDrizzle ORMを備えたプロダクション対応のNext.jsボイラープレート。モダンなウェブアプリ、Eコマース、社内ツール向けに構築。クリーンなコード、スケーラブルなアーキテクチャ、開発者に優しいツールで迅速にローンチ。",
     "signIn": "サインイン",

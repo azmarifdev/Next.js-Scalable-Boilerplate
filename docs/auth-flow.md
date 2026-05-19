@@ -91,14 +91,12 @@ API route handlers also verify via session-guard.ts
 
 ## 2. Custom Auth Mode (External Provider)
 
-When you set `NEXT_PUBLIC_AUTH_PROVIDER=custom-auth` and enable the custom auth flags, the frontend auth service delegates authentication to an external server through `src/modules/optional/auth/custom-auth.adapter.ts`.
+When you set `NEXT_PUBLIC_AUTH_PROVIDER=custom-auth`, the frontend auth service delegates authentication to an external server through `src/modules/optional/auth/custom-auth.adapter.ts`.
 
 ### Required Configuration
 
 ```env
 NEXT_PUBLIC_AUTH_PROVIDER=custom-auth
-NEXT_PUBLIC_ENABLE_CUSTOM_AUTH=true
-ENABLE_CUSTOM_AUTH=true
 NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL=https://your-auth-provider.com
 ```
 
@@ -167,7 +165,7 @@ The default adapter expects a user with `id`, `name`, `email`, and `role`. If yo
 Created at login/register
         │
         ▼
-Valid for 24 hours
+Valid for `AUTH_SESSION_TTL_SECONDS` seconds (default: 24 hours)
         │
         ├─ Sent with every request via cookie
         ├─ Refreshable via POST /api/v1/auth/refresh
@@ -298,6 +296,9 @@ The auth state is checked via the `useAuth()` hook which calls `GET /api/v1/auth
 | [Architecture](architecture.md)                                | System layers, request path, design decisions      |
 | [How to Use](how-to-use.md)                                    | Setup, env config, switching auth modes            |
 | [Auth Setup and Migration](guides/auth-setup-and-migration.md) | Demo auth removal + production/custom auth runbook |
+| [Database Setup](guides/database-setup.md)                     | Database requirements for auth and migrations      |
+| [Security Policy](security.md)                                 | Reporting and security-sensitive areas             |
+| [Workflows](workflows.md)                                      | CI expectations for auth and E2E flows             |
 
 ### Key Source Files
 

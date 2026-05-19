@@ -275,3 +275,13 @@ Fix:
 | **Weekly**    | Review dependency PRs, check CI health, scan new issues                | 15–30 min     |
 | **Monthly**   | Env/secret audit, release automation health, docs accuracy             | 1–2 hours     |
 | **Quarterly** | Validate deploy guides, full test run, major upgrades, security review | Half a day    |
+
+---
+
+## Related Docs
+
+- [Workflows](../workflows.md)
+- [Release Automation](release-automation.md)
+- [Contributing Guide](contributing.md)
+- [Security Policy](../security.md)
+- [Deployment Guide](deployment.md)

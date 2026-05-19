@@ -297,13 +297,6 @@ To use the built-in database, uncomment the PostgreSQL service in `docker-compos
 
 ### Docker-Specific Notes
 
-- ✅ **Full control** — You own the infrastructure
-- ✅ **No cold starts** — Always-on
-- ⚠️ **You manage SSL** — Use a reverse proxy (nginx, Caddy, Traefik) with Let's Encrypt
-- ⚠️ **You manage updates** — Pull new images and restart manually or with watchtower
-
----
-
 ## Quick Reference: Environment Variables by Provider
 
 | Variable                    | Vercel    | Netlify   | Railway                     | Render    | Fly.io    | Docker    |
@@ -314,19 +307,18 @@ To use the built-in database, uncomment the PostgreSQL service in `docker-compos
 | `DATABASE_URL`              | ✅ Manual | ✅ Manual | 🔄 Auto (PostgreSQL plugin) | ✅ Manual | ✅ Manual | ✅ Manual |
 | `AUTH_SESSION_SECRET`       | ✅ Manual | ✅ Manual | ✅ Manual                   | ✅ Manual | ✅ Manual | ✅ Manual |
 
----
-
 ## Docker Notes
 
-Use the included `Dockerfile` and `docker-compose.yml` for containerized deployment and local testing. The `Dockerfile` uses Next.js's **standalone output mode** for minimal image size.
-
-```bash
-# Build the Docker image
 docker build -t my-app .
 
 # Run with environment variables
+
 docker run --env-file .env.local -p ${PORT:-3000}:${PORT:-3000} my-app
 
 # Or use docker compose (recommended)
+
 docker compose up --build
+
+```
+
 ```

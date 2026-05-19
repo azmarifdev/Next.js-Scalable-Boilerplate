@@ -15,10 +15,9 @@ interface AuthFormProps {
 
 function resolveAuthActionPath(mode: "login" | "register"): string {
   const authProvider = process.env.NEXT_PUBLIC_AUTH_PROVIDER;
-  const customAuthEnabled = process.env.NEXT_PUBLIC_ENABLE_CUSTOM_AUTH === "true";
   const customAuthBaseUrl = process.env.NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL?.replace(/\/$/, "");
 
-  if (authProvider === "custom-auth" && customAuthEnabled) {
+  if (authProvider === "custom-auth") {
     if (!customAuthBaseUrl) {
       return "#";
     }
@@ -35,10 +34,9 @@ function resolveAuthActionPath(mode: "login" | "register"): string {
 
 function resolveNoJsConfigError(): string | null {
   const authProvider = process.env.NEXT_PUBLIC_AUTH_PROVIDER;
-  const customAuthEnabled = process.env.NEXT_PUBLIC_ENABLE_CUSTOM_AUTH === "true";
   const customAuthBaseUrl = process.env.NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL?.trim();
 
-  if (authProvider === "custom-auth" && customAuthEnabled && !customAuthBaseUrl) {
+  if (authProvider === "custom-auth" && !customAuthBaseUrl) {
     return "Custom auth configuration missing. Set NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL.";
   }
 
@@ -105,19 +103,6 @@ export function AuthForm({ mode }: AuthFormProps) {
 
       {serverError ? <p className="error-text">{serverError}</p> : null}
       {noJsConfigError ? <p className="error-text">{noJsConfigError}</p> : null}
-
-      {mode === "login" ? (
-        <button
-          type="button"
-          onClick={() => {
-            form.setValue("email", "nextjs.boilerplate@azmarif.dev");
-            form.setValue("password", "azmarifdev");
-          }}
-          className="w-full rounded-2xl border border-emerald-500/30 bg-emerald-500/8 px-4 py-2.5 text-sm font-medium text-emerald-300 backdrop-blur-sm transition hover:bg-emerald-500/15"
-        >
-          Fill Demo Credentials
-        </button>
-      ) : null}
 
       <Button type="submit" className="full-width" disabled={isSubmitting}>
         {isSubmitting

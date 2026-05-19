@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const ORIGINAL_ENV = { ...process.env };
 let mockAdminEnabled = true;
+let mockAuthProvider = "better-auth";
 
 vi.mock("@/lib/config/app-config", () => ({
   appConfig: {
@@ -9,7 +10,7 @@ vi.mock("@/lib/config/app-config", () => ({
       return { admin: mockAdminEnabled };
     },
     get authProvider() {
-      return "better-auth";
+      return mockAuthProvider;
     },
     backendMode: "internal"
   }
@@ -20,6 +21,7 @@ describe("featureFlags", () => {
     process.env.NEXT_PUBLIC_FEATURE_ADMIN = "true";
     process.env.NEXT_PUBLIC_ENABLE_CUSTOM_AUTH = "false";
     process.env.ENABLE_CUSTOM_AUTH = "false";
+    mockAuthProvider = "better-auth";
   });
 
   afterEach(() => {
@@ -55,6 +57,13 @@ describe("featureFlags", () => {
 
   it("returns custom auth enabled when ENABLE_CUSTOM_AUTH is true", async () => {
     process.env.ENABLE_CUSTOM_AUTH = "true";
+    const { getFeatureFlags } = await import("@/lib/config/featureFlags");
+    const flags = getFeatureFlags();
+    expect(flags.ENABLE_CUSTOM_AUTH).toBe(true);
+  });
+
+  it("returns custom auth enabled when custom-auth is the selected provider", async () => {
+    mockAuthProvider = "custom-auth";
     const { getFeatureFlags } = await import("@/lib/config/featureFlags");
     const flags = getFeatureFlags();
     expect(flags.ENABLE_CUSTOM_AUTH).toBe(true);

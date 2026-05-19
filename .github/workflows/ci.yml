@@ -37,8 +37,6 @@ jobs:
       fail-fast: false
       matrix:
         task: [lint, typecheck, test]
-    env:
-      NEXT_PUBLIC_APP_NAME: Nextjs Starter Template
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -73,8 +71,6 @@ jobs:
     name: Build
     needs: quality
     runs-on: ubuntu-latest
-    env:
-      NEXT_PUBLIC_APP_NAME: Nextjs Starter Template
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -105,7 +101,6 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'master' || github.ref_name == 'develop')
     env:
-      NEXT_PUBLIC_APP_NAME: Nextjs Starter Template
       E2E_DATABASE_URL: ${{ secrets.E2E_DATABASE_URL || secrets.TEST_DATABASE_URL }}
       AUTH_SESSION_SECRET: ${{ secrets.AUTH_SESSION_SECRET }}
     steps:
@@ -145,12 +140,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
-    env:
-      NEXT_PUBLIC_APP_NAME: Nextjs Starter Template
-      NEXT_PUBLIC_BACKEND_MODE: internal
-      NEXT_PUBLIC_AUTH_PROVIDER: better-auth
-      AUTH_SESSION_SECRET: e2e-ci-pr-secret
-      E2E_SKIP_DB_SETUP: "true"
     steps:
       - name: Checkout
         uses: actions/checkout@v6

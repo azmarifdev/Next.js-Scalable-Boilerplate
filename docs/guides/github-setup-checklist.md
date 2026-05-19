@@ -324,3 +324,5 @@ The release workflow also deduplicates repeated release-note bullets as a safety
 - [Workflows](../workflows.md)
 - [Release Automation](release-automation.md)
 - [Contributing Guide](contributing.md)
+- [Project Maintenance](project-maintenance.md)
+- [Deployment Guide](deployment.md)

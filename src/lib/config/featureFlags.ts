@@ -21,6 +21,7 @@ export function getFeatureFlags(): FeatureFlags {
   return {
     ENABLE_ADMIN: appConfig.features.admin,
     ENABLE_CUSTOM_AUTH:
+      appConfig.authProvider === "custom-auth" ||
       process.env.NEXT_PUBLIC_ENABLE_CUSTOM_AUTH === "true" ||
       process.env.ENABLE_CUSTOM_AUTH === "true"
   };

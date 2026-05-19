@@ -40,6 +40,7 @@ NEXT_PUBLIC_BACKEND_MODE=internal
 NEXT_PUBLIC_AUTH_PROVIDER=better-auth
 DATABASE_URL=
 AUTH_SESSION_SECRET=
+AUTH_SESSION_TTL_SECONDS=86400
 ```
 
 ---
@@ -149,7 +150,7 @@ Where to get it:
 
 Do not use the production database. E2E setup can migrate, seed, and reset this database.
 
-Pull request E2E is secret-free by default and skips auth DB flows when `E2E_DATABASE_URL` is not configured.
+Pull request E2E is secret-free by default and skips internal auth DB setup when `E2E_DATABASE_URL` is not configured. Playwright respects `NEXT_PUBLIC_AUTH_PROVIDER` from `.env*`; for `custom-auth` E2E, provide `NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL`, `E2E_AUTH_EMAIL`, and `E2E_AUTH_PASSWORD`.
 
 ---
 
@@ -215,3 +216,13 @@ Run it from:
 ```txt
 Actions -> Production Database Migration -> Run workflow
 ```
+
+---
+
+## Related Docs
+
+- [Deployment Guide](deployment.md)
+- [Database Setup](database-setup.md)
+- [Auth Setup and Migration](auth-setup-and-migration.md)
+- [Workflows](../workflows.md)
+- [Security Policy](../security.md)

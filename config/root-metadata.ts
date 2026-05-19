@@ -9,15 +9,9 @@ export const rootMetadata: Metadata = {
     template: `%s | ${siteConfig.name}`
   },
   description: siteConfig.description,
-  keywords: [
-    "Next.js",
-    "React",
-    "TypeScript",
-    "Next.js-Boilerplate-PostgresQL-Drizzle",
-    "Dashboard"
-  ],
-  authors: [{ name: "Next.js-Boilerplate-PostgresQL-Drizzle Maintainer" }],
-  creator: "Next.js-Boilerplate-PostgresQL-Drizzle Maintainer",
+  keywords: ["Next.js", "React", "TypeScript", siteConfig.name, "Dashboard"],
+  authors: [{ name: `${siteConfig.name} Maintainer` }],
+  creator: `${siteConfig.name} Maintainer`,
   openGraph: {
     type: "website",
     locale: "en_US",
