@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.47](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.46...v0.1.47) (2026-05-19)
+
+
+### Bug Fixes
+
+* **boilerplate:** fixed CSP issue and updated DOCS ([c065d1c](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/c065d1cecc273c6101edde8d4d2b1142df5b3b11))
+* **boilerplate:** fixed CSP issue and updated DOCS ([cb92c26](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/cb92c26fa4dbd13ea05d73cef1e38eabb1ca1d35))
+
 ## [0.1.46](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.45...v0.1.46) (2026-05-19)
 
 
