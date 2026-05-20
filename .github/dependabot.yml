@@ -35,3 +35,16 @@ updates:
       - ci
     commit-message:
       prefix: "chore(ci)"
+
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "05:30"
+      timezone: Asia/Dhaka
+    labels:
+      - dependencies
+      - docker
+    commit-message:
+      prefix: "chore(docker)"

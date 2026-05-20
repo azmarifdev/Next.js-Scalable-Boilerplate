@@ -42,7 +42,7 @@ If you're new to this boilerplate, follow this order:
 
 ## Related Docs
 
-- [Security Policy](../security.md) — Supported versions and vulnerability reporting
+- [Security](../security.md) — Defense-in-depth architecture covering 18 attack types, CSP, CSRF, rate limiting, and customization
 - [Architecture](../architecture.md) — System layers and design decisions
 - [Auth Flow](../auth-flow.md) — Authentication lifecycle and security controls
 - [How to Use](../how-to-use.md) — First-time setup and daily workflow

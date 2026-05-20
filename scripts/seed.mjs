@@ -10,7 +10,7 @@ async function hashPassword(password) {
   const salt = randomBytes(16);
   const derivedKey = await scrypt(password, salt, KEY_LENGTH);
 
-  return `scrypt$${salt.toString("base64")}$${derivedKey.toString("base64")}`;
+  return `scrypt_v1$${salt.toString("base64")}$${derivedKey.toString("base64")}`;
 }
 
 const databaseUrl = process.env.DATABASE_URL;

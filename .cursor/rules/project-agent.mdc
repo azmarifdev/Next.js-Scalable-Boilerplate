@@ -1,0 +1,108 @@
+---
+description: Strict project rules for AI edits in Next.js-Boilerplate-PostgresQL-Drizzle
+globs:
+  - "**/*.{ts,tsx,js,jsx,json,md,yml,yaml}"
+alwaysApply: true
+---
+
+# Project Agent Rules
+
+## Goal
+
+Produce minimal, correct, CI-ready changes aligned with current repository patterns.
+
+## Priority Order
+
+1. `tsconfig.json`
+2. `eslint.config.mjs`
+3. Existing module patterns in `src/`
+4. Workflow constraints in `.github/workflows/`
+5. This rules file
+
+## Required Working Style
+
+- Inspect related files before editing.
+- Keep scope tight and avoid unrelated refactor.
+- Preserve existing directory/module boundaries.
+- Update docs when workflow/setup behavior changes.
+
+## Environment & Config Rules
+
+- Local development uses `.env.local`. Template is `.env.example`.
+- Production values live in the hosting provider, not in `.env.local`.
+- CI secrets belong in GitHub Actions Secrets or environment secrets.
+- If env/config behavior changes, update:
+  - `.env.example`
+  - `docs/how-to-use.md`
+  - `docs/guides/deployment.md`
+  - `docs/guides/production-services.md` (if relevant)
+
+## Runtime Modes
+
+- `NEXT_PUBLIC_BACKEND_MODE=internal` uses Next.js API routes.
+- `NEXT_PUBLIC_BACKEND_MODE=external` requires `NEXT_PUBLIC_API_BASE_URL`.
+- `NEXT_PUBLIC_AUTH_PROVIDER=better-auth` uses internal auth routes.
+- `NEXT_PUBLIC_AUTH_PROVIDER=custom-auth` uses external auth adapter.
+
+## Testing & E2E Behavior
+
+- Unit/Integration: `pnpm run test` (Vitest)
+- E2E: `pnpm run e2e` (Playwright)
+- Playwright behavior:
+  - Without `E2E_DATABASE_URL` or `TEST_DATABASE_URL`, auth DB setup is skipped.
+  - With `E2E_DATABASE_URL`, migrations + seed run for auth flows.
+  - With `custom-auth`, set `NEXT_PUBLIC_CUSTOM_AUTH_BASE_URL` and E2E creds.
+
+## Code Quality Rules
+
+- Avoid `any` unless isolated and justified.
+- Prefer explicit types, stable interfaces, and clear naming.
+- Keep functions/components focused.
+- Maintain accessibility in UI output.
+- Do not disable lint/type checks to bypass issues.
+
+## Next.js Rules
+
+- Prefer Server Components by default.
+- Add `"use client"` only when browser interactivity is needed.
+- Keep server/client boundaries intentional.
+
+## Security Rules
+
+- Never hardcode credentials or tokens.
+- Never expose env values in output/logs/docs.
+- Validate external input.
+
+## GitHub and Release Rules
+
+- Commit format: Conventional Commits.
+- PR title format: `type(scope): summary`.
+- Keep CI check names stable when branch protection depends on them.
+- Do not remove release automation files unless explicitly requested.
+
+## Validation Commands & Pipelines
+
+Always execute the unified quality pipeline to validate your changes:
+
+```bash
+# Read-only validation across all 10 stages (Format, Lint, Types, Unit, Build, Playwright E2E, Docs, Knip, Audit)
+pnpm run check:all
+
+# Format files using Prettier first, then execute validation
+pnpm run check:fix
+```
+
+Alternatively, you can run individual checks for localized rapid feedback:
+* `pnpm run lint` — Runs ESLint configuration scans.
+* `pnpm run typecheck` — Runs TypeScript compile validations.
+* `pnpm run test` — Runs Vitest unit & integration test suites.
+* `pnpm run build` — Validates Next.js production builds.
+* `pnpm run e2e` — Runs Playwright end-to-end browser workflows.
+* `pnpm run docs:check` — Validates documentation markdown links consistency.
+
+## Done Criteria
+
+- feature/fix works as requested
+- relevant checks pass
+- no obvious regression
+- docs updated when behavior/setup changed

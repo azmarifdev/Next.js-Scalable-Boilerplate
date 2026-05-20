@@ -169,13 +169,27 @@ The token contains:
 
 ### Security Controls
 
-| Protection          | Implementation                                  | Location                                |
-| ------------------- | ----------------------------------------------- | --------------------------------------- |
-| Same-origin check   | Validates request origin on sensitive endpoints | `src/lib/security/request-origin.ts`    |
-| Redirect validation | Prevents open redirect attacks                  | `src/lib/security/redirect.ts`          |
-| Rate limiting       | In-memory rate limiter for auth endpoints       | `src/lib/security/rate-limit.ts`        |
-| Audit logging       | Logs login/register outcomes for monitoring     | `src/lib/auth/auth-audit.repository.ts` |
-| CSP headers         | Content Security Policy in next.config.ts       | `next.config.ts`                        |
+| Protection             | Implementation                                                 | Location                                               |
+| ---------------------- | -------------------------------------------------------------- | ------------------------------------------------------ |
+| CSP with nonce         | Per-request random nonce, `strict-dynamic` mode                | `src/proxy.ts`, `src/lib/security/security-headers.ts` |
+| HSTS                   | `max-age=31536000; includeSubDomains; preload`                 | `src/lib/security/security-headers.ts`                 |
+| All security headers   | Centralized module applied at 3 layers (Edge, Middleware, API) | `src/lib/security/security-headers.ts`                 |
+| Global rate limiting   | IP-based, 100 req/min general, 30/min auth                     | `src/lib/security/api-security.ts`                     |
+| CSRF protection        | Double-submit cookie pattern with timing-safe comparison       | `src/lib/security/csrf.ts`                             |
+| Input sanitization     | Null bytes, CRLF, length limits, ReDoS prevention              | `src/lib/security/input-validator.ts`                  |
+| Body size validation   | Max 100 KB per request                                         | `src/lib/security/api-security.ts`                     |
+| Same-origin check      | Validates request origin on sensitive endpoints                | `src/lib/security/request-origin.ts`                   |
+| Redirect validation    | Prevents open redirect attacks                                 | `src/lib/security/redirect.ts`                         |
+| Rate limiting          | In-memory + Upstash Redis rate limiter                         | `src/lib/security/rate-limit.ts`                       |
+| Atomic account lockout | SQL `+ 1` increment prevents race condition bypass             | `src/lib/auth/auth-user.repository.ts`                 |
+| Password hashing       | Scrypt (CPU/memory-hard) with random 16-byte salt              | `src/lib/auth/password.ts`                             |
+| Session tokens         | HMAC-SHA256 signed, HttpOnly + SameSite=Strict                 | `src/lib/auth/session.ts`                              |
+| Key rotation           | `AUTH_SESSION_SECRETS` comma-separated list, first signs       | `src/lib/auth/session.ts`                              |
+| Audit logging          | Logs login/register outcomes for monitoring                    | `src/lib/auth/auth-audit.repository.ts`                |
+| RBAC                   | Role-based permissions for admin/user                          | `src/lib/auth/rbac.ts`                                 |
+| MFA step-up            | Optional admin MFA verification for sensitive routes           | `src/lib/auth/step-up.ts`                              |
+| Route protection       | Auth gate + security headers middleware                        | `src/proxy.ts`                                         |
+| AI security            | Automated via `withApiHandler()` for all API routes            | `src/app/api/v1/auth/route-utils.ts`                   |
 
 ---
 

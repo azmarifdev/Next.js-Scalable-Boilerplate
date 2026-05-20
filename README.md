@@ -9,6 +9,7 @@
     <a href="#quick-start">Quick Start</a> ·
     <a href="#tech-stack">Tech Stack</a> ·
     <a href="#key-features">Features</a> ·
+    <a href="#security">Security</a> ·
     <a href="#project-structure">Structure</a> ·
     <a href="#documentation">Docs</a>
   </p>
@@ -19,6 +20,7 @@
     <img src="https://img.shields.io/badge/Drizzle-C5F74F?style=flat&logo=drizzle&logoColor=black" alt="Drizzle" />
     <img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=flat&logo=tailwindcss&logoColor=white" alt="Tailwind" />
     <img src="https://img.shields.io/badge/shadcn/ui-000000?style=flat&logo=shadcnui&logoColor=white" alt="shadcn/ui" />
+    <img src="https://img.shields.io/badge/security-18_attack_types_mitigated-00A86B?style=flat" alt="Security" />
   </p>
 </div>
 
@@ -85,15 +87,22 @@ Your app is now running at the local origin from `.env.local`. With defaults: **
 
 ### 🔐 Authentication & Security
 
-| Feature                   | Details                                                                                |
-| ------------------------- | -------------------------------------------------------------------------------------- |
-| **Cookie-based Sessions** | Secure `httpOnly` + `sameSite=strict` session tokens signed with `AUTH_SESSION_SECRET` |
-| **Better Auth (default)** | Built-in login, register, logout, refresh — runs in your own app                       |
-| **Custom Auth Provider**  | Switch to an external IdP anytime — just change environment variables                  |
-| **Rate Limiting**         | Protects auth endpoints from brute force attacks                                       |
-| **CSP Headers**           | Content Security Policy configured in `next.config.ts`                                 |
-| **Audit Logging**         | Every login/register attempt is logged for security monitoring                         |
-| **Admin MFA Step-Up**     | Optional MFA verification for admin-level routes                                       |
+| Feature                      | Details                                                                                |
+| ---------------------------- | -------------------------------------------------------------------------------------- |
+| **Cookie-based Sessions**    | Secure `httpOnly` + `sameSite=strict` session tokens signed with `AUTH_SESSION_SECRET` |
+| **Better Auth (default)**    | Built-in login, register, logout, refresh — runs in your own app                       |
+| **Custom Auth Provider**     | Switch to an external IdP anytime — just change environment variables                  |
+| **Rate Limiting**            | 4 tiers: global API (100/min), auth API (30/min), login (15/min), register (5/min)     |
+| **CSRF Protection**          | Double-submit cookie pattern with timing-safe comparison                               |
+| **CSP with Nonce**           | Content Security Policy with per-request nonce + `strict-dynamic` — blocks XSS         |
+| **Security Headers**         | 10+ headers applied at 3 layers (Edge, Middleware, API)                                |
+| **Input Sanitization**       | Null bytes, CRLF, and length limits on all inputs — prevents injection attacks         |
+| **Brute Force Protection**   | Account lockout after 5 failed attempts with atomic SQL — race-condition proof         |
+| **Password Security**        | Scrypt (CPU/memory-hard) hashing + 8-char complexity policy (upper, lower, number)     |
+| **Audit Logging**            | Every auth event logged with IP, UA, risk score, and metadata for forensics            |
+| **Admin MFA Step-Up**        | Optional MFA verification for admin-level routes                                       |
+| **Body Size Validation**     | Max 100 KB per API request — prevents resource exhaustion attacks                      |
+| **Open Redirect Prevention** | Origin validation + safe redirect path utility                                         |
 
 ### 🗄️ Database
 
@@ -142,6 +151,82 @@ Your app is now running at the local origin from `.env.local`. With defaults: **
 - ✅ **Docker Support** — `Dockerfile` and `docker-compose.yml` included
 - ✅ **Storybook** — Component development environment
 - ✅ **CI/CD** — 13 GitHub Actions workflows for quality, security, and release
+
+---
+
+<a id="security"></a>
+
+## 🛡️ Enterprise-Grade Security (Built In, Not Bolted On)
+
+Security is not an afterthought — it's woven into every layer of this boilerplate.
+From the moment a request hits your app to the database query, **18 attack types** are mitigated out of the box.
+
+### Why You Can Trust This Boilerplate
+
+| Concern                                    | How It's Addressed                                                                                                                                                                                 |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **"Will my app get hacked through XSS?"**  | Content Security Policy with per-request nonces blocks all inline scripts except those explicitly trusted. `strict-dynamic` mode prevents injection even if an attacker finds a bypass.            |
+| **"Can attackers brute-force my login?"**  | Account lockout after 5 failed attempts + IP-based rate limiting (15 req/min) + dummy password hash to prevent user enumeration. Concurrent request race conditions are prevented with atomic SQL. |
+| **"What about CSRF attacks?"**             | Double-submit cookie pattern — server validates a cryptographically random token from both a cookie and an HTTP header. An attacker's site can't read either.                                      |
+| **"Can someone DoS my API?"**              | Three tiers of rate limiting (global 100/min, auth 30/min, per-endpoint limits) + 100 KB request body cap. Upstash Redis support for distributed rate limiting across serverless instances.        |
+| **"Are user passwords safe?"**             | Scrypt (CPU/memory-hard key derivation) with random 16-byte salt. Password validation requires 8+ characters with uppercase, lowercase, and numbers.                                               |
+| **"What if I have admin routes?"**         | Optional MFA step-up authentication for admin-level routes. Session-based permission system with RBAC.                                                                                             |
+| **"Can sessions be hijacked?"**            | HMAC-SHA256 signed tokens stored in `HttpOnly` + `SameSite=Strict` + `Secure` cookies. Key rotation via `AUTH_SESSION_SECRETS`. Timing-safe signature comparison.                                  |
+| **"Are there security tests in CI?"**      | CodeQL static analysis, CodeHawk scan, dependency review, Gitleaks secret detection, and `pnpm audit` — all automated in GitHub Actions.                                                           |
+| **"Is the database safe from injection?"** | Drizzle ORM generates parameterized queries by default. No raw SQL concatenation. Atomic operations prevent race conditions.                                                                       |
+
+### Complete Attack Coverage
+
+| Attack Vector           | Protection                                            | Layer |
+| :---------------------- | :---------------------------------------------------- | :---: |
+| **XSS**                 | CSP with nonce + `strict-dynamic`                     |  🛡️   |
+| **CSRF**                | Double-submit cookie + header validation              |  🛡️   |
+| **Brute Force**         | Account lockout + rate limiting + atomic SQL          |  🛡️   |
+| **Account Enumeration** | Dummy password hash + generic errors                  |  🛡️   |
+| **DDoS / API Abuse**    | IP-based rate limiting (all routes)                   |  🛡️   |
+| **Clickjacking**        | `X-Frame-Options: DENY` + `frame-ancestors 'none'`    |  🛡️   |
+| **Open Redirect**       | Origin validation + safe redirect function            |  🛡️   |
+| **Race Conditions**     | Atomic SQL increment operations                       |  🛡️   |
+| **Header Injection**    | Sanitized user-agent + IP (null bytes, CRLF stripped) |  🛡️   |
+| **MIME Confusion**      | `X-Content-Type-Options: nosniff`                     |  🛡️   |
+| **Protocol Downgrade**  | HSTS with `preload` + `upgrade-insecure-requests`     |  🛡️   |
+| **Session Hijacking**   | `HttpOnly` + `SameSite=Strict` + HMAC-signed tokens   |  🛡️   |
+| **Weak Passwords**      | Scrypt hashing + 8-char complexity policy             |  🛡️   |
+| **Resource Exhaustion** | Request body limit (100 KB max)                       |  🛡️   |
+| **ReDoS**               | Input length limits before regex evaluation           |  🛡️   |
+| **Supply Chain**        | Dependency review + `frozen-lockfile` + Dependabot    |  🛡️   |
+| **Secret Leakage**      | Gitleaks in CI + gitignored `.env.local`              |  🛡️   |
+| **Credential Stuffing** | Rate limiting + audit logging + risk scoring          |  🛡️   |
+
+> **Defense in Depth**: Security headers are applied at **3 levels** — CDN/Edge (`next.config.ts`), Middleware (`proxy.ts`), and API Routes (`api-security.ts`). If one layer fails, the next catches it.
+
+### 📦 Security Modules
+
+```
+src/lib/security/
+├── security-headers.ts    # CSP, HSTS, X-Frame-Options, etc. (single source)
+├── api-security.ts        # Global rate limiting, CSRF, body validation
+├── csrf.ts                # Double-submit cookie pattern
+├── input-validator.ts     # Sanitization (XSS, header injection, ReDoS)
+├── rate-limit.ts          # In-memory + Upstash Redis rate limiter
+├── request-origin.ts      # Same-origin validation
+└── redirect.ts            # Open redirect prevention
+```
+
+### 🔐 Auth Security
+
+```
+src/lib/auth/
+├── password.ts            # Scrypt hashing with timing-safe verification
+├── session.ts             # HMAC-SHA256 signed tokens with key rotation
+├── session-guard.ts       # Route protection middleware
+├── auth-user.repository.ts  # Atomic SQL for lockout (race-condition proof)
+├── auth-audit.repository.ts # Every event logged with risk scoring
+├── cookie-security.ts     # HttpOnly + SameSite + Secure flag logic
+├── step-up.ts             # Admin MFA step-up configuration
+├── step-up-guard.ts       # MFA enforcement for sensitive routes
+└── rbac.ts                # Role-based access control
+```
 
 ---
 
@@ -247,7 +332,7 @@ All documentation is in the `docs/` directory and covers everything from setup t
 6. [Deployment Guide](docs/guides/deployment.md) — production runbook
 7. [Cloud Providers](docs/deployment/cloud-providers.md) — provider specifics
 8. [Workflows](docs/workflows.md) — CI/CD and automation
-9. [Security Policy](docs/security.md) — reporting and supported versions
+9. [Security](docs/security.md) — defense-in-depth architecture, attack coverage, and customization guide
 
 ### Getting Started
 
@@ -268,16 +353,16 @@ All documentation is in the `docs/` directory and covers everything from setup t
 
 ### Operations
 
-| Guide                                                              | Description                                                                |
-| ------------------------------------------------------------------ | -------------------------------------------------------------------------- |
-| [📕 Contributing Guide](docs/guides/contributing.md)               | PR rules, commit conventions, dev setup, testing guidelines                |
-| [📕 Guides Index](docs/guides/README.md)                           | Entry point for all operational guides                                     |
-| [📕 Deployment Guide](docs/guides/deployment.md)                   | End-to-end deployment runbook with verification steps                      |
-| [📕 Cloud Providers](docs/deployment/cloud-providers.md)           | Provider-specific setup (Vercel, Netlify, Railway, Render, Fly.io, Docker) |
-| [📕 GitHub Setup Checklist](docs/guides/github-setup-checklist.md) | Branch protection, secrets, labels, permissions                            |
-| [📕 Release Automation](docs/guides/release-automation.md)         | How Release Please works, troubleshooting                                  |
-| [📕 Project Maintenance](docs/guides/project-maintenance.md)       | Daily/weekly/monthly/quarterly maintenance routines                        |
-| [📕 Security Policy](docs/security.md)                             | Supported versions and vulnerability reporting                             |
+| Guide                                                              | Description                                                                                               |
+| ------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
+| [📕 Contributing Guide](docs/guides/contributing.md)               | PR rules, commit conventions, dev setup, testing guidelines                                               |
+| [📕 Guides Index](docs/guides/README.md)                           | Entry point for all operational guides                                                                    |
+| [📕 Deployment Guide](docs/guides/deployment.md)                   | End-to-end deployment runbook with verification steps                                                     |
+| [📕 Cloud Providers](docs/deployment/cloud-providers.md)           | Provider-specific setup (Vercel, Netlify, Railway, Render, Fly.io, Docker)                                |
+| [📕 GitHub Setup Checklist](docs/guides/github-setup-checklist.md) | Branch protection, secrets, labels, permissions                                                           |
+| [📕 Release Automation](docs/guides/release-automation.md)         | How Release Please works, troubleshooting                                                                 |
+| [📕 Project Maintenance](docs/guides/project-maintenance.md)       | Daily/weekly/monthly/quarterly maintenance routines                                                       |
+| [📕 Security](docs/security.md)                                    | Defense-in-depth architecture covering 18 attack types, CSP, CSRF, rate limiting, and customization guide |
 
 ### Workflows & Migration
 
@@ -317,7 +402,7 @@ All documentation is in the `docs/` directory and covers everything from setup t
 We welcome contributions! Please see:
 
 - [Contributing Guide](docs/guides/contributing.md) — PR rules, commit conventions, setup
-- [Security Policy](docs/security.md) — How to report vulnerabilities
+- [Security](docs/security.md) — Defense-in-depth architecture, attack coverage, and vulnerability reporting
 - [GitHub Setup Checklist](docs/guides/github-setup-checklist.md) — Repository hardening for maintainers
 - [Project Maintenance](docs/guides/project-maintenance.md) — Maintenance routines for active projects
 

@@ -14,6 +14,8 @@ import { isAdminStepUpEnabled } from "@/lib/auth/step-up";
 import { AUTH_COOKIE_NAME, AUTH_SESSION_TTL_SECONDS } from "@/lib/config/constants";
 import { setRequestIdHeader } from "@/lib/observability/request-id";
 import { withTrace } from "@/lib/observability/tracing";
+import { sanitizeIpAddress, sanitizeUserAgent } from "@/lib/security/input-validator";
+import { attachRateLimitHeaders, consumeRateLimit } from "@/lib/security/rate-limit";
 import { getSafeRedirectPath } from "@/lib/security/redirect";
 import { requireSameOrigin } from "@/lib/security/request-origin";
 import { apiError, apiSuccess, resolveRequestId } from "@/lib/utils/api-response";
@@ -21,14 +23,20 @@ import { registerSchema } from "@/modules/auth/auth.schema";
 
 import { requireInternalBackend, withApiHandler } from "../route-utils";
 
+const AUTH_REGISTER_RATE_LIMIT = {
+  limit: 5,
+  windowMs: 60_000
+};
+
 function prefersHtmlResponse(request: NextRequest): boolean {
   const accept = request.headers.get("accept") ?? "";
   return accept.includes("text/html");
 }
 
 function buildRedirectUrl(request: NextRequest, path: string): URL {
-  const originHeader = request.headers.get("origin");
-  return new URL(path, originHeader ?? request.nextUrl.origin);
+  // Use the request's own origin (already validated via requireSameOrigin above)
+  // to prevent open redirect via manipulated Origin header
+  return new URL(path, request.nextUrl.origin);
 }
 
 function redirectWithRequestId(
@@ -42,15 +50,15 @@ function redirectWithRequestId(
 }
 
 function getRequestIpAddress(request: NextRequest): string | null {
-  return (
+  return sanitizeIpAddress(
     request.headers.get("x-forwarded-for") ??
-    request.headers.get("x-real-ip") ??
-    request.headers.get("cf-connecting-ip")
+      request.headers.get("x-real-ip") ??
+      request.headers.get("cf-connecting-ip")
   );
 }
 
 function getRequestUserAgent(request: NextRequest): string | null {
-  return request.headers.get("user-agent");
+  return sanitizeUserAgent(request.headers.get("user-agent"));
 }
 
 async function parsePayload(request: NextRequest): Promise<unknown> {
@@ -98,6 +106,26 @@ async function registerHandler(request: NextRequest): Promise<Response> {
   return withTrace(
     "auth.register",
     async () => {
+      // Rate limit by IP to prevent account creation abuse / email enumeration
+      const registerRateLimit = await consumeRateLimit(
+        `auth:register:${ipAddress ?? "unknown"}`,
+        AUTH_REGISTER_RATE_LIMIT
+      );
+
+      if (!registerRateLimit.allowed) {
+        const message = "Too many registration attempts. Please retry later.";
+        if (wantsHtml) {
+          return redirectWithRequestId(request, "/register?error=rate_limited", requestId);
+        }
+
+        const response = apiError(
+          { code: "RATE_LIMITED", message },
+          { status: 429, requestId, route }
+        );
+        attachRateLimitHeaders(response, registerRateLimit, AUTH_REGISTER_RATE_LIMIT.limit);
+        return response;
+      }
+
       if (!isAuthDatabaseConfigured()) {
         if (wantsHtml) {
           return redirectWithRequestId(request, "/register?error=service_unavailable", requestId);

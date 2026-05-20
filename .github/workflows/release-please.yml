@@ -200,6 +200,49 @@ jobs:
               pull_number: prNumber
             });
 
+            // Deduplicate bullet points in the release PR body description to prevent duplicate commits
+            const normalizeReleaseBullet = (line) => {
+              const match = line.match(/^(\s*[-*]\s+)(.+?)\s+\(\[[0-9a-f]{7,40}\]\([^)]+\)\)\s*$/i);
+              if (!match) return null;
+              return match[2]
+                .replace(/\s+/g, " ")
+                .trim()
+                .toLowerCase();
+            };
+
+            const dedupeReleaseBullets = (body) => {
+              const lines = body.split("\n");
+              const seen = new Set();
+              const kept = [];
+
+              for (let index = lines.length - 1; index >= 0; index -= 1) {
+                const line = lines[index];
+                const key = normalizeReleaseBullet(line);
+                if (key && seen.has(key)) {
+                  continue;
+                }
+                if (key) {
+                  seen.add(key);
+                }
+                kept.push(line);
+              }
+
+              return kept.reverse().join("\n").replace(/\n{3,}/g, "\n\n").trim();
+            };
+
+            const originalBody = fullPr.body || "";
+            const dedupedBody = dedupeReleaseBullets(originalBody);
+
+            if (dedupedBody !== originalBody) {
+              await github.rest.pulls.update({
+                owner,
+                repo,
+                pull_number: prNumber,
+                body: dedupedBody
+              });
+              core.info(`Deduplicated release PR #${prNumber} description.`);
+            }
+
             const sha = fullPr.head.sha;
             const checks = [
               'Analyze (JavaScript/TypeScript)',

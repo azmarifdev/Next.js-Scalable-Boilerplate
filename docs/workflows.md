@@ -34,10 +34,10 @@ Notes:
 - Trigger: PR and push for package-manager files.
 - Purpose: lockfile / package-manager consistency validation.
 
-### `bun-compatibility.yml`
+### `pnpm-compatibility.yml`
 
 - Trigger: PR and manual run.
-- Purpose: verify install/build compatibility with Bun.
+- Purpose: verify install/build compatibility with pnpm.
 - Merge gate: non-required by default.
 
 ---
@@ -173,19 +173,42 @@ Fix:
 3. if yes but still expected: ruleset mapping is stale, remove and re-add checks
 4. if no: re-run `Release Please`
 
+## Security Automation Summary
+
+| Workflow                        | What It Protects                           | Frequency                      |
+| ------------------------------- | ------------------------------------------ | ------------------------------ |
+| **CodeQL**                      | Static analysis for JS/TS vulnerabilities  | Every PR + weekly              |
+| **CodeHawk**                    | Additional security/code complexity scan   | Every PR + weekly              |
+| **Dependency Review**           | Malicious or vulnerable dependency changes | Every PR with lockfile changes |
+| **Dependabot Auto Merge**       | Safe patch updates for production deps     | Weekly                         |
+| **Package Manager Consistency** | Lockfile integrity verification            | Every push/PR                  |
+
+All security workflows are non-blocking by default (warn-only), except CodeQL which is a required check.
+
 ---
 
 ## Local Preflight
 
+The recommended way to validate quality before pushing is using the unified pipeline:
+
 ```bash
+# Read-only validation across all 10 stages (fast-fail enabled)
+pnpm run check:all
+
+# Format files using Prettier first, then execute validation
+pnpm run check:fix
+```
+
+Alternatively, you can run stages individually if you are troubleshooting a specific layer:
+
+```bash
+pnpm run format:check
 pnpm run lint
 pnpm run typecheck
 pnpm run test
-pnpm run format:check
 pnpm run build
+pnpm run e2e
 ```
-
----
 
 ## Related Docs
 

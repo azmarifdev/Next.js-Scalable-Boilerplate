@@ -11,6 +11,15 @@ Instruction baseline for AI/code agents working in this repository.
 - Avoid destructive git commands
 - Run verification for touched areas
 
+## Platform-Specific Guidance
+
+- Claude: [CLAUDE.md](../../CLAUDE.md) and custom skills in [.claude/skills/](../../.claude/skills/)
+- Cursor: [.cursor/rules/project-agent.mdc](../../.cursor/rules/project-agent.mdc)
+- Windsurf: [.windsurf/rules/project-guidelines.md](../../.windsurf/rules/project-guidelines.md)
+- VS Code & Copilot: [.github/copilot-instructions.md](../../.github/copilot-instructions.md) and [.vscode/settings.json](../../.vscode/settings.json)
+- Kiro: [.kiro/steering/](../../.kiro/steering/)
+- Codex: [.github/codex-instructions.md](../../.github/codex-instructions.md)
+
 ## Minimum Validation by Change Type
 
 Code changes:
@@ -42,3 +51,4 @@ When auth/config behavior changes, update these docs in same PR:
 - `docs/how-to-use.md`
 - `docs/auth-flow.md`
 - `docs/architecture.md`
+- `docs/guides/deployment.md`
