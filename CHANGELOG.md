@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.50](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.49...v0.1.50) (2026-05-20)
+
+
+### Bug Fixes
+
+* **release:** improve duplicate detection in release PR body ([54b071e](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/54b071eb2626ba14582eb53c56933a12f94c6653))
+* **release:** improve duplicate detection in release PR body ([20c9e47](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/20c9e477bf56ba235cb2c0b19381dedba9ce1095))
+
 ## [0.1.49](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.48...v0.1.49) (2026-05-20)
 
 
