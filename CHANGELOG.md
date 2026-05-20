@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.49](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.48...v0.1.49) (2026-05-20)
+
+
+### Features
+
+* **security:** add enterprise-grade security layer with AI agent con… ([27696e0](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/27696e09126e75f0f0e606db08df0d641f128b57))
+* **security:** add enterprise-grade security layer with AI agent configurations ([3aa289f](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/3aa289f3465700008930e84eee2cf830765feb5f))
+
+
+### Bug Fixes
+
+* **security:** relax CSP for dev mode to allow Turbopack HMR eval and inline styles ([8e06bad](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/8e06badf3931dff81536f47615412ceb2578ebd7))
+* **security:** relax CSP for dev mode to allow Turbopack HMR eval and… ([5f2d4de](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/commit/5f2d4de349c2438d259f8e392c4286b6811143fe))
+
 ## [0.1.48](https://github.com/azmarifdev/Next.js-Boilerplate-PostgresQL-Drizzle/compare/v0.1.47...v0.1.48) (2026-05-19)
 
 
