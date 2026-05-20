@@ -14,10 +14,14 @@ export async function proxy(request: NextRequest) {
 
   const isAuthRoute = authRoutes.includes(pathname);
   const isSignedIn = Boolean(session);
+  const isDev = process.env.NODE_ENV !== "production";
 
   // Generate a single nonce for this request
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
-  const contentSecurityPolicy = buildCsp(nonce);
+  // In dev mode, relax CSP to allow eval() (needed by Turbopack HMR and React DevTools)
+  // and inline styles (injected by Turbopack without nonces).
+  // In production, eval and inline styles are strictly blocked for security.
+  const contentSecurityPolicy = buildCsp(nonce, isDev);
 
   // Prepare request headers with nonce for SSR
   const requestHeaders = new Headers(request.headers);
@@ -44,6 +48,7 @@ export async function proxy(request: NextRequest) {
   response.headers.set("x-nonce", nonce);
   applySecurityHeaders(response, {
     nonce,
+    isDev,
     includeHsts: process.env.NODE_ENV === "production"
   });
 

@@ -159,7 +159,10 @@ export function enhanceApiResponse(
   rateLimitConfig?: { limit: number }
 ): void {
   // Apply security headers
-  applySecurityHeaders(response, { includeHsts: process.env.NODE_ENV === "production" });
+  applySecurityHeaders(response, {
+    includeHsts: process.env.NODE_ENV === "production",
+    isDev: process.env.NODE_ENV !== "production"
+  });
 
   // Attach rate limit headers
   if (rateLimit && rateLimitConfig) {
