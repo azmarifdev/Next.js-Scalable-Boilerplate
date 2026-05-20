@@ -89,11 +89,11 @@
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
-    "@types/node": "^25.9.0",
+    "@types/node": "^25.9.1",
     "@types/nodemailer": "^8.0.0",
-    "@types/react": "^19.2.2",
+    "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.2",
-    "@vitest/coverage-v8": "^4.1.6",
+    "@vitest/coverage-v8": "^4.1.7",
     "codehawk-cli": "^10.1.0",
     "dotenv": "^17.4.2",
     "drizzle-kit": "^0.31.10",
@@ -104,13 +104,13 @@
     "jsdom": "^29.1.1",
     "knip": "^6.14.1",
     "lint-staged": "^17.0.5",
-    "postcss": "^8.5.14",
+    "postcss": "^8.5.15",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "storybook": "^10.4.0",
     "tailwindcss": "^4.3.0",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.6"
+    "vitest": "^4.1.7"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
