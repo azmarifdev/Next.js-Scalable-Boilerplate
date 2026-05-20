@@ -11,28 +11,44 @@ export interface SecurityHeadersOptions {
   includeHsts?: boolean;
   /** CSP nonce value for inline scripts/styles */
   nonce?: string;
+  /** Whether to relax CSP for development (allows eval, inline styles) */
+  isDev?: boolean;
 }
 
 /**
  * Builds a Content Security Policy string with a nonce for inline scripts.
  * CSP is the primary defense against XSS attacks.
+ *
+ * In development mode, `'unsafe-eval'` is added because Next.js Turbopack's
+ * HMR client and React DevTools rely on `eval()` for hot reloading.
+ * In production, eval is strictly blocked for security.
  */
-export function buildCsp(nonce: string): string {
+export function buildCsp(nonce: string, isDev = false): string {
+  const scriptSrc = [
+    "'self'",
+    `'nonce-${nonce}'`,
+    "'strict-dynamic'",
+    ...(isDev ? ["'unsafe-eval'"] : [])
+  ].join(" ");
+
+  // In development, allow inline styles since Turbopack injects them without nonces
+  const styleSrc = isDev ? `'self' 'unsafe-inline'` : `'self' 'nonce-${nonce}'`;
+
   return [
     "default-src 'self'",
     "base-uri 'self'",
     "frame-ancestors 'none'",
     "form-action 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
+    `script-src ${scriptSrc}`,
     "script-src-attr 'none'",
-    `style-src 'self' 'nonce-${nonce}'`,
+    `style-src ${styleSrc}`,
     "style-src-attr 'unsafe-inline'",
     "img-src 'self' data: blob: https:",
     "font-src 'self' data:",
     "connect-src 'self' https:",
     "object-src 'none'",
     "worker-src 'self' blob:",
-    "upgrade-insecure-requests"
+    ...(isDev ? [] : ["upgrade-insecure-requests"])
   ].join("; ");
 }
 
@@ -41,7 +57,7 @@ export function buildCsp(nonce: string): string {
  * These headers are applied to every response in production.
  */
 export function getSecurityHeaders(options: SecurityHeadersOptions = {}): Record<string, string> {
-  const { nonce, includeHsts = true } = options;
+  const { nonce, includeHsts = true, isDev = false } = options;
 
   const headers: Record<string, string> = {
     // Prevent MIME type sniffing
@@ -64,7 +80,7 @@ export function getSecurityHeaders(options: SecurityHeadersOptions = {}): Record
   };
 
   if (nonce) {
-    headers["Content-Security-Policy"] = buildCsp(nonce);
+    headers["Content-Security-Policy"] = buildCsp(nonce, isDev);
   }
 
   if (includeHsts) {
