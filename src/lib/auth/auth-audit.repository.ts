@@ -3,6 +3,11 @@ import { and, desc, eq, gte, sql } from "drizzle-orm";
 import { getDrizzleClient } from "@/db";
 import { authAuditLogs } from "@/db/schema";
 import { logger } from "@/lib/observability/logger";
+import {
+  sanitizeEmail,
+  sanitizeIpAddress,
+  sanitizeUserAgent
+} from "@/lib/security/input-validator";
 
 export type AuthAuditEvent =
   | "login"
@@ -38,23 +43,11 @@ const NEW_DEVICE_WINDOW_MS = 24 * 60 * 60 * 1000;
 const MAX_METADATA_LENGTH = 4000;
 
 function normalizeEmail(email: string | null | undefined): string | null {
-  if (!email) {
-    return null;
-  }
-
-  return email.toLowerCase();
+  return sanitizeEmail(email);
 }
 
 function normalizeIp(ipAddress: string | null | undefined): string | null {
-  if (!ipAddress) {
-    return null;
-  }
-
-  if (ipAddress.includes(",")) {
-    return ipAddress.split(",")[0]?.trim() ?? null;
-  }
-
-  return ipAddress.trim();
+  return sanitizeIpAddress(ipAddress);
 }
 
 function serializeMetadata(metadata?: Record<string, unknown> | null): string | null {
@@ -66,9 +59,11 @@ function serializeMetadata(metadata?: Record<string, unknown> | null): string | 
     const serialized = JSON.stringify(metadata);
     if (serialized.length > MAX_METADATA_LENGTH) {
       logger.warn("auth:audit:metadata_too_large", {
-        length: serialized.length
+        length: serialized.length,
+        truncated: true
       });
-      return null;
+      // Truncate instead of silently dropping — preserves partial data for forensics
+      return serialized.slice(0, MAX_METADATA_LENGTH);
     }
     return serialized;
   } catch (error) {
@@ -93,7 +88,7 @@ export async function writeAuthAuditLog(input: AuthAuditInput): Promise<void> {
       email: normalizeEmail(input.email),
       userId: input.userId ?? null,
       ipAddress: normalizeIp(input.ipAddress),
-      userAgent: input.userAgent ?? null,
+      userAgent: sanitizeUserAgent(input.userAgent),
       isSuspicious: input.isSuspicious ?? false,
       riskScore: input.riskScore ?? 0,
       reason: input.reason ?? null,

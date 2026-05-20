@@ -70,7 +70,7 @@ Find these files:
 
 - `ci.yml`
 - `package-manager-consistency.yml`
-- `bun-compatibility.yml`
+- `pnpm-compatibility.yml`
 - `dependabot-auto-merge.yml`
 - `dependency-review.yml`
 

@@ -1,5 +1,7 @@
 import { validateRuntimeConfig } from "@/lib/config/validate";
 import { logger } from "@/lib/observability/logger";
+import { checkApiSecurity, enhanceApiResponse } from "@/lib/security/api-security";
+import { applySecurityHeaders } from "@/lib/security/security-headers";
 import { apiError, resolveRequestId } from "@/lib/utils/api-response";
 
 export function withApiHandler<TRequest extends Request>(
@@ -11,7 +13,36 @@ export function withApiHandler<TRequest extends Request>(
 
     try {
       validateRuntimeConfig();
-      return await handler(request);
+
+      // ── Global API security check ──────────────────────────────────────
+      // Every single API route is protected by:
+      //   • IP-based rate limiting (100 req/min for auth, 100 for others)
+      //   • Body size validation (100 KB max)
+      //   • CSRF protection (for state-changing methods)
+      //   • Content-Type validation
+      //
+      // Note: CSRF is skipped for auth routes because they already have
+      // requireSameOrigin() validation within each handler. Auth forms
+      // submit directly and don't send CSRF headers yet.
+      const isAuthRoute = route.startsWith("/api/v1/auth/");
+      const securityCheck = await checkApiSecurity(request, {
+        route,
+        requestId,
+        skipCsrf: isAuthRoute
+      });
+
+      if (!securityCheck.passed) {
+        return securityCheck.response!;
+      }
+
+      const response = await handler(request);
+
+      // ── Apply security headers to every API response ─────────────────
+      enhanceApiResponse(response, securityCheck.rateLimit, {
+        limit: route.startsWith("/api/v1/auth/") ? 30 : 100
+      });
+
+      return response;
     } catch (error) {
       logger.error("api:unhandled", {
         route,
@@ -19,7 +50,7 @@ export function withApiHandler<TRequest extends Request>(
         message: error instanceof Error ? error.message : "Unknown error"
       });
 
-      return apiError(
+      const errorResponse = apiError(
         {
           code: "INTERNAL_ERROR",
           message: "Unexpected server error"
@@ -30,6 +61,11 @@ export function withApiHandler<TRequest extends Request>(
           route
         }
       );
+
+      // Apply security headers even on error responses
+      applySecurityHeaders(errorResponse);
+
+      return errorResponse;
     }
   };
 }

@@ -404,54 +404,58 @@ migrate-production
 
 ## 6. Daily Development Workflow
 
-### 🚀 Professional Pre-Push Pipeline
+### 🚀 Professional Pre-Push Pipeline (`check:all` & `check:fix`)
 
-Run this single command before every push:
+To guarantee absolute software quality, type-safety, and performance standards, this repository is equipped with a unified validation pipeline. You should always run this validation before pushing any commits or opening a Pull Request.
+
+#### 1. Read-Only Validation: `pnpm run check:all`
+
+This runs the entire 10-stage testing and quality enforcement suite sequentially. It is read-only, meaning it does not modify any source code. If any of the steps fail, the pipeline terminates immediately (fast-fail), ensuring you get rapid feedback without waiting on slow build tasks.
 
 ```bash
 pnpm run check:all
 ```
 
-If you want the pipeline to format files first and then validate everything:
+#### 2. Auto-Fix and Validate: `pnpm run check:fix`
+
+If you want the pipeline to automatically resolve formatting issues (using Prettier), organize imports, and clean up common lint warnings before running the rest of the checks, use the auto-fix pipeline:
 
 ```bash
 pnpm run check:fix
 ```
 
-Or run all stages individually:
+This internally sets `CHECK_ALL_FIX=1` and executes the verification suite, ensuring that all minor code styling differences are ironed out before validation begins.
 
-```bash
-pnpm run format:check &&
-pnpm run lint &&
-pnpm run typecheck &&
-pnpm run test &&
-pnpm run build &&
-pnpm run e2e &&
-pnpm run docs:check &&
-pnpm run knip &&
-pnpm audit
-```
+---
 
-> **Note:** `gitleaks detect` (secret scanning) is also included in `check:all` but requires the `gitleaks` CLI to be installed separately.
+### 📦 Pipeline Breakdown & Security Gates (10 Stages)
 
-**Pipeline breakdown (10 stages):**
+The validation script runs the following checks sequentially:
 
-| Step | Command        | Time  | What it guards against                                              |
-| ---- | -------------- | ----- | ------------------------------------------------------------------- |
-| 1    | `format:check` | ~1s   | Inconsistent code style, trailing whitespace, bad quotes            |
-| 2    | `lint`         | ~3s   | Unused imports, type misuse, logical errors                         |
-| 3    | `typecheck`    | ~3s   | Type mismatches, missing exports, broken generics                   |
-| 4    | `test`         | ~1s   | Regressions — 63 tests across 14 files                              |
-| 5    | `build`        | ~10s  | Bundling errors, broken routes, standalone failure                  |
-| 6    | `e2e`          | ~40s  | Playwright end-to-end tests — login, docs, navigation, multi-locale |
-| 7    | `docs:check`   | ~0.5s | Broken doc references, missing files                                |
-| 8    | `knip`         | ~2s   | Dead file & unused dependency analysis                              |
-| 9    | `audit`        | ~5s   | Known vulnerabilities in dependencies                               |
-| 10   | `gitleaks`     | ~3s   | Secret leak detection (requires `gitleaks` CLI)                     |
+|  Step  | Phase                       | Command            | Execution Time | Purpose & Safety Guards                                                                            |
+| :----: | :-------------------------- | :----------------- | :------------: | :------------------------------------------------------------------------------------------------- |
+| **1**  | **Code Formatting**         | `prettier --check` |      ~1s       | Enforces consistent indentation, quotes, and spacing across all code and documentation files.      |
+| **2**  | **Static Analysis**         | `eslint`           |      ~3s       | Scans for syntax bugs, unreachable blocks, unused imports, or code smells.                         |
+| **3**  | **Type Check**              | `tsc --noEmit`     |      ~3s       | Validates complete TypeScript type safety and compile-time generic matches.                        |
+| **4**  | **Unit & Integration**      | `vitest run`       |     ~1.5s      | Executes Vitest unit tests (e.g., helpers, rate limiters, session keys) and api integration tests. |
+| **5**  | **Production Compilation**  | `next build`       |      ~10s      | Packages files for production using Turbopack to detect compile-time failures.                     |
+| **6**  | **End-to-End Tests**        | `playwright test`  |      ~13s      | Executes full Playwright browser simulations (e.g., login flows, multi-locale, theme toggling).    |
+| **7**  | **Documentation Integrity** | `check-docs.mjs`   |     ~0.5s      | Ensures all custom Markdown links, images, and anchors resolve perfectly.                          |
+| **8**  | **Dependency Audit**        | `knip`             |      ~2s       | Flags dead files, unused dependencies, or unexported components to keep bundle size light.         |
+| **9**  | **Security Auditing**       | `pnpm audit`       |      ~4s       | Scans the package registry tree for known CVEs or vulnerable dependencies.                         |
+| **10** | **Secret Scanning**         | `gitleaks detect`  |      ~3s       | _(Optional)_ Scans files for exposed tokens or keys. Requires `gitleaks` CLI to be installed.      |
 
-**Fast-fail principle:** Steps 1–3 fail in seconds. You never wait minutes for a build only to discover a missing semicolon.
+> [!TIP]
+> **Fast-Fail Principle**: Steps 1–3 run in under 8 seconds. If you made a simple syntax error or left an unused variable, the script fails instantly, saving you from waiting on Next.js production compilations.
 
-`check:all` is read-only by default. Use `check:fix` when you want Prettier to rewrite files before the rest of the validation pipeline runs.
+---
+
+### 🧪 Database Setup & E2E Testing Behaviors
+
+During the `e2e` execution stage, the pipeline handles database state intelligently:
+
+- **Disposable/Smoke Mode (Secret-free)**: If `E2E_DATABASE_URL` or `TEST_DATABASE_URL` is omitted, Playwright skips database-dependent integration setups. It runs essential smoke tests (landing page navigation, sitemap accessibility, i18n checks) while skipping database-level logins.
+- **Full E2E Testing Mode**: When a test database URL is supplied, the test harness automatically generates, runs database migrations, runs seeding scripts, executes authentication, and tears down the connection cleanly.
 
 ### E2E Behavior
 

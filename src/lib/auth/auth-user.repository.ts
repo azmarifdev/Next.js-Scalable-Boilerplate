@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 import { getDrizzleClient } from "@/db";
 import { authUsers } from "@/db/schema";
@@ -105,16 +105,18 @@ class PostgresAuthAdapter implements AuthAdapter {
       return;
     }
 
+    // Use atomic SQL increment to avoid race conditions from concurrent requests.
+    // Without this, an attacker could bypass the account lockout by sending
+    // simultaneous login requests — each would read the old failedLoginAttempts
+    // count and the WHERE clause would fail to match on all but the first.
     await db
       .update(authUsers)
       .set({
-        failedLoginAttempts: user.failedLoginAttempts + 1,
+        failedLoginAttempts: sql`${authUsers.failedLoginAttempts} + 1`,
         lockedUntil: lockUntil,
         updatedAt: new Date()
       })
-      .where(
-        and(eq(authUsers.id, user.id), eq(authUsers.failedLoginAttempts, user.failedLoginAttempts))
-      );
+      .where(eq(authUsers.id, user.id));
   }
 }
 
